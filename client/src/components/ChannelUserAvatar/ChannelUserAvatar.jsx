@@ -3,16 +3,17 @@ import React from "react";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import { setEdit } from "../../slice/editSlice";
+import { useParams } from "react-router";
 
-function ChannelUserAvatar({
-    avatar,
-    channelName,
-    subscribers,
-    subscribed,
-    isMyChannel = false
-}) {
+function ChannelUserAvatar({ subscribers, subscribed }) {
     const dispatch = useDispatch();
     const edit = useSelector((state) => state.edit.edit);
+
+    const { _id, avatar, fullName, username } = useSelector(
+        (state) => state.loginUser.user
+    );
+    const { requestedUserId } = useParams();
+    const isMyChannel = _id == requestedUserId;
 
     let buttonContent;
     if (!isMyChannel) {
@@ -97,8 +98,8 @@ function ChannelUserAvatar({
                     <img src={avatar} alt="Channel" className="h-full w-full" />
                 </span>
                 <div className="mr-auto inline-block">
-                    <h1 className="font-bol text-xl">{channelName}</h1>
-                    <p className="text-sm text-gray-400">@{channelName}</p>
+                    <h1 className="font-bol text-xl">{fullName}</h1>
+                    <p className="text-sm text-gray-400">@{username}</p>
                     <p className="text-sm text-gray-400">
                         {subscribers} Subscribers · {subscribed} Subscribed
                     </p>

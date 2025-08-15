@@ -3,17 +3,47 @@ import PropTypes from "prop-types";
 import Logo from "../Logo";
 import { useNavigate } from "react-router";
 import { api } from "../../api/api";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../slice/userSlice";
+import toast from "react-hot-toast";
 
 function Login({ className }) {
     const navigator = useNavigate();
+    const dispatch = useDispatch();
 
     const handleLogin = async (e) => {
+        e.preventDefault();
         const formDate = new FormData(e.target);
 
         try {
+            toast.loading("Logging you in.");
             const resp = await api.post("/users/login");
-        } catch (error) {}
+
+            console.log("User Logged in Successfully :: ", resp.data);
+            toast.dismiss();
+            toast.success("User Logged in successfully.");
+
+            dispatch(setUser(resp.data));
+            console.log("user dispatched successfully");
+            navigator(`/channel/${resp.data.user._id}`);
+        } catch (error) {
+            console.error("Error Logging In :: ", error);
+            if (error.response) {
+                toast.error(error.response.data.message || error.message);
+                console.error(
+                    "Error Response :: ",
+                    error.response.data.message
+                );
+            } else if (error.request) {
+                toast.error(error.message || "Network Error");
+                console.error("Error in Request :: ", error.message);
+            } else {
+                toast.error("Something went wrong");
+                console.error("Something Went wrong", error.message);
+            }
+        }
     };
+
     return (
         <div
             className={`min-h-screen overflow-y-auto bg-[#121212] text-white flex items-center justify-center p-4 ${className}`}

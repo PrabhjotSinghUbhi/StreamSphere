@@ -8,7 +8,7 @@ import EditInfoPage from "../EditInfoPage/EditInfoPage";
 import EditUserNavbar from "../EditUserNavBar/EditUserNavbar";
 import { useSelector } from "react-redux";
 
-function ChannelPage({ isMyChannel = false }) {
+function ChannelPage() {
     const edit = useSelector((state) => state.edit.edit);
 
     return (
@@ -29,7 +29,6 @@ function ChannelPage({ isMyChannel = false }) {
                                 channelName={"React Patterns"}
                                 subscribers={1000}
                                 subscribed={200}
-                                isMyChannel={isMyChannel}
                             />
                             {/* <ChannelNavbar /> */}
                             {edit ? <EditUserNavbar /> : <ChannelNavbar />}

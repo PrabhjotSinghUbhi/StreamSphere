@@ -172,32 +172,41 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
-    const resLogOut = await User.findByIdAndUpdate(
-        req.user._id,
-        {
-            $unset: {
-                refreshTokens: 1
+    try {
+        const resLogOut = await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                $unset: {
+                    refreshTokens: 1
+                }
+            },
+            {
+                new: true
             }
-        },
-        {
-            new: true
-        }
-    ).select("-password -refreshToken");
+        ).select("-password -refreshToken");
 
-    console.log(resLogOut);
+        console.log(resLogOut);
 
-    const options = {
-        httpOnly: true,
-        secure: true
-    };
+        const options = {
+            httpOnly: true,
+            secure: true
+        };
 
-    return res
-        .status(200)
-        .clearCookie("accessToken", options)
-        .clearCookie("refreshToken", options)
-        .json(
-            new ApiResponse({ resLogOut }, 200, "User Logged Out successfully.")
-        );
+        return res
+            .status(200)
+            .clearCookie("accessToken", options)
+            .clearCookie("refreshToken", options)
+            .json(
+                new ApiResponse(
+                    { resLogOut },
+                    200,
+                    "User Logged Out successfully."
+                )
+            );
+    } catch (error) {
+        console.log("Error :: Logging out the user :: ", error.message);
+        return res.status(500).json(new ApiResponse(null, 500, error.message));
+    }
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
@@ -253,31 +262,39 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 });
 
 const changeCurrentPassword = asyncHandler(async (req, res) => {
-    const { oldPassword, newPassword, confirmPassword } = req.body;
+    try {
+        const { oldPassword, newPassword, confirmPassword } = req.body;
 
-    //since this will be a secure route so req.user will have access to the user and its id.
-    const userId = req.user._id;
+        //since this will be a secure route so req.user will have access to the user and its id.
+        const userId = req.user._id;
 
-    const user = await User.findById(userId);
+        const user = await User.findById(userId);
 
-    if (!user)
-        throw new ApiErrors(401, "Unauthorized request. User not found.");
+        if (!user)
+            throw new ApiErrors(401, "Unauthorized request. User not found.");
 
-    if (!oldPassword || !newPassword || !confirmPassword)
-        throw new ApiErrors(401, "All fields are required.");
+        if (!oldPassword || !newPassword || !confirmPassword)
+            throw new ApiErrors(401, "All fields are required.");
 
-    if (!(await user.isPasswordCorrect(oldPassword)))
-        throw new ApiErrors(401, "Old password is incorrect.");
+        if (!(await user.isPasswordCorrect(oldPassword)))
+            throw new ApiErrors(401, "Old password is incorrect.");
 
-    if (newPassword !== confirmPassword)
-        throw new ApiErrors(401, "Passwords do not match.");
+        if (newPassword !== confirmPassword)
+            throw new ApiErrors(401, "Passwords do not match.");
 
-    user.password = newPassword;
-    await user.save({ validateBeforeSave: false });
+        user.password = newPassword;
+        await user.save({ validateBeforeSave: false });
 
-    return res
-        .status(200)
-        .json(new ApiResponse({}, 200, "Password changed successfully."));
+        return res
+            .status(200)
+            .json(new ApiResponse({}, 200, "Password changed successfully."));
+    } catch (error) {
+        console.error(
+            "Error Occurred :: Changing the password :: ",
+            error.message
+        );
+        return res.status(501).json(new ApiResponse(null, 501, error.message));
+    }
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
@@ -475,8 +492,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 channelsSubscribedTo: 1,
                 isSubscribed: 1,
                 avatar: 1,
-                email: 1,
-                isSubscribed: 1
+                email: 1
             }
         }
     ]);
