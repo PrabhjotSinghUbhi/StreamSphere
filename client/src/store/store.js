@@ -17,12 +17,13 @@ import storage from "redux-persist/lib/storage";
 const persistConfig = {
     key: "my_login_user",
     storage,
-    whitelist: ["userReducer"] // which user to persist.
+    whitelist: ["login_user"] // which user to persist.
 };
 
 //2. combine reducers.
 const rootReducer = combineReducers({
-    login_user: userReducer
+    login_user: userReducer,
+    edit: editReducer
 });
 
 //3. create a persisted reducer.

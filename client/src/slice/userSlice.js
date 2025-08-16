@@ -9,9 +9,14 @@ const userSlice = createSlice({
     initialState,
     reducers: {
         setUser: (state, action) => {
+            console.log("here is the payload in setUser :: ", action.payload);
             state.user = action.payload;
         },
         updateAvatar: (state, action) => {
+            console.log(
+                "Here is the payload of update avatar :: ",
+                action.payload
+            );
             state.user.avatar = action.payload;
         },
         updateCover: (state, action) => {

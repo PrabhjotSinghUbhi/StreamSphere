@@ -1,9 +1,10 @@
 import { User } from "../models/user.model.js";
 import { ApiErrors } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 
-export const verifyJWT = asyncHandler(async (req, _, next) => {
+export const verifyJWT = asyncHandler(async (req, res, next) => {
     try {
         const token =
             req.cookies?.accessToken ||
@@ -26,5 +27,6 @@ export const verifyJWT = asyncHandler(async (req, _, next) => {
             "Error Occurred in Generating or Validating Refresh Tokens",
             error.message
         );
+        return res.status(500).json(new ApiResponse(null, 500, error.message));
     }
 });

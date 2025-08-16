@@ -143,7 +143,8 @@ const loginUser = asyncHandler(async (req, res) => {
         //options for sending secure cookies.
         const options = {
             httpOnly: true,
-            secure: true
+            secure: false,
+            sameSite: 'lax'
         };
 
         return res
@@ -153,7 +154,7 @@ const loginUser = asyncHandler(async (req, res) => {
             .json(
                 new ApiResponse(
                     {
-                        user: foundUser,
+                        foundUser,
                         accessToken,
                         refreshToken
                     },

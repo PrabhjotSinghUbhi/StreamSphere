@@ -1,16 +1,25 @@
 import React from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Logo from "../Logo";
 import SearchIcon from "../SearchIcon";
+import { useSelector } from "react-redux";
+import { Card, CardContent, CardDescription } from "../ui/card";
+import { Button } from "../ui/button";
 
 function Header() {
     const navigator = useNavigate();
+
+    const isLoggedIn = useSelector((state) => state.loginUser.login_user.user);
 
     return (
         <header className="sticky inset-x-0 top-0 z-50 w-full border-b border-white bg-[#121212] px-4">
             <nav className="mx-auto flex max-w-7xl items-center py-2">
                 <div className=" w-12 shrink-0 sm:w-16">
-                    <img src="/public/logo.png" alt="logo" className="scale-250" />
+                    <img
+                        src="/public/logo.png"
+                        alt="logo"
+                        className="scale-250"
+                    />
                 </div>
                 <div className="relative mx-auto hidden w-full max-w-md overflow-hidden sm:block">
                     <input
@@ -18,21 +27,6 @@ function Header() {
                         placeholder="Search"
                     />
                     <span className="absolute left-2.5 top-1/2 inline-block -translate-y-1/2">
-                        {/* <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            aria-hidden="true"
-                            className=" h-4 w-4"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                            ></path>
-                        </svg> */}
                         <SearchIcon />
                     </span>
                 </div>
@@ -235,24 +229,65 @@ function Header() {
                             </button>
                         </li>
                     </ul>
-                    <div className="mb-8 mt-auto flex w-full flex-wrap gap-4 px-4 sm:mb-0 sm:mt-0 sm:items-center sm:px-0">
-                        <button
-                            onClick={() => {
-                                navigator("/login");
-                            }}
-                            className="w-full bg-[#383737] px-3 py-2 hover:bg-[#4f4e4e] sm:w-auto sm:bg-transparent"
+                    {isLoggedIn ? (
+                        <div
+                            className="flex items-center justify-between gap-6 px-4 py-2 
+  bg-background border border-border rounded-xl shadow-sm"
                         >
-                            Log in
-                        </button>
-                        <button
-                            onClick={() => {
-                                navigator("/register");
-                            }}
-                            className="mr-1 w-full bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto"
-                        >
-                            Sign up
-                        </button>
-                    </div>
+                            {/* Avatar Link */}
+                            <Link
+                                to={`/channel/${isLoggedIn._id}`}
+                                className="relative group"
+                            >
+                                <img
+                                    src={isLoggedIn.avatar}
+                                    alt="avatar"
+                                    height={48}
+                                    width={48}
+                                    onError={(e) =>
+                                        (e.currentTarget.src = "/user.png")
+                                    }
+                                    className="h-12 w-12 rounded-full border-2 border-primary 
+        transition duration-300 group-hover:scale-105 group-hover:shadow-md"
+                                />
+                                {/* Online Status */}
+                                <span
+                                    className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full 
+      bg-green-500 border border-background"
+                                ></span>
+                            </Link>
+
+                            {/* Actions */}
+                            <div>
+                                <Button
+                                    variant="destructive"
+                                    className="rounded-full px-4 py-2 text-sm font-medium 
+        shadow-md hover:scale-105 transition"
+                                >
+                                    Logout
+                                </Button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="mb-8 mt-auto flex w-full flex-wrap gap-4 px-4 sm:mb-0 sm:mt-0 sm:items-center sm:px-0">
+                            <button
+                                onClick={() => {
+                                    navigator("/login");
+                                }}
+                                className="w-full bg-[#383737] px-3 py-2 hover:bg-[#4f4e4e] sm:w-auto sm:bg-transparent"
+                            >
+                                Log in
+                            </button>
+                            <button
+                                onClick={() => {
+                                    navigator("/register");
+                                }}
+                                className="mr-1 w-full bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto"
+                            >
+                                Sign up
+                            </button>
+                        </div>
+                    )}
                 </div>
             </nav>
         </header>
