@@ -21,10 +21,13 @@ const userSlice = createSlice({
         },
         updateCover: (state, action) => {
             state.user.coverImage = action.payload;
+        },
+        removeUser: (state) => {
+            state.user = null;
         }
     }
 });
 
-export const { setUser, updateAvatar, updateCover } = userSlice.actions;
+export const { setUser, updateAvatar, updateCover,removeUser } = userSlice.actions;
 
 export default userSlice.reducer;

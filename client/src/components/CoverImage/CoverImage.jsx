@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
     Dialog,
     DialogClose,
@@ -13,6 +13,9 @@ import { Button } from "../ui/button";
 import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import { Input } from "../ui/input";
 import { Label } from "@radix-ui/react-label";
+import toast from "react-hot-toast";
+import { api } from "../../api/api";
+import { updateCover } from "../../slice/userSlice";
 
 function CoverImage() {
     const { coverImage } = useSelector(
@@ -20,8 +23,49 @@ function CoverImage() {
     );
     const edit = useSelector((state) => state.edit.edit);
     const [imageUrl, setImageUrl] = useState(coverImage);
+    const [statusButton, setStatusButton] = useState(false);
+    const dispatch = useDispatch();
 
-   
+    const handleCoverImageUpdate = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const toast_id = toast.loading("Updating Cover Image...");
+        let time_id;
+        try {
+            time_id = setTimeout(() => {
+                toast.error("Update took too long, Please try again");
+            }, 7000);
+            const resp = await api.patch("/users/update-cover-image", formData);
+            console.log("CoverImage updated successfully.", resp.data);
+            toast.success(
+                resp.data.message || "Cover Image Updated Successfully."
+            );
+            clearTimeout(time_id);
+            toast.dismiss(toast_id);
+            setStatusButton(true);
+            dispatch(updateCover(resp.data.payload.user.coverImage));
+        } catch (error) {
+            console.log(error);
+            toast.dismiss(toast_id);
+            clearTimeout(time_id);
+            if (error.response) {
+                console.error(
+                    "Error in updating the Cover Image :: ",
+                    error.response.data.message
+                );
+                toast.error(error.response.data.message || error.message);
+            } else if (error.request) {
+                console.error(
+                    "Network Error :: Updating Cover Image :: ",
+                    error.message
+                );
+                toast(error.message || "Network Error");
+            } else {
+                console.error(error.message || "Something went wrong");
+                toast.error(error.message || "Something went wrong");
+            }
+        }
+    };
 
     return (
         <div>
@@ -58,7 +102,7 @@ function CoverImage() {
                                     </Button>
                                 </DialogTrigger>
                                 <DialogContent className="fixed  rounded-xl p-5 bg-neutral-800 sm:max-w-[425px] z-50">
-                                    <form>
+                                    <form onSubmit={handleCoverImageUpdate}>
                                         <DialogHeader className="space-y-1">
                                             <DialogTitle className="text-xl font-semibold">
                                                 Edit Cover Image
@@ -96,12 +140,12 @@ function CoverImage() {
                                                     >
                                                         Change
                                                     </Label>
-                                                    <input
+                                                    <Input
                                                         id="cover-upload"
                                                         type="file"
                                                         accept="image/*"
                                                         className="hidden"
-                                                        name="cover"
+                                                        name="coverImage"
                                                         onChange={(e) => {
                                                             const file =
                                                                 e.target
@@ -127,11 +171,20 @@ function CoverImage() {
 
                                         <DialogFooter className="flex justify-end gap-2">
                                             <DialogClose asChild>
-                                                <Button variant="outline">
-                                                    Cancel
-                                                </Button>
+                                                {statusButton ? (
+                                                    <Button variant={"success"}>
+                                                        Done
+                                                    </Button>
+                                                ) : (
+                                                    <Button variant="outline">
+                                                        Cancel
+                                                    </Button>
+                                                )}
                                             </DialogClose>
-                                            <Button type="submit">
+                                            <Button
+                                                variant={"default"}
+                                                type="submit"
+                                            >
                                                 Save changes
                                             </Button>
                                         </DialogFooter>

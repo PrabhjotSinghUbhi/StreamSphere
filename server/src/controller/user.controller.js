@@ -144,7 +144,7 @@ const loginUser = asyncHandler(async (req, res) => {
         const options = {
             httpOnly: true,
             secure: false,
-            sameSite: 'lax'
+            sameSite: "lax"
         };
 
         return res
@@ -215,6 +215,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         const incomingRefreshToken =
             req.cookies.refreshToken || req.body.refreshToken;
 
+        console.log("Got the refresh Token :: ", incomingRefreshToken);
+
         if (!incomingRefreshToken)
             throw new ApiErrors(401, "Unauthorized request.");
 
@@ -256,7 +258,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             );
     } catch (error) {
         console.log(
-            "Error Occurred in Refreshing the access token.",
+            "Error Occurred in Refreshing the access token :: ",
             error.message
         );
     }

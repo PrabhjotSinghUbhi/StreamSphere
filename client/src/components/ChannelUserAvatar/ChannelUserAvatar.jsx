@@ -19,7 +19,6 @@ import { Input } from "../ui/input";
 import toast from "react-hot-toast";
 import { api } from "../../api/api";
 import { updateAvatar } from "../../slice/userSlice";
-import { UploadIcon } from "lucide-react";
 
 function ChannelUserAvatar({ subscribers, subscribed }) {
     const dispatch = useDispatch();
@@ -119,7 +118,7 @@ function ChannelUserAvatar({ subscribers, subscribed }) {
         try {
             const toastId = toast.loading("Updating the avatar...");
 
-            setTimeout(() => {
+            const timeId = setTimeout(() => {
                 toast.dismiss(toastId);
                 toast.error("Update took too long. Please try again.");
             }, 8000);
@@ -132,6 +131,7 @@ function ChannelUserAvatar({ subscribers, subscribed }) {
             toast.success(
                 resp.data.message || "Avatar Updated Successfully..."
             );
+            clearTimeout(timeId);
             navigator(`/channel/${user_id}`);
         } catch (error) {
             console.log(error);
@@ -151,8 +151,6 @@ function ChannelUserAvatar({ subscribers, subscribed }) {
                 console.error(error.message || "Something went wrong");
                 toast.error(error.message || "Something went wrong");
             }
-        } finally {
-            clearTimeout();
         }
     };
 

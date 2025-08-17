@@ -27,6 +27,6 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
             "Error Occurred in Generating or Validating Refresh Tokens",
             error.message
         );
-        return res.status(500).json(new ApiResponse(null, 500, error.message));
+        return res.status(401).json(new ApiResponse(null, 401, error.message));
     }
 });

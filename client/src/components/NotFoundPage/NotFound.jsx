@@ -15,7 +15,7 @@ function NotFound() {
                 </p>
                 <button
                     onClick={() => {
-                        navigator("/home");
+                        navigator("/");
                     }}
                     className="inline-block rounded-lg bg-[#ae7aff] px-6 py-3 text-black font-bold shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out hover:bg-[#c7aaff] active:translate-x-[5px] active:translate-y-[5px] active:shadow-none"
                 >
