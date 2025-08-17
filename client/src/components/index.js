@@ -35,6 +35,7 @@ import EditVideoPopUp from "./EditVideoPopUp/EditVideoPopUp.jsx";
 import DeleteVideoPopUp from "./DeleteVideoPopUp/DeleteVideoPopUp.jsx";
 import PrivacyPolicyPage from "./PrivacyPolicyPage/PrivacyPolicyPage.jsx";
 import TermsAndCondition from "./TermsAndConditions/TermsAndCondition.jsx";
+import Logout from "./Logout/Logout.jsx";
 
 export {
     Header,
@@ -73,5 +74,6 @@ export {
     EditVideoPopUp,
     DeleteVideoPopUp,
     PrivacyPolicyPage,
-    TermsAndCondition
+    TermsAndCondition,
+    Logout
 };

@@ -1,62 +1,14 @@
 import React from "react";
 import { Link, useNavigate } from "react-router";
-import Logo from "../Logo";
 import SearchIcon from "../SearchIcon";
-import { useDispatch, useSelector } from "react-redux";
-import { Card, CardContent, CardDescription } from "../ui/card";
+import { useSelector } from "react-redux";
 import { Button } from "../ui/button";
-import { api } from "../../api/api";
-import toast from "react-hot-toast";
-import { removeUser } from "../../slice/userSlice";
+import { useLogout } from "../../hooks/useLogout.hook";
 
 function Header() {
     const navigator = useNavigate();
-    const dispatch = useDispatch();
     const isLoggedIn = useSelector((state) => state.loginUser.login_user.user);
-
-    const handleLogout = async () => {
-        let toast_id;
-        let time_id;
-
-        try {
-            toast_id = toast.loading("Logging Out...");
-
-            time_id = setTimeout(() => {
-                toast.error("Couldn't logout. Please try again...");
-            }, 5000);
-
-            const response = await api.post("/users/logout");
-
-            clearTimeout(time_id);
-
-            console.log("User Logged out :: Successfully :: ", response);
-
-            dispatch(removeUser());
-            navigator("/");
-            toast.success(
-                response.data.payload.message ||
-                    "User Logged out successfully..."
-            );
-        } catch (error) {
-            clearTimeout(time_id);
-            console.error("Error in logout :: ", error);
-            if (error.response) {
-                console.error(
-                    "Error Response :: ",
-                    error.response.payload.message
-                );
-                toast.error(error.response.payload.message || error.message);
-            } else {
-                console.error(
-                    "Something went wrong :: Logout :: ",
-                    error.message
-                );
-                toast.error(error.message || "Something went wrong.");
-            }
-        } finally {
-            toast.dismiss(toast_id);
-        }
-    };
+    const logout = useLogout();
 
     return (
         <header className="sticky inset-x-0 top-0 z-50 w-full border-b border-white bg-[#121212] px-4">
@@ -307,10 +259,8 @@ function Header() {
                             {/* Actions */}
                             <div>
                                 <Button
-                                    variant="destructive"
-                                    className="rounded-full px-4 py-2 text-sm font-medium 
-        shadow-md hover:scale-105 transition"
-                                    onClick={handleLogout}
+                                    variant={"destructive"}
+                                    onClick={logout}
                                 >
                                     Logout
                                 </Button>

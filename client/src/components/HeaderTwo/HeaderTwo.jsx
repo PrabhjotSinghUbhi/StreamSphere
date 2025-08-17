@@ -5,9 +5,9 @@ import { NavLink } from "react-router";
 function HeaderTwo() {
     return (
         <header className="sticky inset-x-0 top-0 z-50 w-full border-b border-white bg-[#121212] px-4">
-            <nav className="mx-auto flex max-w-7xl items-center py-2">
-                <div className="mr-4 w-12 shrink-0 sm:w-16">
-                    <Logo scale={300} />
+            <nav className="mx-auto flex max-w-7xl items-center ">
+                <div className="">
+                    <img src="/logo.png" alt="logo" height={150} width={150} />
                 </div>
                 <button className="group  peer ml-auto flex w-6 shrink-0 flex-wrap gap-y-1.5 md:hidden">
                     <span className="block h-[2px] w-full bg-white group-hover:bg-[#ae7aff]"></span>
@@ -94,7 +94,7 @@ function HeaderTwo() {
                     <ul className="my-4 mx-4 flex w-full flex-wrap gap-2 px-4 md:my-0 md:w-auto md:px-0">
                         <li className="w-full md:w-auto">
                             <NavLink
-                                to={"/home"}
+                                to={"/"}
                                 className="flex w-full items-center justify-start gap-x-4 border border-white px-4 py-1.5 text-left hover:bg-[#ae7aff] hover:text-black focus:border-[#ae7aff] focus:bg-[#ae7aff] focus:text-black md:border-none"
                             >
                                 <span>Home</span>

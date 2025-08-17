@@ -1,6 +1,57 @@
-import React from "react";
+import React, { useRef } from "react";
+import toast from "react-hot-toast";
+import { api } from "../../api/api";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { useLogout } from "../../hooks/useLogout.hook";
+import { Label } from "@radix-ui/react-label";
+import { Input } from "../ui/input";
 
 function ChangeUserPassword() {
+    const logout = useLogout();
+    const formRef = useRef(null);
+
+    const handlePasswordChange = async (e) => {
+        e.preventDefault();
+        console.log("wertyuiopoiuhygfghujiop");
+        const formData = new FormData(e.target);
+        let time_id;
+        let toast_id;
+        try {
+            toast_id = toast.loading("Updating the password.");
+            time_id = setTimeout(() => {
+                toast.error("Update took too long.");
+                toast.error("Please try again.");
+            }, 5000);
+
+            const resp = await api.post("/users/change-password", formData);
+            toast.success("Password Changed Successfully.");
+            console.log("Password Changed Successfully :: ", resp);
+
+            logout();
+        } catch (error) {
+            console.error("Error in Updating password :: ", error);
+            toast.error(
+                error.response.data.message ||
+                    error.message ||
+                    "Something went wrong."
+            );
+        } finally {
+            clearTimeout(time_id);
+            toast.dismiss(toast_id);
+        }
+    };
+
     return (
         <div>
             <div className="h-screen overflow-y-auto bg-[#121212] text-white">
@@ -16,34 +67,40 @@ function ChangeUserPassword() {
                                     </p>
                                 </div>
                                 <div className="w-full sm:w-1/2 lg:w-2/3">
-                                    <div className="rounded-lg border">
+                                    <form
+                                        ref={formRef}
+                                        onSubmit={handlePasswordChange}
+                                        className="rounded-lg border"
+                                    >
                                         <div className="flex flex-wrap gap-y-4 p-4">
                                             <div className="w-full">
-                                                <label
+                                                <Label
                                                     className="mb-1 inline-block"
-                                                    for="old-pwd"
+                                                    htmlFor="old-pwd"
                                                 >
                                                     Current password
-                                                </label>
-                                                <input
+                                                </Label>
+                                                <Input
                                                     type="password"
                                                     className="w-full rounded-lg border bg-transparent px-2 py-1.5"
                                                     id="old-pwd"
                                                     placeholder="Current password"
+                                                    name="oldPassword"
                                                 />
                                             </div>
                                             <div className="w-full">
-                                                <label
+                                                <Label
                                                     className="mb-1 inline-block"
-                                                    for="new-pwd"
+                                                    htmlFor="new-pwd"
                                                 >
                                                     New password
-                                                </label>
-                                                <input
+                                                </Label>
+                                                <Input
                                                     type="password"
                                                     className="w-full rounded-lg border bg-transparent px-2 py-1.5"
                                                     id="new-pwd"
                                                     placeholder="New password"
+                                                    name="newPassword"
                                                 />
                                                 <p className="mt-0.5 text-sm text-gray-300">
                                                     Your new password must be
@@ -51,30 +108,66 @@ function ChangeUserPassword() {
                                                 </p>
                                             </div>
                                             <div className="w-full">
-                                                <label
+                                                <Label
                                                     className="mb-1 inline-block"
-                                                    for="cnfrm-pwd"
+                                                    htmlFor="cnfrm-pwd"
                                                 >
                                                     Confirm password
-                                                </label>
-                                                <input
+                                                </Label>
+                                                <Input
                                                     type="password"
                                                     className="w-full rounded-lg border bg-transparent px-2 py-1.5"
                                                     id="cnfrm-pwd"
                                                     placeholder="Confirm password"
+                                                    name="confirmPassword"
                                                 />
                                             </div>
                                         </div>
                                         <hr className="border border-gray-300" />
                                         <div className="flex items-center justify-end gap-4 p-4">
-                                            <button className="inline-block rounded-lg border px-3 py-1.5 hover:bg-white/10">
+                                            <Button className="inline-block rounded-lg border px-3 py-1.5 hover:bg-white/10">
                                                 Cancel
-                                            </button>
-                                            <button className="inline-block bg-[#ae7aff] px-3 py-1.5 text-black">
-                                                Update Password
-                                            </button>
+                                            </Button>
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button variant="outline">
+                                                        Update Password
+                                                    </Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>
+                                                            Are you absolutely
+                                                            sure?
+                                                        </AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            This action will
+                                                            update your account
+                                                            password. You’ll
+                                                            need to use the new
+                                                            password the next
+                                                            time you log in.
+                                                            Make sure to choose
+                                                            a strong and secure
+                                                            password.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>
+                                                            Cancel
+                                                        </AlertDialogCancel>
+                                                        <AlertDialogAction
+                                                            onClick={() =>
+                                                                formRef.current.requestSubmit()
+                                                            }
+                                                        >
+                                                            continue
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
