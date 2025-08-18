@@ -17,10 +17,10 @@ const userSlice = createSlice({
                 "Here is the payload of update avatar :: ",
                 action.payload
             );
-            state.user.avatar = action.payload;
+            state.user.avatar.url = action.payload;
         },
         updateCover: (state, action) => {
-            state.user.coverImage = action.payload;
+            state.user.coverImage.url = action.payload;
         },
         removeUser: (state) => {
             state.user = null;
@@ -28,6 +28,7 @@ const userSlice = createSlice({
     }
 });
 
-export const { setUser, updateAvatar, updateCover,removeUser } = userSlice.actions;
+export const { setUser, updateAvatar, updateCover, removeUser } =
+    userSlice.actions;
 
 export default userSlice.reducer;

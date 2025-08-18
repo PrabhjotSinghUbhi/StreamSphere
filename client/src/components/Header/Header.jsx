@@ -239,7 +239,7 @@ function Header() {
                                 className="relative group"
                             >
                                 <img
-                                    src={isLoggedIn.avatar}
+                                    src={isLoggedIn.avatar.url}
                                     alt="avatar"
                                     height={48}
                                     width={48}

@@ -32,7 +32,7 @@ function ChannelUserAvatar({ subscribers, subscribed }) {
     const { user_id } = useParams();
     const isMyChannel = _id == user_id;
 
-    const [imageUrl, setImageUrl] = useState(avatar);
+    const [imageUrl, setImageUrl] = useState(avatar.url);
 
     let buttonContent;
     if (!isMyChannel) {
@@ -115,10 +115,23 @@ function ChannelUserAvatar({ subscribers, subscribed }) {
     const handleAvatarUpdate = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
-        try {
-            const toastId = toast.loading("Updating the avatar...");
+        for (let [k, v] of formData.entries()) {
+            console.log(k, v);
+        }
 
-            const timeId = setTimeout(() => {
+        const avatar = formData.get("avatar");
+
+        if (!avatar || (avatar instanceof File && avatar.size === 0)) {
+            toast.error("New Avatar in required.");
+            return;
+        }
+
+        let toastId;
+        let timeId;
+        try {
+            toastId = toast.loading("Updating the avatar...");
+
+            timeId = setTimeout(() => {
                 toast.dismiss(toastId);
                 toast.error("Update took too long. Please try again.");
             }, 8000);
@@ -126,12 +139,12 @@ function ChannelUserAvatar({ subscribers, subscribed }) {
             const resp = await api.patch("/users/update-avatar", formData);
 
             console.log("User Avatar Updated Successfully :: ", resp.data);
-            dispatch(updateAvatar(resp.data.payload.user.avatar));
-            toast.dismiss();
+            dispatch(updateAvatar(resp.data.payload.user.avatar.url));
+
             toast.success(
                 resp.data.message || "Avatar Updated Successfully..."
             );
-            clearTimeout(timeId);
+
             navigator(`/channel/${user_id}`);
         } catch (error) {
             console.log(error);
@@ -151,6 +164,9 @@ function ChannelUserAvatar({ subscribers, subscribed }) {
                 console.error(error.message || "Something went wrong");
                 toast.error(error.message || "Something went wrong");
             }
+        } finally {
+            toast.dismiss(toastId);
+            clearTimeout(timeId);
         }
     };
 
@@ -274,7 +290,11 @@ function ChannelUserAvatar({ subscribers, subscribed }) {
                             </div>
                         </Dialog>
                     )}
-                    <img src={avatar} alt="Channel" className="h-full w-full" />
+                    <img
+                        src={avatar.url}
+                        alt="Channel"
+                        className="h-full w-full"
+                    />
                 </div>
                 <div className="mr-auto inline-block">
                     <h1 className="font-bol text-xl">{fullName}</h1>

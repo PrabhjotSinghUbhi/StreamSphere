@@ -25,13 +25,24 @@ const userSchema = new Schema(
             required: true
         },
         avatar: {
-            // cloudNary is used.
-            type: String,
-            required: true
+            url: {
+                type: String,
+                required: true
+            },
+            public_id: {
+                type: String,
+                required: true
+            }
         },
         coverImage: {
-            type: String, // cloudNary is used.
-            default: ""
+            url: {
+                type: String,
+                required: true
+            },
+            public_id: {
+                type: String,
+                required: true
+            }
         },
         watchHistory: [
             {

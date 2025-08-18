@@ -5,6 +5,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import uploadFileOnCloudinary from "../utils/uploadOnCloudinary.js";
 import mongoose from "mongoose";
+import deleteImageFromCloudinary from "../utils/deleteFromCloudinary.js";
 
 const generateAccessRefreshTokens = async function (userId) {
     try {
@@ -74,15 +75,20 @@ const registerUser = asyncHandler(async (req, res) => {
 
         // uploading thing will definitely take time, so use await.
         const avatar = await uploadFileOnCloudinary(avatarLocalPath);
-
         if (!avatar) throw new ApiErrors(400, "Avatar field is required.");
 
         const coverImage = await uploadFileOnCloudinary(coverImageLocalPath);
 
         const userCreated = await User.create({
             fullName,
-            avatar: avatar.url,
-            coverImage: coverImage.url,
+            avatar: {
+                url: avatar.url,
+                public_id: avatar.public_id
+            },
+            coverImage: {
+                url: coverImage.url,
+                public_id: coverImage.public_id || ""
+            },
             email,
             username: username.toLowerCase(),
             password
@@ -363,8 +369,19 @@ const updateUserDetails = asyncHandler(async (req, res) => {
 const updateUserAvatar = asyncHandler(async (req, res) => {
     try {
         const avatarLocalPath = req?.file?.path;
-
         if (!avatarLocalPath) throw new ApiErrors(401, "Invalid Request.");
+
+        console.log("User Sent by the verifyJWT Middleware :: ", req.user);
+
+        //delete previous avatar.
+        const deleteAvatarResponse = await deleteImageFromCloudinary(
+            req?.user?.avatar?.public_id
+        );
+
+        console.log(
+            "Previous Avatar Deleted Successfully :: ",
+            deleteAvatarResponse
+        );
 
         const avatarUploaded = await uploadFileOnCloudinary(avatarLocalPath);
 
@@ -379,7 +396,10 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
             userId,
             {
                 $set: {
-                    avatar: avatarUploaded.url
+                    avatar: {
+                        url: avatarUploaded.url,
+                        public_id: avatarUploaded.public_id
+                    }
                 }
             },
             { new: true }
@@ -405,6 +425,15 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 
         if (!coverImageLocalPath) throw new ApiErrors(401, "Invalid Request.");
 
+        const deleteCoverImageResponse = await deleteImageFromCloudinary(
+            req?.user?.coverImage?.public_id
+        );
+
+        console.log(
+            "Cover Image deleted successfully :: ",
+            deleteCoverImageResponse
+        );
+
         const coverImageUploaded =
             await uploadFileOnCloudinary(coverImageLocalPath);
 
@@ -422,7 +451,10 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
             userId,
             {
                 $set: {
-                    coverImage: coverImageUploaded.url
+                    coverImage: {
+                        url: coverImageUploaded.url,
+                        public_id: coverImageUploaded.public_id
+                    }
                 }
             },
             { new: true }

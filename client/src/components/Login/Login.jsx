@@ -17,37 +17,46 @@ import {
 import { Label } from "@/components/ui/label";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { useState } from "react";
 
 function Login() {
     const navigator = useNavigate();
     const dispatch = useDispatch();
+    const [disable, setDisable] = useState(false);
 
-    const loadingToast = () => toast.loading("Logging you in.");
     const handleLogin = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
-        console.log("Formdata :: ", Object.entries(formData));
+        console.log(
+            "Formdata :: ",
+            formData.forEach((element) => console.log(element))
+        );
+
+        let toast_id;
+        let time_id;
 
         try {
-            loadingToast();
+            toast_id = toast.loading("Logging in...");
+            setDisable(true);
+            time_id = setTimeout(() => {
+                toast.dismiss(toast_id);
+                toast.error("Logging took too long. Please try again...");
+            }, 5000);
+
             const resp = await api.post("/users/login", formData);
 
-            console.log("User Logged in Successfully :: ", resp);
-            toast.dismiss();
-            toast.success("User Logged in successfully.");
-
-            dispatch(setUser(resp.data.payload.foundUser));
-            console.log("user dispatched successfully");
-            navigator(`/channel/${resp.data.payload.foundUser._id}`);
+            if (resp) {
+                console.log("User Logged in Successfully :: ", resp);
+                toast.success("User Logged in successfully.");
+                dispatch(setUser(resp.data.payload.foundUser));
+                console.log("user dispatched successfully");
+                navigator(`/channel/${resp.data.payload.foundUser._id}`);
+            }
         } catch (error) {
-            toast.dismiss();
             console.error("Error Logging In :: ", error);
             if (error.response) {
                 toast.error(error.response.data.message || error.message);
-                console.error(
-                    "Error Response :: ",
-                    error.response.data.message
-                );
+                console.error("Error Response :: ", error.response.message);
             } else if (error.request) {
                 toast.error(error.message || "Network Error");
                 console.error("Error in Request :: ", error.message);
@@ -55,6 +64,10 @@ function Login() {
                 toast.error("Something went wrong");
                 console.error("Something Went wrong", error.message);
             }
+        } finally {
+            toast.dismiss(toast_id);
+            clearTimeout(time_id);
+            setDisable(false);
         }
     };
 
@@ -107,7 +120,10 @@ function Login() {
                                 <div className="pt-5">
                                     <Button
                                         type="submit"
-                                        className="w-full cursor-pointer"
+                                        className={`w-full cursor-pointer ${
+                                            disable ? "pointer-events-none" : ""
+                                        }`}
+                                        disabled={disable}
                                     >
                                         Login
                                     </Button>

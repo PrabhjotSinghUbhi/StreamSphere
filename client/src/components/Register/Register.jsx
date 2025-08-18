@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import Logo from "../Logo";
-import { useNavigate } from "react-router";
-import { SyncLoader } from "react-spinners";
+import { Link, useNavigate } from "react-router";
+import { api } from "../../api/api";
+import toast from "react-hot-toast";
 
 function Register() {
     const [avatarPreview, setAvatarPreview] = useState(null);
     const [coverPreview, setCoverPreview] = useState(null);
-
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
 
     const navigator = useNavigate();
 
@@ -24,47 +22,39 @@ function Register() {
 
     const handleRegisterForm = async (e) => {
         e.preventDefault();
+        let toast_id;
+        let time_id;
+        const formData = new FormData(e.target);
         try {
-            setLoading(true);
-            setError(null);
-            const formData = new FormData(e.target);
-            const response = await fetch(
-                `${
-                    import.meta.env.VITE_STREAM_SPHERE_SERVER_URI
-                }/api/v1/users/register`,
-                {
-                    method: "POST",
-                    body: formData
-                }
-            );
+            toast_id = toast.loading("Registering the User...");
+            time_id = setTimeout(() => {
+                toast.dismiss(toast_id);
+                toast.error("Register too long.");
+                toast.error("Please try again...");
+            }, 5000);
 
-            const responseData = await response.json();
+            const response = await api.post("/users/register", formData);
 
-            if (!response.ok) {
-                // Show backend error message if available
-                setError(
-                    responseData.message ||
-                        "Registration failed. Please try again."
-                );
-                return;
-            }
-            console.log("Response:", responseData);
+            toast.success("User Registered Successfully.");
+            console.log("User Registered SuccessFully:", response.data);
             navigator("/login"); // Redirect to login after successful registration
         } catch (error) {
-            setError(error.message || "Registration failed. Please try again.");
             console.error("Registration error:", error);
+            if (error.response) {
+                console.error(
+                    "Error in Response :: ",
+                    error.response.data.message
+                );
+                toast.error(error.response.data.message || error.message);
+            } else {
+                console.log("Network Error :: ", error.message);
+                toast.error(error.message);
+            }
         } finally {
-            setLoading(false);
+            toast.dismiss(toast_id);
+            clearTimeout(time_id);
         }
     };
-
-    if (loading) {
-        return (
-            <div className="absolute inset-0 flex items-center justify-center bg-">
-                <SyncLoader color="#ae7aff" />
-            </div>
-        );
-    }
 
     return (
         <div className="min-h-screen overflow-y-scroll scrollbar-hide bg-gradient-to-br from-[#1c1c1f] via-[#18181b] to-[#141416] text-white flex items-center justify-center px-4 py-8">
@@ -79,12 +69,6 @@ function Register() {
                 <p className="text-center text-sm text-gray-400">
                     Join Stream Sphere and start your journey
                 </p>
-                {/* Error Message */}
-                {error && (
-                    <div className="bg-[#2c1e3a] border border-[#ae7aff]/60 text-[#ae7aff] rounded-lg px-4 py-3 text-center font-medium shadow mb-2 animate-fade-in">
-                        {error}
-                    </div>
-                )}
 
                 <form onSubmit={handleRegisterForm} className="space-y-6">
                     {/* Cover Image + Avatar */}
@@ -257,12 +241,12 @@ function Register() {
                             className="text-xs text-gray-400"
                         >
                             I agree to the{" "}
-                            <a
-                                href="/terms-and-conditions"
+                            <Link
+                                to="/terms"
                                 className="text-[#ae7aff] underline hover:text-[#c7a6ff]"
                             >
                                 Terms & Conditions
-                            </a>
+                            </Link>
                         </label>
                     </div>
 

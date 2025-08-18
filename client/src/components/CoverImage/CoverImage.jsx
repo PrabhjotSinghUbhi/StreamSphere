@@ -22,28 +22,40 @@ function CoverImage() {
         (state) => state.loginUser.login_user.user
     );
     const edit = useSelector((state) => state.edit.edit);
-    const [imageUrl, setImageUrl] = useState(coverImage);
+    const [imageUrl, setImageUrl] = useState(coverImage?.url || null);
     const [statusButton, setStatusButton] = useState(false);
     const dispatch = useDispatch();
 
     const handleCoverImageUpdate = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
-        const toast_id = toast.loading("Updating Cover Image...");
+        console.log("FORM___________________________-");
+        for (let [K, V] of formData.entries()) {
+            console.log(K, V);
+        }
+        const coverImage = formData.get("coverImage");
+        if (
+            !coverImage ||
+            (coverImage instanceof File && coverImage.size === 0)
+        ) {
+            toast.error("New Cover Image is required.");
+            return;
+        }
+        let toast_id;
         let time_id;
         try {
+            toast_id = toast.loading("Updating Cover Image...");
             time_id = setTimeout(() => {
+                toast.dismiss(toast_id);
                 toast.error("Update took too long, Please try again");
-            }, 7000);
+            }, 5000);
             const resp = await api.patch("/users/update-cover-image", formData);
             console.log("CoverImage updated successfully.", resp.data);
             toast.success(
                 resp.data.message || "Cover Image Updated Successfully."
             );
-            clearTimeout(time_id);
-            toast.dismiss(toast_id);
             setStatusButton(true);
-            dispatch(updateCover(resp.data.payload.user.coverImage));
+            dispatch(updateCover(resp.data.payload.user.coverImage.url));
         } catch (error) {
             console.log(error);
             toast.dismiss(toast_id);
@@ -64,6 +76,9 @@ function CoverImage() {
                 console.error(error.message || "Something went wrong");
                 toast.error(error.message || "Something went wrong");
             }
+        } finally {
+            toast.dismiss(toast_id);
+            clearTimeout(time_id);
         }
     };
 
@@ -72,7 +87,7 @@ function CoverImage() {
             <div className="relative min-h-[290px] w-full pt-[16.28%]">
                 <div className="absolute inset-0 overflow-hidden">
                     <img
-                        src={coverImage}
+                        src={coverImage.url}
                         alt="cover-photo"
                         className="w-full h-full object-cover object-center"
                         onError={(e) => (e.target.src = "/default-cover.png")}
@@ -160,6 +175,10 @@ function CoverImage() {
                                                                 );
                                                             }
                                                         }}
+                                                        onError={(e) =>
+                                                            (e.target.src =
+                                                                "/user.png")
+                                                        }
                                                     />
                                                 </div>
                                                 <p className="text-xs text-muted-foreground">

@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useNavigate } from "react-router";
 
 export const api = axios.create({
     baseURL: "http://localhost:8000/api/v1",
@@ -7,14 +6,17 @@ export const api = axios.create({
 });
 
 api.interceptors.response.use(
-    (res) => res,
+    (resp) => resp,
     async (error) => {
         //save the error response for retry.
         const originalRequestResponse = error.config;
         console.log("Error Intercepted.");
 
-        if (error.response.status === 401 && !originalRequestResponse._retry) {
+        if (error.response?.status === 401 && !originalRequestResponse._retry) {
             originalRequestResponse._retry = true;
+
+            console.log("Error caught by the interceptor.");
+            
 
             try {
                 console.log("Interceptor sending request.");
@@ -30,11 +32,11 @@ api.interceptors.response.use(
                 return api(originalRequestResponse);
             } catch (error) {
                 console.log("Error in Refreshing User", error);
-                window.location.href("/login");
+                window.location.href = "/login";
                 if (error.response) {
                     console.error(
                         "Error in Response :: ",
-                        error.response.data.payload.message ||
+                        error.response.message ||
                             "Something went wrong in response"
                     );
                 } else if (error.request) {
@@ -51,5 +53,7 @@ api.interceptors.response.use(
                 return Promise.reject(error);
             }
         }
+
+        return Promise.reject(error)
     }
 );
