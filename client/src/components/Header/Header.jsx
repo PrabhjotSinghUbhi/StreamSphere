@@ -261,6 +261,7 @@ function Header() {
                                 <Button
                                     variant={"destructive"}
                                     onClick={logout}
+                                    className="cursor-pointer"
                                 >
                                     Logout
                                 </Button>

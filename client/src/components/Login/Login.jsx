@@ -50,7 +50,7 @@ function Login() {
                 toast.success("User Logged in successfully.");
                 dispatch(setUser(resp.data.payload.foundUser));
                 console.log("user dispatched successfully");
-                navigator(`/channel/${resp.data.payload.foundUser._id}`);
+                navigator(`/channel/${resp.data.payload.foundUser.username}`);
             }
         } catch (error) {
             console.error("Error Logging In :: ", error);

@@ -13,7 +13,7 @@ const generateAccessRefreshTokens = async function (userId) {
         const accessToken = foundUser.generateAccessTokens();
         const refreshToken = foundUser.generateRefreshTokens();
 
-        foundUser.refreshTokens = refreshToken;
+        foundUser.refreshToken = refreshToken;
         await foundUser.save({ validateBeforeSave: false });
 
         return { accessToken, refreshToken };
@@ -96,7 +96,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
         // check for the user in the database.
         const isCreated = await User.findById(userCreated._id).select(
-            "-password -refreshTokens"
+            "-password -refreshToken"
         );
         console.log(req.files);
 
@@ -184,7 +184,7 @@ const logoutUser = asyncHandler(async (req, res) => {
             req.user._id,
             {
                 $unset: {
-                    refreshTokens: 1
+                    refreshToken: 1
                 }
             },
             {
@@ -196,7 +196,8 @@ const logoutUser = asyncHandler(async (req, res) => {
 
         const options = {
             httpOnly: true,
-            secure: true
+            secure: false,
+            sameSite: "lax"
         };
 
         return res
@@ -235,12 +236,13 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
         if (!user) throw new ApiErrors(401, "Invalid Refresh Token.");
 
-        if (user?.refreshTokens !== incomingRefreshToken)
+        if (user?.refreshToken !== incomingRefreshToken)
             throw new ApiErrors(401, "Invalid Incoming Refresh Token.");
 
         const options = {
             httpOnly: true,
-            secure: true
+            secure: false,
+            sameSite: "lax"
         };
 
         const { accessToken, refreshToken } = await generateAccessRefreshTokens(
@@ -250,7 +252,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         return res
             .status(200)
             .cookie("accessToken", accessToken, options)
-            .cookie("refreshToken", refreshToken)
+            .cookie("refreshToken", refreshToken, options)
             .json(
                 new ApiResponse(
                     {
@@ -267,6 +269,15 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             "Error Occurred in Refreshing the access token :: ",
             error.message
         );
+        return res
+            .status(403)
+            .json(
+                new ApiResponse(
+                    null,
+                    403,
+                    error.message || "Something went wrong in refreshing access"
+                )
+            );
     }
 });
 
@@ -509,13 +520,16 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                     $size: "$subscribedTo"
                 },
                 isSubscribed: {
-                    $cond: {
-                        $if: {
-                            $in: [req?.user?._id, "$subscribers.subscriber"]
-                        },
-                        then: true,
-                        else: false
-                    }
+                    $in: [
+                        req?.user?._id,
+                        {
+                            $map: {
+                                input: "$subscribers",
+                                as: "sub",
+                                in: "$$sub.subscriber"
+                            }
+                        }
+                    ]
                 }
             }
         },

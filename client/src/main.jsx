@@ -55,6 +55,7 @@ const route = createBrowserRouter(
                         path="change-password"
                         element={<ChangeUserPassword />}
                     />
+                    <Route path="change-info" element={<EditPersonalInfo />} />
                 </Route>
             </Route>
             <Route path="/login" element={<Login />}></Route>

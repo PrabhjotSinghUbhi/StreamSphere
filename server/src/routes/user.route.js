@@ -44,7 +44,9 @@ router
     .post(upload.none(), verifyJWT, changeCurrentPassword);
 router.route("/current-user").get(verifyJWT, getCurrentUser);
 
-router.route("/update-account-details").patch(verifyJWT, updateUserDetails);
+router
+    .route("/update-account-details")
+    .patch(upload.none(), verifyJWT, updateUserDetails);
 
 router
     .route("/update-avatar")

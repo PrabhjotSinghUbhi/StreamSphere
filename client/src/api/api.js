@@ -1,4 +1,7 @@
 import axios from "axios";
+import toast from "react-hot-toast";
+import { removeUser } from "../slice/userSlice";
+import { useDispatch } from "react-redux";
 
 export const api = axios.create({
     baseURL: "http://localhost:8000/api/v1",
@@ -13,30 +16,30 @@ api.interceptors.response.use(
         console.log("Error Intercepted.");
 
         if (error.response?.status === 401 && !originalRequestResponse._retry) {
-            originalRequestResponse._retry = true;
+            toast.dismissAll();
+            toast.error(error.response.data.message || "Unauthorized Request");
 
-            console.log("Error caught by the interceptor.");
-            
+            originalRequestResponse._retry = true;
+            console.error("Error caught by the Interceptor :: ", error);
 
             try {
                 console.log("Interceptor sending request.");
-                const resp = await axios.post(
-                    "http://localhost:8000/api/v1/users/refresh-token",
-                    {},
-                    { withCredentials: true }
-                );
+
+                const resp = await api.post(`/users/refresh-token`);
+
                 console.log(
                     "Access Token Refreshed successfully :: ",
                     resp.data
                 );
                 return api(originalRequestResponse);
             } catch (error) {
+                console.error("Things got in the catch og interceptor.");
                 console.log("Error in Refreshing User", error);
-                window.location.href = "/login";
+
                 if (error.response) {
                     console.error(
                         "Error in Response :: ",
-                        error.response.message ||
+                        error.response.data.message ||
                             "Something went wrong in response"
                     );
                 } else if (error.request) {
@@ -50,10 +53,11 @@ api.interceptors.response.use(
                         error.message
                     );
                 }
+                window.location.href = "/login";
                 return Promise.reject(error);
             }
         }
 
-        return Promise.reject(error)
+        return Promise.reject(error);
     }
 );
