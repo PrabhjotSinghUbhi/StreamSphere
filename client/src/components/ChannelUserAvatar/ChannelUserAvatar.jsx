@@ -20,7 +20,13 @@ import toast from "react-hot-toast";
 import { api } from "../../api/api";
 import { updateAvatar } from "../../slice/userSlice";
 
-function ChannelUserAvatar({ subscribers, subscribed }) {
+function ChannelUserAvatar({
+    src,
+    subscriberCount,
+    subscribed,
+    userName,
+    full_name
+}) {
     const dispatch = useDispatch();
     const edit = useSelector((state) => state.edit.edit);
 
@@ -29,8 +35,9 @@ function ChannelUserAvatar({ subscribers, subscribed }) {
         return state.loginUser.login_user.user;
     });
 
-    const { user_id } = useParams();
-    const isMyChannel = _id == user_id;
+    const { user_name } = useParams();
+
+    const isMyChannel = username == user_name;
 
     const [imageUrl, setImageUrl] = useState(avatar.url);
 
@@ -145,7 +152,7 @@ function ChannelUserAvatar({ subscribers, subscribed }) {
                 resp.data.message || "Avatar Updated Successfully..."
             );
 
-            navigator(`/channel/${user_id}`);
+            navigator(`/channel/${user_name}`);
         } catch (error) {
             console.log(error);
             if (error.response) {
@@ -291,16 +298,18 @@ function ChannelUserAvatar({ subscribers, subscribed }) {
                         </Dialog>
                     )}
                     <img
-                        src={avatar.url}
+                        src={isMyChannel ? avatar.url : src}
                         alt="Channel"
                         className="h-full w-full"
                     />
                 </div>
                 <div className="mr-auto inline-block">
-                    <h1 className="font-bol text-xl">{fullName}</h1>
-                    <p className="text-sm text-gray-400">@{username}</p>
+                    <h1 className="font-bol text-xl">{isMyChannel ? fullName : full_name}</h1>
                     <p className="text-sm text-gray-400">
-                        {subscribers} Subscribers · {subscribed} Subscribed
+                        @{isMyChannel ? username : userName}
+                    </p>
+                    <p className="text-sm text-gray-400">
+                        {subscriberCount} Subscribers · {subscribed} Subscribed
                     </p>
                 </div>
                 <div className="inline-block">
@@ -316,6 +325,7 @@ function ChannelUserAvatar({ subscribers, subscribed }) {
 export default ChannelUserAvatar;
 
 ChannelUserAvatar.propTypes = {
-    subscribers: PropTypes.number.isRequired,
-    subscribed: PropTypes.number.isRequired
+    subscriberCount: PropTypes.number.isRequired,
+    subscribed: PropTypes.number.isRequired,
+    src: PropTypes.string.isRequired
 };

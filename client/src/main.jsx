@@ -50,7 +50,7 @@ const route = createBrowserRouter(
         <Route path="/" element={<App />}>
             <Route path="/" element={<Layout />}>
                 <Route path="/" element={<Home />}></Route>
-                <Route path="channel/:user_id" element={<ChannelPage />}>
+                <Route path="channel/:user_name" element={<ChannelPage />}>
                     <Route
                         path="change-password"
                         element={<ChangeUserPassword />}

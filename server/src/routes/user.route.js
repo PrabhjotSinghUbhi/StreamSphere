@@ -36,8 +36,8 @@ router.route("/login").post(upload.none(), loginUser, async (_, res) => {
 });
 
 //secure route.
-router.route("/logout").post(verifyJWT, logoutUser);
-router.route("/refresh-token").post(refreshAccessToken);
+router.route("/logout").post(upload.none(), verifyJWT, logoutUser);
+router.route("/refresh-token").post(upload.none(), refreshAccessToken);
 
 router
     .route("/change-password")
@@ -56,7 +56,9 @@ router
     .route("/update-cover-image")
     .patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage);
 
-router.route("/c/:username").get(verifyJWT, getUserChannelProfile);
+router
+    .route("/c/:username")
+    .get(upload.none(), verifyJWT, getUserChannelProfile);
 router.route("/watch-history").get(verifyJWT, getWatchHistory);
 
 export default router;

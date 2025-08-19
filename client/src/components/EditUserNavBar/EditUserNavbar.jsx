@@ -1,10 +1,8 @@
 import React from "react";
 import { NavLink, useParams } from "react-router";
 
-
 function EditUserNavbar() {
-    
-    const {user_id} = useParams()
+    const { user_id } = useParams();
 
     return (
         <div>

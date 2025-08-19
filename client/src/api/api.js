@@ -2,6 +2,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { removeUser } from "../slice/userSlice";
 import { useDispatch } from "react-redux";
+import store from "../store/store";
 
 export const api = axios.create({
     baseURL: "http://localhost:8000/api/v1",
@@ -24,17 +25,17 @@ api.interceptors.response.use(
 
             try {
                 console.log("Interceptor sending request.");
-
                 const resp = await api.post(`/users/refresh-token`);
 
                 console.log(
                     "Access Token Refreshed successfully :: ",
                     resp.data
                 );
+
                 return api(originalRequestResponse);
             } catch (error) {
                 console.error("Things got in the catch og interceptor.");
-                console.log("Error in Refreshing User", error);
+                console.error("Error in Refreshing User", error.message);
 
                 if (error.response) {
                     console.error(
@@ -54,6 +55,7 @@ api.interceptors.response.use(
                     );
                 }
                 window.location.href = "/login";
+                store.dispatch(removeUser());
                 return Promise.reject(error);
             }
         }

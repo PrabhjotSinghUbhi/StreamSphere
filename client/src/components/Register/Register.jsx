@@ -31,7 +31,7 @@ function Register() {
                 toast.dismiss(toast_id);
                 toast.error("Register too long.");
                 toast.error("Please try again...");
-            }, 5000);
+            }, 10000);
 
             const response = await api.post("/users/register", formData);
 

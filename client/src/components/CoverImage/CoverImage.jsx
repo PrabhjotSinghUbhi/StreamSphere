@@ -16,8 +16,9 @@ import { Label } from "@radix-ui/react-label";
 import toast from "react-hot-toast";
 import { api } from "../../api/api";
 import { updateCover } from "../../slice/userSlice";
+import { useParams } from "react-router";
 
-function CoverImage() {
+function CoverImage({ src }) {
     const { coverImage } = useSelector(
         (state) => state.loginUser.login_user.user
     );
@@ -48,7 +49,7 @@ function CoverImage() {
             time_id = setTimeout(() => {
                 toast.dismiss(toast_id);
                 toast.error("Update took too long, Please try again");
-            }, 5000);
+            }, 10000);
             const resp = await api.patch("/users/update-cover-image", formData);
             console.log("CoverImage updated successfully.", resp.data);
             toast.success(
@@ -82,15 +83,20 @@ function CoverImage() {
         }
     };
 
+    const { user_name } = useParams();
+    const { username } = useSelector(state => state.loginUser.login_user.user);
+
+    const isOwner = username == user_name;
+
     return (
         <div>
             <div className="relative min-h-[290px] w-full pt-[16.28%]">
                 <div className="absolute inset-0 overflow-hidden">
                     <img
-                        src={coverImage.url}
+                        src={isOwner ? coverImage?.url : src}
                         alt="cover-photo"
                         className="w-full h-full object-cover object-center"
-                        onError={(e) => (e.target.src = "/default-cover.png")}
+                        onError={(e) => (e.target.src = "/default-cover.jpg")}
                     />
                     {edit && (
                         <Dialog>

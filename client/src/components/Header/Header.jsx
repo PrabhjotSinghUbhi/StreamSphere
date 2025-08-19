@@ -235,7 +235,7 @@ function Header() {
                         >
                             {/* Avatar Link */}
                             <Link
-                                to={`/channel/${isLoggedIn._id}`}
+                                to={`/channel/${isLoggedIn.username}`}
                                 className="relative group"
                             >
                                 <img

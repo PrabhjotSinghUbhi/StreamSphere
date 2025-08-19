@@ -155,8 +155,14 @@ const loginUser = asyncHandler(async (req, res) => {
 
         return res
             .status(200)
-            .cookie("accessToken", accessToken, options)
-            .cookie("refreshToken", refreshToken, options)
+            .cookie("accessToken", accessToken, {
+                ...options,
+                maxAge: 5 * 60 * 60 * 1000
+            })
+            .cookie("refreshToken", refreshToken, {
+                ...options,
+                maxAge: 2 * 24 * 60 * 60 * 1000 // 1 min
+            })
             .json(
                 new ApiResponse(
                     {
@@ -218,6 +224,8 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
+    console.log("refresh access token was called.");
+
     try {
         const incomingRefreshToken =
             req.cookies.refreshToken || req.body.refreshToken;
@@ -251,8 +259,14 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
         return res
             .status(200)
-            .cookie("accessToken", accessToken, options)
-            .cookie("refreshToken", refreshToken, options)
+            .cookie("accessToken", accessToken, {
+                ...options,
+                maxAge: 5 * 60 * 60 * 1000 // 5 hrs
+            })
+            .cookie("refreshToken", refreshToken, {
+                ...options,
+                maxAge: 2 * 24 * 60 * 60 * 1000 // 2 days
+            })
             .json(
                 new ApiResponse(
                     {
@@ -486,79 +500,89 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 });
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
-    const { username } = req.params;
-    if (!username?.trim()) throw new ApiErrors(401, "Username is missing.");
+    console.log("getUserChannelProfile got called")
+    try {
+        const { username } = req.params;
+        if (!username?.trim()) throw new ApiErrors(401, "Username is missing.");
 
-    const channel = await User.aggregate([
-        {
-            $match: {
-                username: username?.toLowerCase()
-            }
-        },
-        {
-            $lookup: {
-                from: "subscriptions",
-                localField: "_id",
-                foreignField: "channel",
-                as: "subscribers"
-            }
-        },
-        {
-            $lookup: {
-                from: "subscriptions",
-                localField: "_id",
-                foreignField: "subscriber",
-                as: "subscribedTo"
-            }
-        },
-        {
-            $addFields: {
-                subscriberCount: {
-                    $size: "$subscribers"
-                },
-                channelsSubscribedTo: {
-                    $size: "$subscribedTo"
-                },
-                isSubscribed: {
-                    $in: [
-                        req?.user?._id,
-                        {
-                            $map: {
-                                input: "$subscribers",
-                                as: "sub",
-                                in: "$$sub.subscriber"
+        console.log("USername is :: ",username)
+
+        const channel = await User.aggregate([
+            {
+                $match: {
+                    username: username?.toLowerCase()
+                }
+            },
+            {
+                $lookup: {
+                    from: "subscriptions",
+                    localField: "_id",
+                    foreignField: "channel",
+                    as: "subscribers"
+                }
+            },
+            {
+                $lookup: {
+                    from: "subscriptions",
+                    localField: "_id",
+                    foreignField: "subscriber",
+                    as: "subscribedTo"
+                }
+            },
+            {
+                $addFields: {
+                    subscriberCount: {
+                        $size: "$subscribers"
+                    },
+                    channelsSubscribedTo: {
+                        $size: "$subscribedTo"
+                    },
+                    isSubscribed: {
+                        $in: [
+                            req?.user?._id,
+                            {
+                                $map: {
+                                    input: "$subscribers",
+                                    as: "sub",
+                                    in: "$sub.subscriber"
+                                }
                             }
-                        }
-                    ]
+                        ]
+                    }
+                }
+            },
+            {
+                $project: {
+                    fullName: 1,
+                    username: 1,
+                    subscriberCount: 1,
+                    channelsSubscribedTo: 1,
+                    isSubscribed: 1,
+                    avatar: 1,
+                    email: 1,
+                    coverImage: 1
                 }
             }
-        },
-        {
-            $project: {
-                fullName: 1,
-                username: 1,
-                subscriberCount: 1,
-                channelsSubscribedTo: 1,
-                isSubscribed: 1,
-                avatar: 1,
-                email: 1
-            }
-        }
-    ]);
+        ]);
 
-    console.log(channel);
+        console.log(channel);
 
-    if (!channel?.length) throw new ApiErrors(501, "Channel Does not exists.");
+        if (!channel?.length)
+            throw new ApiErrors(501, "Channel Does not exists.");
 
-    return res
-        .status(200)
-        .json(
-            new ApiResponse(
-                channel[0],
-                200,
-                "User Channel Fetched Successfully."
-            )
-        );
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    channel[0],
+                    200,
+                    "User Channel Fetched Successfully."
+                )
+            );
+    } catch (error) {
+        console.log("ERROR in GETTING CHANNEL :: ", error.message);
+        return res.status(404).json(new ApiResponse(null, 404, error.message));
+    }
 });
 
 const getWatchHistory = asyncHandler(async (req, res) => {

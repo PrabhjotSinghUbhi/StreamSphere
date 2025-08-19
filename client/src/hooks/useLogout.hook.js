@@ -28,18 +28,16 @@ export function useLogout() {
             dispatch(removeUser());
             navigator("/");
             toast.success(
-                response.data.payload.message ||
-                    "User Logged out successfully..."
+                response.data.message || "User Logged out successfully..."
             );
         } catch (error) {
             clearTimeout(time_id);
-            console.error("Error in logout :: ", error);
             if (error.response) {
                 console.error(
                     "Error Response :: ",
-                    error.response.payload.message
+                    error.response.data.message
                 );
-                toast.error(error.response.payload.message || error.message);
+                toast.error(error.response.data.message || error.message);
             } else {
                 console.error(
                     "Something went wrong :: Logout :: ",
