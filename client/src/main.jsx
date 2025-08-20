@@ -55,6 +55,10 @@ const route = createBrowserRouter(
                         path="change-password"
                         element={<ChangeUserPassword />}
                     />
+                    <Route
+                        path="subscribed"
+                        element={<ChannelSubscriberPage />}
+                    />
                     <Route path="change-info" element={<EditPersonalInfo />} />
                 </Route>
             </Route>

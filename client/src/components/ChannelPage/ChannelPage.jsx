@@ -5,17 +5,29 @@ import ChannelNavbar from "../ChannelNavBar/ChannelNavbar";
 import CoverImage from "../CoverImage/CoverImage";
 import ChannelUserAvatar from "../ChannelUserAvatar/ChannelUserAvatar";
 import EditUserNavbar from "../EditUserNavBar/EditUserNavbar";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { api } from "../../api/api";
+import { setUser } from "../../slice/userSlice";
 
 function ChannelPage() {
     const edit = useSelector((state) => state.edit.edit);
     const [channelInfo, setChannelInfo] = useState({});
 
+    const dispatch = useDispatch();
+    const user = useSelector((state) => state.loginUser.login_user.user);
+
+    const { user_name } = useParams();
+
     const getChannelInfo = async (username) => {
         let toast_id;
         let time_id;
+
+        console.log(
+            "Hello WPrabh-----------",
+            user.username == username,
+            "------------------------------"
+        );
 
         try {
             toast_id = toast.loading("Getting Channel Info...");
@@ -25,6 +37,13 @@ function ChannelPage() {
             const resp = await api.get(`users/c/${username}`);
             console.log("Got the Channel Info :: ", resp.data);
             setChannelInfo(resp.data.payload);
+            if (user.username == username) {
+                const { subscriberCount, channelsSubscribedTo } =
+                    resp.data.payload;
+                dispatch(
+                    setUser({ ...user, subscriberCount, channelsSubscribedTo })
+                );
+            }
             toast.success("Fetched Channel Info.");
         } catch (error) {
             if (error.response) {
@@ -45,10 +64,17 @@ function ChannelPage() {
         }
     };
 
-    const { user_name } = useParams();
+    const isOwner = user.username == user_name;
 
     useEffect(() => {
-        getChannelInfo(user_name);
+        if (
+            !(
+                isOwner &&
+                user.channelsSubscribedTo !== undefined &&
+                user.subscriberCount != undefined
+            )
+        )
+            getChannelInfo(user_name);
     }, []);
 
     const {

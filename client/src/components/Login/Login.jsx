@@ -115,6 +115,7 @@ function Login() {
                                     id="password"
                                     name="password"
                                     type="password"
+                                    placeholder="* * * * * * * *"
                                     required
                                 />
                                 <div className="pt-5">

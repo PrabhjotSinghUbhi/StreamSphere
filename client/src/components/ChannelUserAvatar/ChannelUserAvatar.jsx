@@ -22,7 +22,7 @@ import { updateAvatar } from "../../slice/userSlice";
 
 function ChannelUserAvatar({
     src,
-    subscriberCount,
+    subscriber_Count,
     subscribed,
     userName,
     full_name
@@ -30,7 +30,14 @@ function ChannelUserAvatar({
     const dispatch = useDispatch();
     const edit = useSelector((state) => state.edit.edit);
 
-    const { _id, avatar, fullName, username } = useSelector((state) => {
+    const {
+        _id,
+        avatar,
+        fullName,
+        username,
+        subscriberCount,
+        channelsSubscribedTo
+    } = useSelector((state) => {
         console.log("State in User Avatar is :: ", state);
         return state.loginUser.login_user.user;
     });
@@ -304,12 +311,17 @@ function ChannelUserAvatar({
                     />
                 </div>
                 <div className="mr-auto inline-block">
-                    <h1 className="font-bol text-xl">{isMyChannel ? fullName : full_name}</h1>
+                    <h1 className="font-bol text-xl">
+                        {isMyChannel ? fullName : full_name}
+                    </h1>
                     <p className="text-sm text-gray-400">
                         @{isMyChannel ? username : userName}
                     </p>
                     <p className="text-sm text-gray-400">
-                        {subscriberCount} Subscribers · {subscribed} Subscribed
+                        {isMyChannel ? subscriberCount : subscriber_Count}{" "}
+                        Subscribers · 
+                        {isMyChannel ? channelsSubscribedTo : subscribed}{" "}
+                        Subscribed
                     </p>
                 </div>
                 <div className="inline-block">
