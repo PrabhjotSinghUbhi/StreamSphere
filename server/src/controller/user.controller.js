@@ -351,6 +351,104 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     }
 });
 
+const getUserById = asyncHandler(async (req, res) => {
+    console.log("getUserById got called");
+
+    try {
+        const { userId } = req.params;
+
+        // validate presence
+        if (!userId || !String(userId).trim())
+            throw new ApiErrors(400, "User Id missing.");
+
+        // validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(userId))
+            throw new ApiErrors(400, "Invalid user id.");
+
+        const objectId = new mongoose.Types.ObjectId(userId);
+
+        const userWithSubscription = await User.aggregate([
+            {
+                $match: {
+                    _id: objectId
+                }
+            },
+            {
+                $lookup: {
+                    from: "subscriptions",
+                    localField: "_id",
+                    foreignField: "channel",
+                    as: "subscribers"
+                }
+            },
+            {
+                $lookup: {
+                    from: "subscriptions",
+                    localField: "_id",
+                    foreignField: "subscriber",
+                    as: "subscriberTo"
+                }
+            },
+            {
+                $addFields: {
+                    isSubscribed: {
+                        $in: [
+                            req?.user?._id,
+                            {
+                                $map: {
+                                    input: "$subscribers",
+                                    as: "sub",
+                                    in: "$$sub.subscriber"
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                $project: {
+                    username: 1,
+                    fullName: 1,
+                    subscribers: 1,
+                    subscriberTo: 1,
+                    avatar: 1,
+                    coverImage: 1,
+                    isSubscribed: 1
+                }
+            }
+        ]);
+
+        console.log(userWithSubscription);
+
+        if (!userWithSubscription || !userWithSubscription.length)
+            return res
+                .status(404)
+                .json(new ApiResponse(null, 404, "User not found."));
+
+        // return the single user document
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    userWithSubscription[0],
+                    200,
+                    "User fetched successfully"
+                )
+            );
+    } catch (error) {
+        console.error("ERROR :: Occurred in Getting the user.", error.message);
+        return res
+            .status(error?.statusCode || 500)
+            .json(
+                new ApiResponse(
+                    null,
+                    error?.statusCode || 500,
+                    error.message || "Error Occurred in Fetching User."
+                )
+            );
+    }
+});
+
 const updateUserDetails = asyncHandler(async (req, res) => {
     try {
         const { fullName, email } = req.body;
@@ -499,92 +597,6 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     }
 });
 
-const getUserChannelProfile = asyncHandler(async (req, res) => {
-    console.log("getUserChannelProfile got called")
-    try {
-        const { username } = req.params;
-        if (!username?.trim()) throw new ApiErrors(401, "Username is missing.");
-
-        console.log("USername is :: ",username)
-
-        const channel = await User.aggregate([
-            {
-                $match: {
-                    username: username?.toLowerCase()
-                }
-            },
-            {
-                $lookup: {
-                    from: "subscriptions",
-                    localField: "_id",
-                    foreignField: "channel",
-                    as: "subscribers"
-                }
-            },
-            {
-                $lookup: {
-                    from: "subscriptions",
-                    localField: "_id",
-                    foreignField: "subscriber",
-                    as: "subscribedTo"
-                }
-            },
-            {
-                $addFields: {
-                    subscriberCount: {
-                        $size: "$subscribers"
-                    },
-                    channelsSubscribedTo: {
-                        $size: "$subscribedTo"
-                    },
-                    isSubscribed: {
-                        $in: [
-                            req?.user?._id,
-                            {
-                                $map: {
-                                    input: "$subscribers",
-                                    as: "sub",
-                                    in: "$sub.subscriber"
-                                }
-                            }
-                        ]
-                    }
-                }
-            },
-            {
-                $project: {
-                    fullName: 1,
-                    username: 1,
-                    subscriberCount: 1,
-                    channelsSubscribedTo: 1,
-                    isSubscribed: 1,
-                    avatar: 1,
-                    email: 1,
-                    coverImage: 1
-                }
-            }
-        ]);
-
-        console.log(channel);
-
-        if (!channel?.length)
-            throw new ApiErrors(501, "Channel Does not exists.");
-
-        return res
-            .status(200)
-            .json(
-                new ApiResponse(
-                    channel[0],
-                    200,
-                    "User Channel Fetched Successfully."
-                )
-            );
-    } catch (error) {
-        console.log("ERROR in GETTING CHANNEL :: ", error.message);
-        return res.status(404).json(new ApiResponse(null, 404, error.message));
-    }
-});
-
 const getWatchHistory = asyncHandler(async (req, res) => {
     const user = await User.aggregate([
         {
@@ -649,7 +661,7 @@ export {
     getCurrentUser,
     updateUserDetails,
     updateUserAvatar,
-    getUserChannelProfile,
     getWatchHistory,
-    updateUserCoverImage
+    updateUserCoverImage,
+    getUserById
 };

@@ -18,10 +18,16 @@ import { api } from "../../api/api";
 import { updateCover } from "../../slice/userSlice";
 import { useParams } from "react-router";
 
-function CoverImage({ src }) {
+function CoverImage() {
+    
     const { coverImage } = useSelector(
         (state) => state.loginUser.login_user.user
     );
+
+    const channelCoverImage = useSelector(
+        (state) => state?.channelInfo?.channel?.coverImage?.url
+    );
+
     const edit = useSelector((state) => state.edit.edit);
     const [imageUrl, setImageUrl] = useState(coverImage?.url || null);
     const [statusButton, setStatusButton] = useState(false);
@@ -84,7 +90,9 @@ function CoverImage({ src }) {
     };
 
     const { user_name } = useParams();
-    const { username } = useSelector(state => state.loginUser.login_user.user);
+    const { username } = useSelector(
+        (state) => state.loginUser.login_user.user
+    );
 
     const isOwner = username == user_name;
 
@@ -93,7 +101,7 @@ function CoverImage({ src }) {
             <div className="relative min-h-[290px] w-full pt-[16.28%]">
                 <div className="absolute inset-0 overflow-hidden">
                     <img
-                        src={isOwner ? coverImage?.url : src}
+                        src={isOwner ? coverImage?.url : channelCoverImage}
                         alt="cover-photo"
                         className="w-full h-full object-cover object-center"
                         onError={(e) => (e.target.src = "/default-cover.jpg")}

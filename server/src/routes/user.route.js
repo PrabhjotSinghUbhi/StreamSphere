@@ -3,7 +3,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 import {
     changeCurrentPassword,
     getCurrentUser,
-    getUserChannelProfile,
+    getUserById,
     getWatchHistory,
     loginUser,
     logoutUser,
@@ -56,9 +56,8 @@ router
     .route("/update-cover-image")
     .patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage);
 
-router
-    .route("/c/:username")
-    .get(upload.none(), verifyJWT, getUserChannelProfile);
+router.route("/get-user/:userId").get(upload.none(), verifyJWT, getUserById);
+
 router.route("/watch-history").get(verifyJWT, getWatchHistory);
 
 export default router;

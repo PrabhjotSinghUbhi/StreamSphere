@@ -12,6 +12,7 @@ import userReducer from "../slice/userSlice";
 import persistReducer from "redux-persist/es/persistReducer";
 import persistStore from "redux-persist/es/persistStore";
 import storage from "redux-persist/lib/storage";
+import channelReducer from "../slice/channelSlice.js";
 
 //1. configure reducer.
 const persistConfig = {
@@ -32,7 +33,8 @@ const persistedUser = persistReducer(persistConfig, rootReducer);
 const store = configureStore({
     reducer: {
         edit: editReducer,
-        loginUser: persistedUser
+        loginUser: persistedUser,
+        channelInfo: channelReducer
     },
     devTools: {
         name: "my shadcn stream sphere."

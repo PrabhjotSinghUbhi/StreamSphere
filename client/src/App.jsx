@@ -1,9 +1,17 @@
 import { Provider } from "react-redux";
-import { Outlet } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import store from "./store/store";
 import { Toaster } from "react-hot-toast";
+import { useEffect } from "react";
+import { setNavigator } from "./Helper/navigate";
 
 function App() {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        setNavigator(navigate);
+    }, [navigate]);
+
     return (
         <Provider store={store}>
             <Toaster />

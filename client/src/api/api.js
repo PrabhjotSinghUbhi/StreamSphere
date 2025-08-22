@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { removeUser } from "../slice/userSlice";
 import { useDispatch } from "react-redux";
 import store from "../store/store";
+import { navigate } from "../Helper/navigate";
 
 export const api = axios.create({
     baseURL: "http://localhost:8000/api/v1",
@@ -16,6 +17,7 @@ api.interceptors.response.use(
         const originalRequestResponse = error.config;
         console.log("Error Intercepted.");
 
+        //handles unauthorized request errors.
         if (error.response?.status === 401 && !originalRequestResponse._retry) {
             toast.dismissAll();
             toast.error(error.response.data.message || "Unauthorized Request");
@@ -54,10 +56,19 @@ api.interceptors.response.use(
                         error.message
                     );
                 }
-                window.location.href = "/login";
+                navigate("/login");
                 store.dispatch(removeUser());
                 return Promise.reject(error);
             }
+        }
+
+        // handles general errors.
+        if (error.response) {
+            console.error("API ERROR :: ", error.response.data.message);
+        } else if (error.request) {
+            console.error("Network error. Please check connection.");
+        } else {
+            console.error("Error:", error.message);
         }
 
         return Promise.reject(error);

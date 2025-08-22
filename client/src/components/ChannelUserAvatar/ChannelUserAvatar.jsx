@@ -1,7 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { useDispatch, useSelector } from "react-redux";
 import { setEdit } from "../../slice/editSlice";
 import { useNavigate, useParams } from "react-router";
 import { Button } from "../ui/button";
@@ -19,34 +18,21 @@ import { Input } from "../ui/input";
 import toast from "react-hot-toast";
 import { api } from "../../api/api";
 import { updateAvatar } from "../../slice/userSlice";
+import { Skeleton } from "../ui/skeleton";
+import { useDispatch, useSelector } from "react-redux";
 
-function ChannelUserAvatar({
-    src,
-    subscriber_Count,
-    subscribed,
-    userName,
-    full_name
-}) {
+function ChannelUserAvatar() {
+    const edit = useSelector((state) => state.edit);
     const dispatch = useDispatch();
-    const edit = useSelector((state) => state.edit.edit);
-
-    const {
-        _id,
-        avatar,
-        fullName,
-        username,
-        subscriberCount,
-        channelsSubscribedTo
-    } = useSelector((state) => {
-        console.log("State in User Avatar is :: ", state);
-        return state.loginUser.login_user.user;
-    });
 
     const { user_name } = useParams();
+    const { username } = useSelector(
+        (state) => state.loginUser.login_user.user
+    );
 
     const isMyChannel = username == user_name;
 
-    const [imageUrl, setImageUrl] = useState(avatar.url);
+    const [imageUrl, setImageUrl] = useState(null);
 
     let buttonContent;
     if (!isMyChannel) {
@@ -68,8 +54,7 @@ function ChannelUserAvatar({
                         ></path>
                     </svg>
                 </span>
-                <span className="group-focus/btn:hidden">Subscribe</span>
-                <span className="hidden group-focus/btn:block">Subscribed</span>
+                {/* <button>{isSubscribed ? "Subscribed" : "Subscribe"}</button> */}
             </button>
         );
     } else if (!edit) {
@@ -101,7 +86,7 @@ function ChannelUserAvatar({
         buttonContent = (
             <button
                 className="group/btn mr-1 flex w-full items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto"
-                onClick={() => dispatch(setEdit(!edit))}
+                // onClick={() => dispatch(setEdit(!edit))}
             >
                 <span className="inline-block w-5">
                     <svg
@@ -305,23 +290,21 @@ function ChannelUserAvatar({
                         </Dialog>
                     )}
                     <img
-                        src={isMyChannel ? avatar.url : src}
+                        src={isMyChannel ? avatar.url : channel.avatar.url}
                         alt="Channel"
                         className="h-full w-full"
+                        onError={e => e.target.src = "/user.png"}
                     />
                 </div>
                 <div className="mr-auto inline-block">
                     <h1 className="font-bol text-xl">
-                        {isMyChannel ? fullName : full_name}
+                        {/* {isMyChannel ? fullName : channel.fullName} */}
                     </h1>
                     <p className="text-sm text-gray-400">
-                        @{isMyChannel ? username : userName}
+                        {/* @{isMyChannel ? username : channel.username} */}
                     </p>
                     <p className="text-sm text-gray-400">
-                        {isMyChannel ? subscriberCount : subscriber_Count}{" "}
-                        Subscribers · 
-                        {isMyChannel ? channelsSubscribedTo : subscribed}{" "}
-                        Subscribed
+                        {/* {channel.isSubscribed ? "Subscribed" : "Subscribe"} */}
                     </p>
                 </div>
                 <div className="inline-block">
@@ -335,9 +318,3 @@ function ChannelUserAvatar({
 }
 
 export default ChannelUserAvatar;
-
-ChannelUserAvatar.propTypes = {
-    subscriberCount: PropTypes.number.isRequired,
-    subscribed: PropTypes.number.isRequired,
-    src: PropTypes.string.isRequired
-};

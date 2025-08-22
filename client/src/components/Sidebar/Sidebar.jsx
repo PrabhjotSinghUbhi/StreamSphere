@@ -12,7 +12,7 @@ function Sidebar({ className }) {
         >
             <ul className="flex justify-around gap-y-2 sm:sticky sm:top-[106px] sm:min-h-[calc(100vh-130px)] sm:flex-col">
                 <li className="">
-                    <Button
+                    <button
                         onClick={() => navigator("/")}
                         className="flex flex-col items-center justify-center border-white py-1 focus:text-[#ae7aff] sm:w-full sm:flex-row sm:border sm:p-1.5 sm:hover:bg-[#ae7aff] sm:hover:text-black sm:focus:border-[#ae7aff] sm:focus:bg-[#ae7aff] sm:focus:text-black sm:group-hover:justify-start sm:group-hover:px-4 lg:justify-start lg:px-4"
                         variant={"default"}
@@ -36,10 +36,10 @@ function Sidebar({ className }) {
                         <span className="block sm:hidden sm:group-hover:inline lg:inline">
                             Home
                         </span>
-                    </Button>
+                    </button>
                 </li>
                 <li className="hidden sm:block">
-                    <Button
+                    <button
                         onClick={() => navigator("/")}
                         className="flex flex-col items-center justify-center border-white py-1 focus:text-[#ae7aff] sm:w-full sm:flex-row sm:border sm:p-1.5 sm:hover:bg-[#ae7aff] sm:hover:text-black sm:focus:border-[#ae7aff] sm:focus:bg-[#ae7aff] sm:focus:text-black sm:group-hover:justify-start sm:group-hover:px-4 lg:justify-start lg:px-4"
                     >
@@ -62,10 +62,10 @@ function Sidebar({ className }) {
                         <span className="block sm:hidden sm:group-hover:inline lg:inline">
                             Liked Videos
                         </span>
-                    </Button>
+                    </button>
                 </li>
                 <li className="">
-                    <Button
+                    <button
                         onClick={() => navigator("/")}
                         className="flex flex-col items-center justify-center border-white py-1 focus:text-[#ae7aff] sm:w-full sm:flex-row sm:border sm:p-1.5 sm:hover:bg-[#ae7aff] sm:hover:text-black sm:focus:border-[#ae7aff] sm:focus:bg-[#ae7aff] sm:focus:text-black sm:group-hover:justify-start sm:group-hover:px-4 lg:justify-start lg:px-4"
                     >
@@ -88,10 +88,10 @@ function Sidebar({ className }) {
                         <span className="block sm:hidden sm:group-hover:inline lg:inline">
                             History
                         </span>
-                    </Button>
+                    </button>
                 </li>
                 <li className="hidden sm:block">
-                    <Button
+                    <button
                         onClick={() => navigator("/")}
                         className="flex flex-col items-center justify-center border-white py-1 focus:text-[#ae7aff] sm:w-full sm:flex-row sm:border sm:p-1.5 sm:hover:bg-[#ae7aff] sm:hover:text-black sm:focus:border-[#ae7aff] sm:focus:bg-[#ae7aff] sm:focus:text-black sm:group-hover:justify-start sm:group-hover:px-4 lg:justify-start lg:px-4"
                     >
@@ -121,10 +121,10 @@ function Sidebar({ className }) {
                         <span className="block sm:hidden sm:group-hover:inline lg:inline">
                             My Content
                         </span>
-                    </Button>
+                    </button>
                 </li>
                 <li className="">
-                    <Button
+                    <button
                         onClick={() => navigator("/")}
                         className="flex flex-col items-center justify-center border-white py-1 focus:text-[#ae7aff] sm:w-full sm:flex-row sm:border sm:p-1.5 sm:hover:bg-[#ae7aff] sm:hover:text-black sm:focus:border-[#ae7aff] sm:focus:bg-[#ae7aff] sm:focus:text-black sm:group-hover:justify-start sm:group-hover:px-4 lg:justify-start lg:px-4"
                     >
@@ -147,10 +147,10 @@ function Sidebar({ className }) {
                         <span className="block sm:hidden sm:group-hover:inline lg:inline">
                             Collections
                         </span>
-                    </Button>
+                    </button>
                 </li>
                 <li className="">
-                    <Button
+                    <button
                         onClick={() => navigator("/")}
                         className="flex flex-col items-center justify-center border-white py-1 focus:text-[#ae7aff] sm:w-full sm:flex-row sm:border sm:p-1.5 sm:hover:bg-[#ae7aff] sm:hover:text-black sm:focus:border-[#ae7aff] sm:focus:bg-[#ae7aff] sm:focus:text-black sm:group-hover:justify-start sm:group-hover:px-4 lg:justify-start lg:px-4"
                     >
@@ -173,10 +173,10 @@ function Sidebar({ className }) {
                         <span className="block sm:hidden sm:group-hover:inline lg:inline">
                             Subscribers
                         </span>
-                    </Button>
+                    </button>
                 </li>
                 <li className="hidden sm:block mt-auto">
-                    <Button
+                    <button
                         onClick={() => navigator("/")}
                         className="flex flex-col items-center justify-center border-white py-1 focus:text-[#ae7aff] sm:w-full sm:flex-row sm:border sm:p-1.5 sm:hover:bg-[#ae7aff] sm:hover:text-black sm:focus:border-[#ae7aff] sm:focus:bg-[#ae7aff] sm:focus:text-black sm:group-hover:justify-start sm:group-hover:px-4 lg:justify-start lg:px-4"
                     >
@@ -199,10 +199,10 @@ function Sidebar({ className }) {
                         <span className="block sm:hidden sm:group-hover:inline lg:inline">
                             Support
                         </span>
-                    </Button>
+                    </button>
                 </li>
                 <li className="hidden sm:block">
-                    <Button
+                    <button
                         onClick={() => navigator("/")}
                         className="flex flex-col items-center justify-center border-white py-1 focus:text-[#ae7aff] sm:w-full sm:flex-row sm:border sm:p-1.5 sm:hover:bg-[#ae7aff] sm:hover:text-black sm:focus:border-[#ae7aff] sm:focus:bg-[#ae7aff] sm:focus:text-black sm:group-hover:justify-start sm:group-hover:px-4 lg:justify-start lg:px-4"
                     >
@@ -232,7 +232,7 @@ function Sidebar({ className }) {
                         <span className="block sm:hidden sm:group-hover:inline lg:inline">
                             Settings
                         </span>
-                    </Button>
+                    </button>
                 </li>
             </ul>
         </aside>

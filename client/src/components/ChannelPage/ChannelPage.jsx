@@ -1,92 +1,14 @@
-/* eslint-disable no-irregular-whitespace */
-import React, { useEffect, useState } from "react";
-import { Outlet, useParams } from "react-router";
+import React from "react";
+import { Outlet } from "react-router";
 import ChannelNavbar from "../ChannelNavBar/ChannelNavbar";
 import CoverImage from "../CoverImage/CoverImage";
 import ChannelUserAvatar from "../ChannelUserAvatar/ChannelUserAvatar";
 import EditUserNavbar from "../EditUserNavBar/EditUserNavbar";
-import { useDispatch, useSelector } from "react-redux";
-import toast from "react-hot-toast";
-import { api } from "../../api/api";
-import { setUser } from "../../slice/userSlice";
+import { useSelector } from "react-redux";
+
 
 function ChannelPage() {
     const edit = useSelector((state) => state.edit.edit);
-    const [channelInfo, setChannelInfo] = useState({});
-
-    const dispatch = useDispatch();
-    const user = useSelector((state) => state.loginUser.login_user.user);
-
-    const { user_name } = useParams();
-
-    const getChannelInfo = async (username) => {
-        let toast_id;
-        let time_id;
-
-        console.log(
-            "Hello WPrabh-----------",
-            user.username == username,
-            "------------------------------"
-        );
-
-        try {
-            toast_id = toast.loading("Getting Channel Info...");
-            time_id = setTimeout(() => {
-                toast.dismiss(toast_id);
-            }, 8000);
-            const resp = await api.get(`users/c/${username}`);
-            console.log("Got the Channel Info :: ", resp.data);
-            setChannelInfo(resp.data.payload);
-            if (user.username == username) {
-                const { subscriberCount, channelsSubscribedTo } =
-                    resp.data.payload;
-                dispatch(
-                    setUser({ ...user, subscriberCount, channelsSubscribedTo })
-                );
-            }
-            toast.success("Fetched Channel Info.");
-        } catch (error) {
-            if (error.response) {
-                console.error(
-                    "Error in Fetching User :: ",
-                    error.response.data.message
-                );
-                toast.error(error.response.data.message || error.message);
-            } else if (error.request) {
-                console.error("Network Error :: ", error.message);
-                toast.error(error.message);
-            } else {
-                toast.error(error.message);
-            }
-        } finally {
-            toast.dismiss(toast_id);
-            clearTimeout(time_id);
-        }
-    };
-
-    const isOwner = user.username == user_name;
-
-    useEffect(() => {
-        if (
-            !(
-                isOwner &&
-                user.channelsSubscribedTo !== undefined &&
-                user.subscriberCount != undefined
-            )
-        )
-            getChannelInfo(user_name);
-    }, []);
-
-    const {
-        username,
-        avatar,
-        coverImage,
-        subscriberCount,
-        channelsSubscribedTo,
-        fullName
-    } = channelInfo;
-
-    console.log(channelInfo);
 
     return (
         <div>
@@ -95,13 +17,7 @@ function ChannelPage() {
                     <section className="w-full pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0">
                         <CoverImage src={coverImage?.url} />
                         <div className="px-4 pb-4">
-                            <ChannelUserAvatar
-                                subscriberCount={subscriberCount}
-                                subscribed={channelsSubscribedTo}
-                                src={avatar?.url}
-                                userName={username}
-                                full_name={fullName}
-                            />
+                            <ChannelUserAvatar />
                             {/* <ChannelNavbar /> */}
                             {edit ? <EditUserNavbar /> : <ChannelNavbar />}
                             <Outlet />
