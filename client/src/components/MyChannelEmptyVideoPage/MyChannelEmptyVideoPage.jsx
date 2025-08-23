@@ -1,4 +1,6 @@
+import { Plus } from "lucide-react";
 import React from "react";
+import UploadVideo from "../UploadVideo/UploadVideo";
 
 function MyChannelEmptyVideoPage() {
     return (
@@ -36,23 +38,8 @@ function MyChannelEmptyVideoPage() {
                                         Search another page in order to find
                                         more videos.
                                     </p>
-                                    <button className="mt-4 inline-flex items-center gap-x-2 bg-[#ae7aff] px-3 py-2 font-semibold text-black">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke-width="2"
-                                            stroke="currentColor"
-                                            aria-hidden="true"
-                                            className="h-5 w-5"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M12 4.5v15m7.5-7.5h-15"
-                                            ></path>
-                                        </svg>{" "}
-                                        New video
+                                    <button className="mt-4 cursor-pointer  px-3 py-2 font-semibold text-black">
+                                        <UploadVideo />
                                     </button>
                                 </div>
                             </div>

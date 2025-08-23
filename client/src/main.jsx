@@ -44,6 +44,7 @@ import {
 } from "./components/index.js";
 import { Provider } from "react-redux";
 import store from "./store/store.js";
+import ChannelVideoPage from "./components/ChannelVideoPage/ChannelVideoPage.jsx";
 
 const route = createBrowserRouter(
     createRoutesFromElements(
@@ -59,6 +60,7 @@ const route = createBrowserRouter(
                         path="subscribed"
                         element={<ChannelSubscriberPage />}
                     />
+                    <Route path="videos" element={<ChannelVideoPage />} />
                     <Route path="change-info" element={<EditPersonalInfo />} />
                 </Route>
             </Route>

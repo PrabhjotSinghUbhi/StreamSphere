@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     user: null,
-    userChannelDetails: null
+    userChannelDetails: null,
+    userVideos: null
 };
 
 const userSlice = createSlice({

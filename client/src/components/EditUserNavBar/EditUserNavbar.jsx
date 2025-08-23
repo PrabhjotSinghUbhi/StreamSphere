@@ -14,7 +14,7 @@ function EditUserNavbar() {
                                 isActive
                                     ? "border-[#ae7aff] bg-white block px-3 py-1.5 text-[#ae7aff]"
                                     : "border-transparent px-3 py-1.5 block text-gray-400"
-                            }`
+                        }`
                         }
                     >
                         Personal Information
