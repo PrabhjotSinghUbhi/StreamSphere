@@ -1,14 +1,16 @@
 import React from "react";
 import { Link, useNavigate } from "react-router";
 import SearchIcon from "../SearchIcon";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "../ui/button";
 import { useLogout } from "../../hooks/useLogout.hook";
+import { setEdit } from "../../slice/editSlice";
 
 function Header() {
     const navigator = useNavigate();
     const isLoggedIn = useSelector((state) => state.loginUser.login_user.user);
     const logout = useLogout();
+    const dispatch = useDispatch();
 
     return (
         <header className="sticky inset-x-0 top-0 z-50 w-full border-b border-white bg-[#121212] px-4">
@@ -236,6 +238,9 @@ function Header() {
                             {/* Avatar Link */}
                             <Link
                                 to={`/channel/${isLoggedIn.username}`}
+                                onClick={() => {
+                                    dispatch(setEdit(false));
+                                }}
                                 className="relative group"
                             >
                                 <img

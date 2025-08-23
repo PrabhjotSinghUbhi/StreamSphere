@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import {
     Dialog,
@@ -14,18 +13,17 @@ import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import { Input } from "../ui/input";
 import { Label } from "@radix-ui/react-label";
 import toast from "react-hot-toast";
-import { api } from "../../api/api";
 import { updateCover } from "../../slice/userSlice";
 import { useParams } from "react-router";
+import { userService } from "../../service/user.service";
 
 function CoverImage() {
-    
     const { coverImage } = useSelector(
         (state) => state.loginUser.login_user.user
     );
 
     const channelCoverImage = useSelector(
-        (state) => state?.channelInfo?.channel?.coverImage?.url
+        (state) => state?.channelInfo?.channelInfo?.coverImage?.url
     );
 
     const edit = useSelector((state) => state.edit.edit);
@@ -36,10 +34,7 @@ function CoverImage() {
     const handleCoverImageUpdate = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
-        console.log("FORM___________________________-");
-        for (let [K, V] of formData.entries()) {
-            console.log(K, V);
-        }
+
         const coverImage = formData.get("coverImage");
         if (
             !coverImage ||
@@ -48,60 +43,33 @@ function CoverImage() {
             toast.error("New Cover Image is required.");
             return;
         }
-        let toast_id;
-        let time_id;
+
         try {
-            toast_id = toast.loading("Updating Cover Image...");
-            time_id = setTimeout(() => {
-                toast.dismiss(toast_id);
-                toast.error("Update took too long, Please try again");
-            }, 10000);
-            const resp = await api.patch("/users/update-cover-image", formData);
-            console.log("CoverImage updated successfully.", resp.data);
-            toast.success(
-                resp.data.message || "Cover Image Updated Successfully."
-            );
+            const resp = await userService.updateCoverImage(formData);
+            console.log("CoverImage updated successfully.", resp);
+
             setStatusButton(true);
-            dispatch(updateCover(resp.data.payload.user.coverImage.url));
+            dispatch(updateCover(resp.payload.user.coverImage.url));
         } catch (error) {
-            console.log(error);
-            toast.dismiss(toast_id);
-            clearTimeout(time_id);
-            if (error.response) {
-                console.error(
-                    "Error in updating the Cover Image :: ",
-                    error.response.data.message
-                );
-                toast.error(error.response.data.message || error.message);
-            } else if (error.request) {
-                console.error(
-                    "Network Error :: Updating Cover Image :: ",
-                    error.message
-                );
-                toast(error.message || "Network Error");
-            } else {
-                console.error(error.message || "Something went wrong");
-                toast.error(error.message || "Something went wrong");
-            }
-        } finally {
-            toast.dismiss(toast_id);
-            clearTimeout(time_id);
+            console.log("ERROR updating cover image :: ", error);
         }
     };
 
-    const { user_name } = useParams();
-    const { username } = useSelector(
-        (state) => state.loginUser.login_user.user
-    );
+    const params = useParams();
+    const { user } = useSelector((state) => state.loginUser.login_user);
 
-    const isOwner = username == user_name;
+    const isOwner = params.username == user.username;
 
     return (
         <div>
             <div className="relative min-h-[290px] w-full pt-[16.28%]">
                 <div className="absolute inset-0 overflow-hidden">
                     <img
-                        src={isOwner ? coverImage?.url : channelCoverImage}
+                        src={
+                            isOwner
+                                ? coverImage?.url || "/default-cover.jpg"
+                                : channelCoverImage || "/default-cover.jpg"
+                        }
                         alt="cover-photo"
                         className="w-full h-full object-cover object-center"
                         onError={(e) => (e.target.src = "/default-cover.jpg")}

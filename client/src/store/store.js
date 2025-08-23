@@ -18,7 +18,7 @@ import channelReducer from "../slice/channelSlice.js";
 const persistConfig = {
     key: "my_login_user",
     storage,
-    whitelist: ["login_user"] // which user to persist.
+    whitelist: ["login_user", "edit"] // which user to persist.
 };
 
 //2. combine reducers.

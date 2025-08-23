@@ -1,6 +1,4 @@
 import React, { useRef } from "react";
-import toast from "react-hot-toast";
-import { api } from "../../api/api";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -16,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useLogout } from "../../hooks/useLogout.hook";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "../ui/input";
+import { userService } from "../../service/user.service";
 
 function ChangeUserPassword() {
     const logout = useLogout();
@@ -23,32 +22,15 @@ function ChangeUserPassword() {
 
     const handlePasswordChange = async (e) => {
         e.preventDefault();
-        console.log("wertyuiopoiuhygfghujiop");
         const formData = new FormData(e.target);
-        let time_id;
-        let toast_id;
+
         try {
-            toast_id = toast.loading("Updating the password.");
-            time_id = setTimeout(() => {
-                toast.error("Update took too long.");
-                toast.error("Please try again.");
-            }, 5000);
+            const resp = await userService.changePassword(formData);
 
-            const resp = await api.post("/users/change-password", formData);
-            toast.success("Password Changed Successfully.");
             console.log("Password Changed Successfully :: ", resp);
-
             logout();
         } catch (error) {
             console.error("Error in Updating password :: ", error);
-            toast.error(
-                error.response.data.message ||
-                    error.message ||
-                    "Something went wrong."
-            );
-        } finally {
-            clearTimeout(time_id);
-            toast.dismiss(toast_id);
         }
     };
 

@@ -1,12 +1,14 @@
 import { Label } from "@radix-ui/react-label";
 import React from "react";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import toast from "react-hot-toast";
 import { Form } from "react-router";
-import { api } from "../../api/api";
+import { userService } from "../../service/user.service";
+import { Error } from "mongoose";
+import { updateFullName } from "../../slice/userSlice";
 
 function EditPersonalInfo() {
     const { fullName, email } = useSelector(
@@ -16,48 +18,27 @@ function EditPersonalInfo() {
     const [name, setName] = useState(fullName);
     const [mail, setMail] = useState(email);
 
+    const dispatch = useDispatch();
+
     const handleChangeInfo = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const fullName = formData.get("fullName");
         const email = formData.get("email");
-        if (
-            !formData ||
-            (formData instanceof Form &&
-                fullName.size === 0 &&
-                email.size === 0)
-        ) {
+        if (!formData || (fullName.size === 0 && email.size === 0)) {
             toast.error("fields are required...");
-            return;
+            throw new Error("fields are required...");
         }
 
-        let toast_id;
-        let time_id;
         try {
-            toast_id = toast.loading("Updating Information...");
-            time_id = setTimeout(() => {
-                toast.dismiss(toast_id);
-                toast.error("Update took too long.");
-                toast.error("Please try again");
-            }, 5000);
-
-            const resp = await api.patch(
-                "/users/update-account-details",
-                formData
-            );
-
-            console.log("users info updated successfully.", resp.data);
-            toast.success(
-                resp.data.message || "Information Updated successfully."
-            );
+            const resp = await userService.updateAccountDetails(formData);
+            console.log("users info updated successfully.", resp);
+            dispatch(updateFullName(resp.payload.user.fullName));
         } catch (error) {
             console.error("Error in Updating User Info :: ", error);
             toast.error(
                 error.response.data.message || "Something went wrong..."
             );
-        } finally {
-            clearTimeout(time_id);
-            toast.dismiss(toast_id);
         }
     };
 
@@ -78,7 +59,7 @@ function EditPersonalInfo() {
                         <div className="flex flex-wrap gap-y-4 p-4">
                             <div className="w-full lg:w-1/2 lg:pr-2">
                                 <label
-                                    htmlFor="firstname"
+                                    htmlFor="name"
                                     className="mb-1 inline-block"
                                 >
                                     Name
@@ -89,13 +70,14 @@ function EditPersonalInfo() {
                                     id="fullName"
                                     placeholder="Enter first name"
                                     value={name}
+                                    name="fullName"
                                     onChange={(e) => setName(e.target.value)}
                                 />
                             </div>
 
                             <div className="w-full">
                                 <Label
-                                    htmlFor="lastname"
+                                    htmlFor="email"
                                     className="mb-1 inline-block"
                                 >
                                     Email address
@@ -117,7 +99,7 @@ function EditPersonalInfo() {
                                             ></path>
                                         </svg>
                                     </div>
-                                    <Input
+                                    <input
                                         type="email"
                                         className="w-full rounded-lg border bg-transparent py-1.5 pl-10 pr-2"
                                         id=""
@@ -133,18 +115,18 @@ function EditPersonalInfo() {
                         </div>
                         <hr className="border border-gray-300" />
                         <div className="flex items-center justify-end gap-4 p-4">
-                            <Button
+                            <button
                                 type="reset"
                                 className="cursor-pointer inline-block rounded-lg border px-3 py-1.5 hover:bg-white/10"
                             >
                                 Cancel
-                            </Button>
-                            <Button
+                            </button>
+                            <button
                                 type="submit"
                                 className="cursor-pointer inline-block bg-[#ae7aff] px-3 py-1.5 text-black"
                             >
                                 Save changes
-                            </Button>
+                            </button>
                         </div>
                     </form>
                 </div>

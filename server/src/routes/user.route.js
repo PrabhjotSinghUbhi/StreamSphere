@@ -4,6 +4,7 @@ import {
     changeCurrentPassword,
     getCurrentUser,
     getUserById,
+    getUserChannelProfile,
     getWatchHistory,
     loginUser,
     logoutUser,
@@ -57,6 +58,10 @@ router
     .patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage);
 
 router.route("/get-user/:userId").get(upload.none(), verifyJWT, getUserById);
+
+router
+    .route("/c/:username")
+    .get(upload.none(), verifyJWT, getUserChannelProfile);
 
 router.route("/watch-history").get(verifyJWT, getWatchHistory);
 

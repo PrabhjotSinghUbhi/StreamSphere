@@ -16,23 +16,77 @@ import { DialogFooter, DialogHeader } from "../ui/dialog";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "../ui/input";
 import toast from "react-hot-toast";
-import { api } from "../../api/api";
-import { updateAvatar } from "../../slice/userSlice";
+import {
+    addSubscription,
+    decrementUserSubscribedToCount,
+    incrementUserSubscribedToCount,
+    removeSubscription,
+    updateAvatar
+} from "../../slice/userSlice";
 import { Skeleton } from "../ui/skeleton";
 import { useDispatch, useSelector } from "react-redux";
+import { userService } from "../../service/user.service";
+import { Pencil } from "lucide-react";
+import { subscriptionService } from "../../service/subscription.service";
+import {
+    addSubscriberToChannel,
+    decrementSubscriberCount,
+    incrementSubscriberCount,
+    removeSubscriberFromChannel,
+    updateIsSubscribed
+} from "../../slice/channelSlice";
 
 function ChannelUserAvatar() {
-    const edit = useSelector((state) => state.edit);
+    const { edit } = useSelector((state) => state.edit);
     const dispatch = useDispatch();
+    const navigator = useNavigate();
 
-    const { user_name } = useParams();
-    const { username } = useSelector(
-        (state) => state.loginUser.login_user.user
+    const params = useParams();
+    const { user } = useSelector((state) => state.loginUser.login_user);
+    const { userChannelDetails } = useSelector(
+        (state) => state.loginUser.login_user
     );
 
-    const isMyChannel = username == user_name;
+    const { channelInfo } = useSelector((state) => state.channelInfo);
+    const isMyChannel = user.username == params.username;
 
     const [imageUrl, setImageUrl] = useState(null);
+
+    const handleCreateSubscription = async (channel) => {
+        try {
+            const resp = await subscriptionService.createSubscription(channel);
+            dispatch(addSubscription(resp.payload));
+            dispatch(updateIsSubscribed(true));
+            dispatch(incrementSubscriberCount());
+            dispatch(incrementUserSubscribedToCount());
+            dispatch(addSubscriberToChannel(resp.payload));
+            console.log("Subscription Created", resp.payload);
+        } catch (error) {
+            console.error("Error Occurred in creating Subscription", error);
+        }
+    };
+
+    const handleDeleteSubscription = async (channel) => {
+        try {
+            const resp = await subscriptionService.deleteSubscription(channel);
+
+            dispatch(updateIsSubscribed(false));
+            dispatch(removeSubscription(channel));
+            dispatch(decrementSubscriberCount());
+            dispatch(decrementUserSubscribedToCount());
+            dispatch(removeSubscriberFromChannel(user._id));
+            console.log("Unsubscribed Successfully :: ", resp.payload);
+        } catch (error) {
+            console.log(
+                "Error Occurred in deleting the subscription :: ",
+                error
+            );
+        }
+    };
+
+    if (!user) {
+        return null;
+    }
 
     let buttonContent;
     if (!isMyChannel) {
@@ -54,14 +108,27 @@ function ChannelUserAvatar() {
                         ></path>
                     </svg>
                 </span>
-                {/* <button>{isSubscribed ? "Subscribed" : "Subscribe"}</button> */}
+                <button
+                    onClick={() => {
+                        if (!channelInfo?.isSubscribed) {
+                            handleCreateSubscription(channelInfo?._id);
+                        } else {
+                            handleDeleteSubscription(channelInfo?._id);
+                        }
+                    }}
+                >
+                    {channelInfo?.isSubscribed ? "Unsubscribe" : "Subscribe"}
+                </button>
             </button>
         );
     } else if (!edit) {
         buttonContent = (
             <button
                 className="group/btn mr-1 flex w-full items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto"
-                onClick={() => dispatch(setEdit(true))}
+                onClick={() => {
+                    dispatch(setEdit(true));
+                    navigator("change-info");
+                }}
             >
                 <span className="inline-block w-5">
                     <svg
@@ -86,86 +153,34 @@ function ChannelUserAvatar() {
         buttonContent = (
             <button
                 className="group/btn mr-1 flex w-full items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto"
-                // onClick={() => dispatch(setEdit(!edit))}
+                onClick={() => {
+                    dispatch(setEdit(false));
+                    navigator(``);
+                }}
             >
-                <span className="inline-block w-5">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="2"
-                        stroke="currentColor"
-                        aria-hidden="true"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
-                        ></path>
-                    </svg>
-                </span>
+                <Pencil size={20} />
                 View Channel
             </button>
         );
     }
 
-    const navigator = useNavigate();
-
     const handleAvatarUpdate = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
-        for (let [k, v] of formData.entries()) {
-            console.log(k, v);
-        }
-
         const avatar = formData.get("avatar");
 
         if (!avatar || (avatar instanceof File && avatar.size === 0)) {
             toast.error("New Avatar in required.");
-            return;
+            throw new Error("New Avatar is Required prince.");
         }
 
-        let toastId;
-        let timeId;
         try {
-            toastId = toast.loading("Updating the avatar...");
-
-            timeId = setTimeout(() => {
-                toast.dismiss(toastId);
-                toast.error("Update took too long. Please try again.");
-            }, 8000);
-
-            const resp = await api.patch("/users/update-avatar", formData);
+            const resp = await userService.updateUserAvatar(formData);
 
             console.log("User Avatar Updated Successfully :: ", resp.data);
-            dispatch(updateAvatar(resp.data.payload.user.avatar.url));
-
-            toast.success(
-                resp.data.message || "Avatar Updated Successfully..."
-            );
-
-            navigator(`/channel/${user_name}`);
+            dispatch(updateAvatar(resp.payload.user.avatar.url));
         } catch (error) {
-            console.log(error);
-            if (error.response) {
-                console.error(
-                    "Error in updating the avatar :: ",
-                    error.response.data.message
-                );
-                toast.error(error.response.data.message || error.message);
-            } else if (error.request) {
-                console.error(
-                    "Network Error :: Updating Avatar :: ",
-                    error.message
-                );
-                toast(error.message || "Network Error");
-            } else {
-                console.error(error.message || "Something went wrong");
-                toast.error(error.message || "Something went wrong");
-            }
-        } finally {
-            toast.dismiss(toastId);
-            clearTimeout(timeId);
+            console.log("Error in updating avatar :: ", error);
         }
     };
 
@@ -290,21 +305,33 @@ function ChannelUserAvatar() {
                         </Dialog>
                     )}
                     <img
-                        src={isMyChannel ? avatar.url : channel.avatar.url}
+                        src={
+                            isMyChannel
+                                ? user.avatar?.url
+                                : channelInfo?.avatar?.url
+                        }
                         alt="Channel"
                         className="h-full w-full"
-                        onError={e => e.target.src = "/user.png"}
+                        onError={(e) => (e.target.src = "/user.png")}
                     />
                 </div>
                 <div className="mr-auto inline-block">
                     <h1 className="font-bol text-xl">
-                        {/* {isMyChannel ? fullName : channel.fullName} */}
+                        {isMyChannel ? user.fullName : channelInfo?.fullName}
                     </h1>
                     <p className="text-sm text-gray-400">
-                        {/* @{isMyChannel ? username : channel.username} */}
+                        @{isMyChannel ? user.username : channelInfo?.username}
                     </p>
                     <p className="text-sm text-gray-400">
-                        {/* {channel.isSubscribed ? "Subscribed" : "Subscribe"} */}
+                        {`Subscribers . ${
+                            isMyChannel
+                                ? userChannelDetails?.subscriberCount || 0
+                                : channelInfo?.subscriberCount || 0
+                        }  Subscribed . ${
+                            isMyChannel
+                                ? userChannelDetails?.channelsSubscribedTo
+                                : channelInfo?.channelsSubscribedTo
+                        }`}
                     </p>
                 </div>
                 <div className="inline-block">

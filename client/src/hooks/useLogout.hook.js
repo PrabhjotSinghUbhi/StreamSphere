@@ -1,8 +1,8 @@
 import { useDispatch } from "react-redux";
-import { removeUser } from "../slice/userSlice";
+import { removeUser, removeUserChannelDetails } from "../slice/userSlice";
 import { useNavigate } from "react-router";
 import { authService } from "../service/auth.service";
-import { removeChannel } from "../slice/channelSlice";
+import { removeChannelInfo } from "../slice/channelSlice";
 
 export function useLogout() {
     const dispatch = useDispatch();
@@ -15,7 +15,8 @@ export function useLogout() {
             const response = await authService.logout();
 
             dispatch(removeUser());
-            dispatch(removeChannel());
+            dispatch(removeChannelInfo());
+            dispatch(removeUserChannelDetails());
             navigator("/");
             console.log("response in logout hook :: ", response);
         } catch (error) {

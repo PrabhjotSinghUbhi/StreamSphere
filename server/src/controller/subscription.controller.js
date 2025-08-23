@@ -1,11 +1,26 @@
 import { Subscription } from "../models/subscription.model.js";
+import { ApiErrors } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 const createSubscription = asyncHandler(async (req, res) => {
     try {
         //remember these are _id's of User.
-        const { subscriber, channel } = req.body;
+        //i don't think i need the subscriber from the req.body because the obviously the user will be the one subscribing, as i am only handling the user subscription so i don't think i need it anymore.
+
+        const { channel } = req.params;
+        const subscriber = req?.user._id;
+
+        //we also need to check this subscription exists or not.
+        const existedRelation = await Subscription.findOne({
+            subscriber,
+            channel
+        });
+
+        if (existedRelation) {
+            throw new ApiErrors(400, "Already Subscribed.");
+        }
+
         const createdSubscriptionDocument = await Subscription.create({
             subscriber,
             channel
@@ -35,91 +50,43 @@ const createSubscription = asyncHandler(async (req, res) => {
     }
 });
 
-const getUserSubscriptionDetails = asyncHandler(async (req, res) => {
-    console.log("getUserChannelProfile got called");
+const deleteSubscription = asyncHandler(async (req, res) => {
     try {
-        const { username } = req.params;
-        if (!username?.trim()) throw new ApiErrors(401, "Username is missing.");
+        const { channel } = req.params;
+        if (!channel) throw new ApiErrors(400, "No Channel Found.");
 
-        console.log("USername is :: ", username);
+        const subscriber = req?.user._id;
 
-        const channel = await User.aggregate([
-            {
-                $match: {
-                    username: username?.toLowerCase()
-                }
-            },
-            {
-                $lookup: {
-                    from: "subscriptions",
-                    localField: "_id",
-                    foreignField: "channel",
-                    as: "subscribers"
-                }
-            },
-            {
-                $lookup: {
-                    from: "subscriptions",
-                    localField: "_id",
-                    foreignField: "subscriber",
-                    as: "subscribedTo"
-                }
-            },
-            {
-                $addFields: {
-                    subscriberCount: {
-                        $size: "$subscribers"
-                    },
-                    channelsSubscribedTo: {
-                        $size: "$subscribedTo"
-                    },
-                    isSubscribed: {
-                        $in: [
-                            req?.user?._id,
-                            {
-                                $map: {
-                                    input: "$subscribers",
-                                    as: "sub",
-                                    in: "$$sub.subscriber"
-                                }
-                            }
-                        ]
-                    }
-                }
-            },
-            {
-                $project: {
-                    fullName: 1,
-                    username: 1,
-                    subscriberCount: 1,
-                    channelsSubscribedTo: 1,
-                    isSubscribed: 1,
-                    avatar: 1,
-                    coverImage: 1,
-                    subscribers: 1,
-                    subscribedTo: 1
-                }
-            }
-        ]);
+        const findAndDeleteSubscription = await Subscription.findOneAndDelete({
+            subscriber,
+            channel
+        });
 
-        console.log(channel);
-
-        if (!channel?.length)
-            throw new ApiErrors(501, "Channel Does not exists.");
+        if (!findAndDeleteSubscription) {
+            throw new ApiErrors(404, "Subscription not found.");
+        }
 
         return res
             .status(200)
             .json(
                 new ApiResponse(
-                    channel[0],
+                    findAndDeleteSubscription,
                     200,
-                    "User Channel Fetched Successfully."
+                    "Unsubscribed Successfully"
                 )
             );
     } catch (error) {
-        console.log("ERROR in GETTING CHANNEL :: ", error.message);
-        return res.status(404).json(new ApiResponse(null, 404, error.message));
+        console.log("Error Occurred in Subscription :: ", error.message);
+        return res
+            .status(error.statusCode || 500)
+            .json(
+                new ApiResponse(
+                    null,
+                    error.statusError || 500,
+                    "Error Occurred in Unsubscribing"
+                )
+            );
     }
 });
 
-export { createSubscription, getUserSubscriptionDetails };
+export { createSubscription, deleteSubscription };

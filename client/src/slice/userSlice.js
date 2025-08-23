@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    user: null
+    user: null,
+    userChannelDetails: null
 };
 
 const userSlice = createSlice({
@@ -12,18 +13,79 @@ const userSlice = createSlice({
             state.user = action.payload;
         },
         updateAvatar: (state, action) => {
-            state.user.avatar.url = action.payload;
+            if (state.user && state.user.avatar) {
+                state.user.avatar.url = action.payload;
+            }
         },
         updateCover: (state, action) => {
-            state.user.coverImage.url = action.payload;
+            if (state.user && state.user.coverImage) {
+                state.user.coverImage.url = action.payload;
+            }
         },
         removeUser: (state) => {
             state.user = null;
+        },
+        setUserChannelDetails: (state, action) => {
+            state.userChannelDetails = action.payload;
+        },
+        updateUserChannelDetails: (state, action) => {
+            state.userChannelDetails = action.payload;
+        },
+        removeUserChannelDetails: (state) => {
+            state.userChannelDetails = null;
+        },
+        updateFullName: (state, action) => {
+            console.log("update fullName got called", action.payload);
+
+            state.user.fullName = action.payload;
+        },
+        addSubscription: (state, action) => {
+            state.userChannelDetails?.subscribedTo?.push(action.payload);
+        },
+        removeSubscription: (state, action) => {
+            if (state.userChannelDetails?.subscribedTo) {
+                state.userChannelDetails.subscribedTo =
+                    state.userChannelDetails.subscribedTo.filter(
+                        (subs) => subs?.channel !== action.payload
+                    );
+            }
+        },
+        incrementUserSubscriberCount: (state) => {
+            if (state.userChannelDetails.subscriberCount) {
+                state.userChannelDetails.subscriberCount += 1;
+            }
+        },
+        decrementUserSubscriberCount: (state) => {
+            if (state.userChannelDetails.subscriberCount) {
+                state.userChannelDetails.subscriberCount -= 1;
+            }
+        },
+        incrementUserSubscribedToCount: (state) => {
+            if (state.userChannelDetails.channelsSubscribedTo)
+                state.userChannelDetails.channelsSubscribedTo += 1;
+        },
+        decrementUserSubscribedToCount: (state) => {
+            if (state.userChannelDetails.channelsSubscribedTo)
+                state.userChannelDetails.channelsSubscribedTo -= 1;
         }
     }
 });
 
-export const { setUser, updateAvatar, updateCover, removeUser } =
-    userSlice.actions;
+export const {
+    setUser,
+    updateAvatar,
+    updateCover,
+    removeUser,
+    setUserChannelDetails,
+    updateUserChannelDetails,
+    removeUserChannelDetails,
+    updateFullName,
+    addSubscription,
+    removeSubscription,
+    decrementUserSubscribedToCount,
+    decrementUserSubscriberCount,
+    incrementUserSubscribedToCount,
+    incrementUserSubscriberCount
+} = userSlice.actions;
 
 export default userSlice.reducer;

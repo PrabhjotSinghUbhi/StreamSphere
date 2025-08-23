@@ -9,10 +9,14 @@ export const authService = {
     },
 
     register: (formData) => {
-        return makeRequest(() => api.post("/users/register", formData));
+        return makeRequest(() => api.post("/users/register", formData), {
+            successMessage: "User Registered out successfully!"
+        });
     },
 
     logout: () => {
-        return makeRequest(() => api.post("/users/logout"));
+        return makeRequest(() => api.post("/users/logout"), {
+            successMessage: "User logged out successfully!"
+        });
     }
 };
