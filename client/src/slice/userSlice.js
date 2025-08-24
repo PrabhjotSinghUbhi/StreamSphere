@@ -68,6 +68,12 @@ const userSlice = createSlice({
         decrementUserSubscribedToCount: (state) => {
             if (state.userChannelDetails.channelsSubscribedTo)
                 state.userChannelDetails.channelsSubscribedTo -= 1;
+        },
+        userChannelVideos: (state, action) => {
+            state.userVideos = action.payload;
+        },
+        removeUserChannelVideos: (state) => {
+            state.userVideos = null;
         }
     }
 });
@@ -86,7 +92,9 @@ export const {
     decrementUserSubscribedToCount,
     decrementUserSubscriberCount,
     incrementUserSubscribedToCount,
-    incrementUserSubscriberCount
+    incrementUserSubscriberCount,
+    userChannelVideos,
+    removeUserChannelVideos
 } = userSlice.actions;
 
 export default userSlice.reducer;

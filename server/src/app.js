@@ -34,8 +34,10 @@ app.use(express.static("public/temp"));
 //import routers
 import userRoute from "./routes/user.route.js";
 import subs from "./routes/subs.route.js";
+import videoRoute from "./routes/video.route.js";
 //router declaration.
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/subscribe", subs);
+app.use("/api/v1/videos", videoRoute);
 
 export { app };

@@ -62,10 +62,6 @@ function ChannelPage() {
             })();
         }
 
-        // return () => {
-        //     console.log("CHannel Page Unmounted------------");
-        //     setEdit(false);
-        // };
     }, [params]);
 
     return (   

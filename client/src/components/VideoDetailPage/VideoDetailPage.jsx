@@ -1,7 +1,26 @@
 /* eslint-disable no-irregular-whitespace */
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router";
+import { videoService } from "../../service/video.service";
+import { useSelector } from "react-redux";
 
 function VideoDetailPage() {
+    const { video_id } = useParams();
+
+    const [video, setVideo] = useState(null);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const resp = await videoService.getVideoDetails(video_id);
+                console.log("Got the Video In Details :: ", resp);
+                setVideo(resp.payload);
+            } catch (error) {
+                console.error("ERROR occurred in getting the video :: ", error);
+            }
+        })();
+    }, [video_id]);
+
     return (
         <div className="h-screen overflow-y-auto bg-[#121212] text-white">
             <div className="flex min-h-[calc(100vh-66px)] sm:min-h-[calc(100vh-82px)]">
@@ -9,19 +28,27 @@ function VideoDetailPage() {
                     <div className="flex w-full flex-wrap gap-4 p-4 lg:flex-nowrap">
                         <div className="col-span-12 w-full">
                             <div className="relative mb-4 w-full pt-[56%]">
-                                <div className="absolute inset-0">
-                                    <video
-                                        className="h-full w-full"
-                                        controls=""
-                                        autoPlay=""
-                                        muted=""
-                                    >
-                                        <source
-                                            src="https://res.cloudinary.com/dfw5nnic5/video/upload/v1695117968/Sample_1280x720_mp4_b4db0s.mp4"
-                                            type="video/mp4"
-                                        />
-                                    </video>
-                                </div>
+                                {video ? (
+                                    <div className="absolute inset-0">
+                                        <video
+                                            className="h-full w-full"
+                                            controls
+                                            autoPlay
+                                        >
+                                            <source
+                                                src={video?.videoFile?.url}
+                                                type="video/mp4"
+                                            />
+                                        </video>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center h-full">
+                                        <div className="w-10 h-10 border-4 border-[#ae7aff] border-t-transparent rounded-full animate-spin mb-3"></div>
+                                        <span className="text-gray-300 text-lg font-semibold">
+                                            Loading video...
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                             <div
                                 className="group mb-4 w-full rounded-lg border p-4 duration-200 hover:bg-white/5 focus:bg-white/5"
@@ -31,10 +58,11 @@ function VideoDetailPage() {
                                 <div className="flex flex-wrap gap-y-2">
                                     <div className="w-full md:w-1/2 lg:w-full xl:w-1/2">
                                         <h1 className="text-lg font-bold">
-                                            Advanced React Patterns
+                                            {video?.title || "Title"}
                                         </h1>
                                         <p className="flex text-sm text-gray-200">
-                                            30,164 Views ·18 hours ago
+                                            {video?.view || 0} Views ·18 hours
+                                            ago
                                         </p>
                                     </div>
                                     <div className="w-full md:w-1/2 lg:w-full xl:w-1/2">
@@ -311,17 +339,28 @@ function VideoDetailPage() {
                                     <div className="flex items-center gap-x-4">
                                         <div className="mt-2 h-12 w-12 shrink-0">
                                             <img
-                                                src="https://images.pexels.com/photos/18264716/pexels-photo-18264716/free-photo-of-man-people-laptop-internet.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                                                alt="reactpatterns"
+                                                src={
+                                                    video?.Owner?.publisher
+                                                        .avatar?.url ||
+                                                    "/user.png"
+                                                }
+                                                alt={
+                                                    video?.Owner?.publisher
+                                                        ?.username
+                                                }
                                                 className="h-full w-full rounded-full"
                                             />
                                         </div>
                                         <div className="block">
                                             <p className="text-gray-200">
-                                                React Patterns
+                                                {
+                                                    video?.Owner?.publisher
+                                                        ?.fullName
+                                                }
                                             </p>
                                             <p className="text-sm text-gray-400">
-                                                757K Subscribers
+                                                {video?.Owner?.subscriberCount}{" "}
+                                                Subscribers
                                             </p>
                                         </div>
                                     </div>
@@ -344,10 +383,9 @@ function VideoDetailPage() {
                                                 </svg>
                                             </span>
                                             <span className="group-focus/btn:hidden">
-                                                Subscribe
-                                            </span>
-                                            <span className="hidden group-focus/btn:block">
-                                                Subscribed
+                                                {video?.Owner?.isSubscribed
+                                                    ? "Unsubscribe"
+                                                    : "Subscribe"}
                                             </span>
                                         </button>
                                     </div>
@@ -355,13 +393,7 @@ function VideoDetailPage() {
                                 <hr className="my-4 border-white" />
                                 <div className="h-5 overflow-hidden group-focus:h-auto">
                                     <p className="text-sm">
-                                        🚀 Dive into the world of React with our
-                                        latest tutorial series: &quot;Advanced
-                                        React Patterns&quot;! 🛠️ Whether
-                                        you&#x27;re a seasoned developer or just
-                                        starting out, this series is designed to
-                                        elevate your React skills to the next
-                                        level.
+                                        🚀 {video?.description}
                                     </p>
                                 </div>
                             </div>
