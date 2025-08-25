@@ -283,4 +283,38 @@ const getAllVideos = asyncHandler(async (req, res) => {
     }
 });
 
-export { publishVideo, getChannelVideos, getVideo, getAllVideos };
+const updateViewCount = asyncHandler(async (req, res) => {
+    try {
+        const { video_id } = req.params;
+        if (!video_id) throw new ApiErrors(404, "Video not found.");
+
+        const videoId = new mongoose.Types.ObjectId(video_id);
+
+        const video = await Video.findByIdAndUpdate(
+            videoId,
+            { $inc: { view: 1 } },
+            { new: true }
+        );
+
+        if (!video) {
+            throw new ApiErrors(404, "Video not found.");
+        }
+
+        return res
+            .status(200)
+            .json(new ApiResponse(video, 200, "View count updated!"));
+    } catch (error) {
+        console.log("Error updating view count:", error);
+        return res
+            .status(error.statusCode || 500)
+            .json(
+                new ApiResponse(
+                    null,
+                    error.statusCode || 500,
+                    "Error updating view count"
+                )
+            );
+    }
+});
+
+export { publishVideo, getChannelVideos, getVideo, getAllVideos, updateViewCount };

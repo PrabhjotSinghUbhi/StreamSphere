@@ -4,7 +4,8 @@ import {
     getAllVideos,
     getChannelVideos,
     getVideo,
-    publishVideo
+    publishVideo,
+    updateViewCount
 } from "../controller/video.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 
@@ -28,5 +29,6 @@ router.route("/publish-video").post(
 router.route("/get-channel-videos/:username").get(verifyJWT, getChannelVideos);
 router.route("/v/:video_id").get(verifyJWT, getVideo);
 router.route("/get-all-videos").get(verifyJWT, getAllVideos);
+router.route("/v/:video_id/increment-views").post(verifyJWT, updateViewCount);
 
 export default router;
