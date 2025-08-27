@@ -50,10 +50,12 @@ function VideoDetailPage() {
         try {
             const resp = await subscriptionService.createSubscription(channel);
             dispatch(addSubscription(resp.payload));
-            dispatch(updateIsSubscribed(true));
-            dispatch(incrementSubscriberCount());
-            dispatch(incrementUserSubscribedToCount());
-            dispatch(addSubscriberToChannel(resp.payload));
+            // dispatch(updateIsSubscribed(true));
+            video.Owner.isSubscribed = true;
+            // dispatch(incrementSubscriberCount());
+            video.Owner.subscriberCount += 1;
+            // dispatch(incrementUserSubscribedToCount());
+            // dispatch(addSubscriberToChannel(resp.payload));
             console.log("Subscription Created", resp.payload);
         } catch (error) {
             console.error("Error Occurred in creating Subscription", error);
@@ -64,11 +66,13 @@ function VideoDetailPage() {
         try {
             const resp = await subscriptionService.deleteSubscription(channel);
 
-            dispatch(updateIsSubscribed(false));
-            dispatch(removeSubscription(channel));
-            dispatch(decrementSubscriberCount());
-            dispatch(decrementUserSubscribedToCount());
-            dispatch(removeSubscriberFromChannel(user._id));
+            // dispatch(updateIsSubscribed(false));
+            video.Owner.isSubscribed = false;
+            // dispatch(removeSubscription(channel));
+            video.Owner.subscriberCount -= 1;
+            // dispatch(decrementSubscriberCount());
+            // dispatch(decrementUserSubscribedToCount());
+            // dispatch(removeSubscriberFromChannel(user._id));
             console.log("Unsubscribed Successfully :: ", resp.payload);
         } catch (error) {
             console.log(
