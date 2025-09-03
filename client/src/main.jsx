@@ -61,7 +61,7 @@ const route = createBrowserRouter(
                         path="subscribed"
                         element={<ChannelSubscriberPage />}
                     />
-                    <Route path="" element={<ChannelVideoPage />} />
+                    <Route path="videos" element={<ChannelVideoPage />} />
                     <Route path="change-info" element={<EditPersonalInfo />} />
                 </Route>
             </Route>

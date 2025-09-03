@@ -59,7 +59,7 @@ function SubscriberCard({ _id }) {
                 <div className="block">
                     <button
                         className="group/btn px-3 py-2 text-black bg-[#ae7aff] focus:bg-white cursor-pointer"
-                        onClick={() => navigator(`/channel/${username}`)}
+                        onClick={() => navigator(`/channel/${username}/videos`)}
                     >
                         view channel
                     </button>

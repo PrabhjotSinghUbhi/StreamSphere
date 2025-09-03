@@ -46,17 +46,21 @@ function VideoDetailPage() {
     const { user } = useSelector((state) => state.loginUser.login_user);
     const dispatch = useDispatch();
 
+    const [isSubscribed, setIsSubscribed] = useState(
+        video?.Owner?.isSubscribed
+    );
+    const [subscriberCount, setSubscriberCount] = useState(
+        video?.Owner?.subscriberCount
+    );
+
     const handleCreateSubscription = async (channel) => {
         try {
             const resp = await subscriptionService.createSubscription(channel);
             dispatch(addSubscription(resp.payload));
-            // dispatch(updateIsSubscribed(true));
             video.Owner.isSubscribed = true;
-            // dispatch(incrementSubscriberCount());
             video.Owner.subscriberCount += 1;
-            // dispatch(incrementUserSubscribedToCount());
-            // dispatch(addSubscriberToChannel(resp.payload));
             console.log("Subscription Created", resp.payload);
+            setSubscriberCount(subscriberCount + 1);
         } catch (error) {
             console.error("Error Occurred in creating Subscription", error);
         }
@@ -65,14 +69,9 @@ function VideoDetailPage() {
     const handleDeleteSubscription = async (channel) => {
         try {
             const resp = await subscriptionService.deleteSubscription(channel);
-
-            // dispatch(updateIsSubscribed(false));
             video.Owner.isSubscribed = false;
-            // dispatch(removeSubscription(channel));
             video.Owner.subscriberCount -= 1;
-            // dispatch(decrementSubscriberCount());
-            // dispatch(decrementUserSubscribedToCount());
-            // dispatch(removeSubscriberFromChannel(user._id));
+            setSubscriberCount(subscriberCount - 1);
             console.log("Unsubscribed Successfully :: ", resp.payload);
         } catch (error) {
             console.log(
@@ -399,7 +398,7 @@ function VideoDetailPage() {
                                 </div>
                                 <div className="mt-4 flex items-center justify-between">
                                     <Link
-                                        to={`/channel/${video?.Owner?.publisher?.username}`}
+                                        to={`/channel/${video?.Owner?.publisher?.username}/videos`}
                                         className="flex items-center gap-x-4"
                                     >
                                         <div className="mt-2 h-12 w-12 shrink-0">
@@ -424,8 +423,7 @@ function VideoDetailPage() {
                                                 }
                                             </p>
                                             <p className="text-sm text-gray-400">
-                                                {video?.Owner?.subscriberCount}{" "}
-                                                Subscribers
+                                                {subscriberCount || 0} Subscribers
                                             </p>
                                         </div>
                                     </Link>
@@ -450,7 +448,7 @@ function VideoDetailPage() {
                                             {video?.Owner?.publisher?._id ===
                                             user?._id ? (
                                                 <Link
-                                                    to={`/channel/${user?.username}`}
+                                                    to={`/channel/${user?.username}/videos`}
                                                 >
                                                     View Channel
                                                 </Link>
@@ -458,10 +456,7 @@ function VideoDetailPage() {
                                                 <button
                                                     className="cursor-pointer"
                                                     onClick={() => {
-                                                        if (
-                                                            !video?.Owner
-                                                                ?.isSubscribed
-                                                        ) {
+                                                        if (isSubscribed) {
                                                             handleCreateSubscription(
                                                                 video?.Owner
                                                                     ?.publisher
@@ -476,7 +471,7 @@ function VideoDetailPage() {
                                                         }
                                                     }}
                                                 >
-                                                    {video?.Owner?.isSubscribed
+                                                    {isSubscribed
                                                         ? "Unsubscribe"
                                                         : "Subscribe"}
                                                 </button>

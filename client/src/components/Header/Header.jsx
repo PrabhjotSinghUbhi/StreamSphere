@@ -237,7 +237,7 @@ function Header() {
                         >
                             {/* Avatar Link */}
                             <Link
-                                to={`/channel/${isLoggedIn.username}`}
+                                to={`/channel/${isLoggedIn.username}/videos`}
                                 onClick={() => {
                                     dispatch(setEdit(false));
                                 }}
