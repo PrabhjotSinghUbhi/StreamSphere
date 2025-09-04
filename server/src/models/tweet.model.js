@@ -2,13 +2,10 @@ import mongoose, { Schema } from "mongoose";
 
 const tweetSchema = new Schema(
     {
-        owner: {
+        channel: {
             type: Schema.Types.ObjectId,
-            ref: "User"
-        },
-        video: {
-            type: Schema.Types.ObjectId,
-            ref: "Video"
+            ref: "User",
+            required: true
         },
         content: {
             type: String,

@@ -4,7 +4,8 @@ const commentSchema = new mongoose.Schema(
     {
         owner: {
             type: Schema.Types.ObjectId,
-            ref: "User"
+            ref: "User",
+            required: true
         },
         content: {
             type: String,
@@ -12,7 +13,8 @@ const commentSchema = new mongoose.Schema(
         },
         video: {
             type: Schema.Types.ObjectId,
-            ref: "Video"
+            ref: "Video",
+            required: true
         }
     },
     {

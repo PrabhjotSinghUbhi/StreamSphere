@@ -35,9 +35,15 @@ app.use(express.static("public/temp"));
 import userRoute from "./routes/user.route.js";
 import subs from "./routes/subs.route.js";
 import videoRoute from "./routes/video.route.js";
+import commentRoute from "./routes/comment.route.js";
+import tweetRoute from "./routes/tweet.route.js";
+import likeRoute from "./routes/like.route.js";
 //router declaration.
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/subscribe", subs);
 app.use("/api/v1/videos", videoRoute);
+app.use("/api/v1/comments", commentRoute);
+app.use("/api/v1/tweets", tweetRoute);
+app.use("/api/v1/likes", likeRoute);
 
 export { app };

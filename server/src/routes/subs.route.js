@@ -1,19 +1,15 @@
 import { Router } from "express";
 import {
-    createSubscription,
-    deleteSubscription
+    toggleSubscription,
+    getSubscribedChannels,
+    getUserChannelSubscribers
 } from "../controller/subscription.controller.js";
-import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router
-    .route("/add-subscriber/:channel")
-    .post(upload.none(), verifyJWT, createSubscription);
-
-router
-    .route("/delete-subscriber/:channel")
-    .delete(upload.none(), verifyJWT, deleteSubscription);
+router.post("/:channelId", verifyJWT, toggleSubscription);
+router.get("/:subscriberId/subscriptions", verifyJWT, getSubscribedChannels);
+router.get("/:channelId/subscribers", verifyJWT, getUserChannelSubscribers);
 
 export default router;

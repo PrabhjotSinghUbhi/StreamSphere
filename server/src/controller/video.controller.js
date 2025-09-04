@@ -317,4 +317,72 @@ const updateViewCount = asyncHandler(async (req, res) => {
     }
 });
 
-export { publishVideo, getChannelVideos, getVideo, getAllVideos, updateViewCount };
+const updateVideo = asyncHandler(async (req, res) => {
+    try {
+        const { videoId } = req.params;
+        //check for if the video exists;
+        const video = await Video.findById(videoId);
+        if (!video) {
+            throw new ApiErrors(404, "Video not found.");
+        }
+
+        const { title, description, thumbnail } = req.body;
+
+        video.title = title;
+        video.description = description;
+        video.thumbnail = thumbnail;
+
+        await video.save();
+
+        return res
+            .status(200)
+            .json(new ApiResponse(video, 200, "Video updated successfully!"));
+    } catch (error) {
+        console.log("Error updating video:", error);
+        return res
+            .status(error.statusCode || 500)
+            .json(
+                new ApiResponse(
+                    null,
+                    error.statusCode || 500,
+                    "Error updating video"
+                )
+            );
+    }
+});
+
+const deleteVideo = asyncHandler(async (req, res) => {
+    try {
+        const { videoId } = req.params;
+
+        if (!videoId) throw new ApiErrors(404, "Video Id missing...");
+
+        const video = await Video.findByIdAndDelete(videoId);
+        if (!video) throw new ApiErrors(404, "Video not found.");
+
+        return res
+            .status(200)
+            .json(new ApiResponse(video, 200, "Video deleted successfully!"));
+    } catch (error) {
+        console.log("Error deleting video:", error);
+        return res
+            .status(error.statusCode || 500)
+            .json(
+                new ApiResponse(
+                    null,
+                    error.statusCode || 500,
+                    "Error deleting video"
+                )
+            );
+    }
+});
+
+export {
+    publishVideo,
+    getChannelVideos,
+    getVideo,
+    getAllVideos,
+    updateViewCount,
+    deleteVideo,
+    updateVideo
+};

@@ -3,90 +3,107 @@ import { ApiErrors } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
-const createSubscription = asyncHandler(async (req, res) => {
+const toggleSubscription = asyncHandler(async (req, res) => {
     try {
-        //remember these are _id's of User.
-        //i don't think i need the subscriber from the req.body because the obviously the user will be the one subscribing, as i am only handling the user subscription so i don't think i need it anymore.
+        const { channelId } = req.params;
+        const subscriber = req.user._id;
 
-        const { channel } = req.params;
-        const subscriber = req?.user._id;
-
-        //we also need to check this subscription exists or not.
-        const existedRelation = await Subscription.findOne({
+        const existingSubscription = await Subscription.findOne({
             subscriber,
-            channel
+            channel: channelId
         });
 
-        if (existedRelation) {
-            throw new ApiErrors(400, "Already Subscribed.");
+        if (existingSubscription) {
+            // If subscription exists, delete it (unsubscribe)
+            await Subscription.findOneAndDelete({
+                subscriber,
+                channel: channelId
+            });
+            return res
+                .status(200)
+                .json(new ApiResponse(null, 200, "Unsubscribed Successfully"));
+        } else {
+            // If subscription does not exist, create it (subscribe)
+            const newSubscription = await Subscription.create({
+                subscriber,
+                channel: channelId
+            });
+            return res
+                .status(201)
+                .json(
+                    new ApiResponse(
+                        newSubscription,
+                        201,
+                        "Subscribed Successfully"
+                    )
+                );
         }
-
-        const createdSubscriptionDocument = await Subscription.create({
-            subscriber,
-            channel
-        });
-        console.log(createdSubscriptionDocument);
-
-        return res
-            .status(201)
-            .json(
-                new ApiResponse(
-                    createdSubscriptionDocument,
-                    201,
-                    "Subscribed Successfully"
-                )
-            );
     } catch (error) {
-        console.error("Error occurred in while subscribing :: ", error.message);
+        console.error("Error occurred while toggling subscription:", error);
         return res
             .status(500)
             .json(
                 new ApiResponse(
                     null,
                     500,
-                    error.message || "something went wrong."
+                    error.message || "Something went wrong."
                 )
             );
     }
 });
 
-const deleteSubscription = asyncHandler(async (req, res) => {
+const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     try {
-        const { channel } = req.params;
-        if (!channel) throw new ApiErrors(400, "No Channel Found.");
+        const { channelId } = req.params;
 
-        const subscriber = req?.user._id;
-
-        const findAndDeleteSubscription = await Subscription.findOneAndDelete({
-            subscriber,
-            channel
-        });
-
-        if (!findAndDeleteSubscription) {
-            throw new ApiErrors(404, "Subscription not found.");
-        }
+        const channelSubscribers = await Subscription.find({
+            channel: channelId
+        }).populate("subscriber", "username avatar");
 
         return res
             .status(200)
             .json(
                 new ApiResponse(
-                    findAndDeleteSubscription,
+                    channelSubscribers,
                     200,
-                    "Unsubscribed Successfully"
+                    "Channel Subscribers fetched successfully."
+                )
+            );
+    } catch (error) {}
+});
+
+const getSubscribedChannels = asyncHandler(async (req, res) => {
+    try {
+        const { subscriberId } = req.params;
+
+        const subscribedChannels = await Subscription.find({
+            subscriber: subscriberId
+        }).populate("channel", "name");
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    subscribedChannels,
+                    200,
+                    "Subscribed Channels fetched successfully."
                 )
             );
     } catch (error) {
-        console.log("Error Occurred in Subscription :: ", error.message);
+        console.error(
+            "Error occurred while fetching subscribed channels:",
+            error.message
+        );
         return res
             .status(error.statusCode || 500)
             .json(
                 new ApiResponse(
                     null,
-                    error.statusError || 500,
-                    "Error Occurred in Unsubscribing"
+                    error.statusCode || 500,
+                    error.message || "Something went wrong."
                 )
             );
     }
 });
 
-export { createSubscription, deleteSubscription };
+export { toggleSubscription, getUserChannelSubscribers, getSubscribedChannels };

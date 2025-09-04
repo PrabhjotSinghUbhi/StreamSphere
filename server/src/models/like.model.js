@@ -4,7 +4,8 @@ const likeSchema = new Schema(
     {
         owner: {
             type: Types.ObjectId,
-            ref: "User"
+            ref: "User",
+            required: true
         },
         comment: {
             type: Types.ObjectId,
@@ -16,7 +17,8 @@ const likeSchema = new Schema(
         },
         likedBy: {
             type: Types.ObjectId,
-            ref: "User"
+            ref: "User",
+            required: true
         },
         tweets: {
             type: Types.ObjectId,
