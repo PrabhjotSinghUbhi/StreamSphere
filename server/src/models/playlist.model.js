@@ -3,16 +3,22 @@ import mongoose, { model, Schema, Types } from "mongoose";
 const playListSchema = new Schema(
     {
         name: {
-            type: string,
+            type: String,
             required: true
         },
-        videos: {
-            type: [
-                {
-                    type: Types.ObjectId,
-                    ref: "Video"
-                }
-            ]
+        description: {
+            type: String,
+            required: true
+        },
+        videos: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Video"
+            }
+        ],
+        owner: {
+            type: Schema.Types.ObjectId,
+            ref: "User"
         }
     },
     {
