@@ -48,7 +48,9 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
 
         if (!userID) throw new ApiErrors(400, "User ID is required");
 
-        const userPlaylists = await PlayList.find({ owner: userID });
+        const userPlaylists = await PlayList.find({ owner: userID }).populate(
+            "videos"
+        );
 
         console.log("User playlists :: ", userPlaylists);
 
@@ -176,7 +178,7 @@ const deletePlaylist = asyncHandler(async (req, res) => {
             .json(
                 new ApiResponse(
                     deletePlaylist,
-                    204,
+                    203,
                     "Playlist deleted successfully."
                 )
             );
@@ -198,24 +200,36 @@ const updatePlaylist = asyncHandler(async (req, res) => {
         const { playlistId } = req.params;
         const { name, description } = req.body;
 
+        console.log("name is ", name);
+        console.log("description is ", description);
+
         if (!playlistId) throw new ApiErrors(400, "Playlist ID is required");
 
-        const updatePlaylist = await PlayList.findByIdAndUpdate(
+        const updateFields = {};
+        if (name !== undefined) updateFields.name = name?.trim() || "";
+        if (description !== undefined)
+            updateFields.description = description?.trim() || "";
+
+        if (Object.keys(updateFields).length === 0) {
+            throw new ApiErrors(
+                400,
+                "At least one field (name or description) must be provided"
+            );
+        }
+
+        const updatedPlaylist = await PlayList.findByIdAndUpdate(
             playlistId,
-            {
-                name,
-                description
-            },
+            updateFields,
             { new: true }
         );
 
-        if (!updatePlaylist) throw new ApiErrors(404, "Playlist not found");
+        if (!updatedPlaylist) throw new ApiErrors(404, "Playlist not found");
 
         return res
             .status(200)
             .json(
                 new ApiResponse(
-                    updatePlaylist,
+                    updatedPlaylist,
                     200,
                     "Playlist updated successfully"
                 )
