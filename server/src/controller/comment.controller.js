@@ -9,10 +9,10 @@ const getVideoComments = asyncHandler(async (req, res) => {
         const { videoId } = req.params;
         const { page = 1, limit = 10 } = req.query;
 
-        const comments = await Comment.find({ video: videoId })
-            .skip((page - 1) * limit)
-            .limit(limit)
-            .populate("owner", "username avatar");
+        const comments = await Comment.find({ video: videoId }).populate(
+            "owner",
+            "username avatar"
+        );
 
         return res.status(200).json(new ApiResponse(comments, 200, "Success"));
     } catch (error) {

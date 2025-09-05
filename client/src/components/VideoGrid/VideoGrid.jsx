@@ -1,9 +1,11 @@
 import React from "react";
 import VideoSmall from "../Video/VideoSmall";
 import { useSelector } from "react-redux";
+import { useFormatDuration } from "../../hooks/useFormatDuration.hook";
 
 function VideoGrid() {
     const { userVideos } = useSelector((state) => state.loginUser.login_user);
+    const { formatDuration } = useFormatDuration();
 
     return (
         <div>
@@ -15,7 +17,9 @@ function VideoGrid() {
                                 {userVideos?.map((video) => (
                                     <VideoSmall
                                         title={video.title}
-                                        duration={video.duration.toFixed(2)}
+                                        duration={formatDuration(
+                                            video.duration
+                                        )}
                                         thumbnail={video.thumbnail.url}
                                         alt={video.title}
                                         views={video.view}

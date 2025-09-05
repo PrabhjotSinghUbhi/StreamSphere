@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { videoService } from "../../service/video.service";
 import { Link } from "react-router";
+import { useFormatDuration } from "../../hooks/useFormatDuration.hook";
 
 function Home() {
     const [homeVideos, setHomeVideos] = useState([]);
+
+    const { formatDuration } = useFormatDuration();
 
     useEffect(() => {
         (async () => {
@@ -41,7 +44,9 @@ function Home() {
                                                 />
                                             </div>
                                             <span className="absolute bottom-1 right-1 inline-block rounded bg-black px-1.5 text-sm">
-                                                {video?.duration.toFixed(2)}
+                                                {formatDuration(
+                                                    video?.duration
+                                                )}
                                             </span>
                                         </div>
                                         <div className="flex gap-x-2">
@@ -57,7 +62,12 @@ function Home() {
                                             </div>
                                             <div className="w-full">
                                                 <h6 className="mb-1 font-semibold">
-                                                    {video?.title}
+                                                    {video?.title?.length > 40
+                                                        ? video?.title?.substring(
+                                                              0,
+                                                              40
+                                                          ) + "..."
+                                                        : video?.title}
                                                 </h6>
                                                 <p className="flex text-sm text-gray-200">
                                                     {video?.view} Views · 44

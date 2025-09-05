@@ -139,70 +139,116 @@ const getVideo = asyncHandler(async (req, res) => {
 
         const videoId = new mongoose.Types.ObjectId(video_id);
 
-        const video = await Video.aggregate([
-            {
-                $match: {
-                    _id: videoId
-                }
-            },
-            {
-                $lookup: {
-                    from: "users",
-                    localField: "owner",
-                    foreignField: "_id",
-                    as: "ownerOfVideoDetails"
-                }
-            },
-            {
-                $lookup: {
-                    from: "subscriptions",
-                    localField: "owner",
-                    foreignField: "channel",
-                    as: "ownerSubscribers"
-                }
-            },
-            {
-                $unwind: {
-                    path: "$ownerOfVideoDetails",
-                    preserveNullAndEmptyArrays: false
-                }
-            },
-            {
-                $addFields: {
-                    Owner: {
-                        publisher: "$ownerOfVideoDetails",
-                        subscriberCount: {
-                            $size: "$ownerSubscribers"
+        const video = await Video.aggregate(
+            [
+                {
+                    $match: {
+                        _id: videoId
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "owner",
+                        foreignField: "_id",
+                        as: "ownerOfVideoDetails"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "likes",
+                        localField: "_id",
+                        foreignField: "video",
+                        as: "likes"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "subscriptions",
+                        localField: "owner",
+                        foreignField: "channel",
+                        as: "ownerSubscribers"
+                    }
+                },
+                {
+                    $unwind: {
+                        path: "$ownerOfVideoDetails",
+                        preserveNullAndEmptyArrays: false
+                    }
+                },
+                {
+                    $addFields: {
+                        likeCount: {
+                            $size: "$likes"
                         },
-                        isSubscribed: {
+                        isLiked: {
                             $in: [
-                                req?.user?._id,
+                                "$$currentUserId",
                                 {
                                     $map: {
                                         input: {
-                                            $ifNull: ["$ownerSubscribers", []]
+                                            $ifNull: ["$likes", []]
                                         },
-                                        as: "sub",
-                                        in: "$$sub.subscriber"
+                                        as: "like",
+                                        in: "$$like.likedBy"
+                                    }
+                                }
+                            ]
+                        },
+                        Owner: {
+                            $mergeObjects: [
+                                "$ownerOfVideoDetails",
+                                {
+                                    subscriberCount: {
+                                        $size: "$ownerSubscribers"
+                                    }
+                                },
+                                {
+                                    isSubscribed: {
+                                        $in: [
+                                            "$$currentUserId",
+                                            {
+                                                $map: {
+                                                    input: {
+                                                        $ifNull: [
+                                                            "$ownerSubscribers",
+                                                            []
+                                                        ]
+                                                    },
+                                                    as: "sub",
+                                                    in: "$$sub.subscriber"
+                                                }
+                                            }
+                                        ]
                                     }
                                 }
                             ]
                         }
                     }
+                },
+                {
+                    $project: {
+                        Owner: {
+                            subscriberCount: 1,
+                            isSubscribed: 1,
+                            avatar: 1,
+                            fullName: 1,
+                            username: 1,
+                            _id: 1
+                        },
+                        duration: 1,
+                        title: 1,
+                        view: 1,
+                        description: 1,
+                        videoFile: 1,
+                        thumbnail: 1,
+                        likeCount: 1,
+                        isLiked: 1
+                    }
                 }
-            },
-            {
-                $project: {
-                    Owner: 1,
-                    duration: 1,
-                    title: 1,
-                    view: 1,
-                    description: 1,
-                    videoFile: 1,
-                    thumbnail: 1
-                }
-            }
-        ]);
+            ],
+            { let: { currentUserId: req?.user?._id } }
+        );
 
         console.log("Heres is the aggregated Video :: ", video);
 
@@ -219,7 +265,7 @@ const getVideo = asyncHandler(async (req, res) => {
             .status(error.statusCode || 500)
             .json(
                 new ApiResponse(
-                    null,
+                    error,
                     error.statusCode || 500,
                     "Error Getting the Video"
                 )

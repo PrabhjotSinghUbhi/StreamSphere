@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { upload } from "../middlewares/multer.middleware.js";
 import {
     addComment,
     deleteComment,
@@ -10,8 +11,8 @@ import {
 const router = Router();
 
 router.route("/:videoId").get(verifyJWT, getVideoComments);
-router.route("/:videoId").post(verifyJWT, addComment);
-router.route("/:commentId").patch(verifyJWT, updateComment);
-router.route("/:commentId").delete(verifyJWT, deleteComment);
+router.route("/:videoId").post(upload.none(), verifyJWT, addComment);
+router.route("/:commentId").patch(upload.none(), verifyJWT, updateComment);
+router.route("/:commentId").delete(upload.none(), verifyJWT, deleteComment);
 
 export default router;

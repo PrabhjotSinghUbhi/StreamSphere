@@ -1,6 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import { setEdit } from "../../slice/editSlice";
 import { useNavigate, useParams } from "react-router";
 import { Button } from "../ui/button";
@@ -13,27 +12,12 @@ import {
     DialogTrigger
 } from "@radix-ui/react-dialog";
 import { DialogFooter, DialogHeader } from "../ui/dialog";
-import { Label } from "@radix-ui/react-label";
-import { Input } from "../ui/input";
-import toast from "react-hot-toast";
-import {
-    addSubscription,
-    decrementUserSubscribedToCount,
-    incrementUserSubscribedToCount,
-    removeSubscription,
-    updateAvatar
-} from "../../slice/userSlice";
-import { Skeleton } from "../ui/skeleton";
+
 import { useDispatch, useSelector } from "react-redux";
-import { userService } from "../../service/user.service";
 import { Pencil } from "lucide-react";
-import { subscriptionService } from "../../service/subscription.service";
 import {
-    addSubscriberToChannel,
-    decrementSubscriberCount,
-    incrementSubscriberCount,
-    removeSubscriberFromChannel,
-    updateIsSubscribed
+    toggleIsSubscribed,
+    toggleSubscription
 } from "../../slice/channelSlice";
 
 function ChannelUserAvatar() {
@@ -51,38 +35,6 @@ function ChannelUserAvatar() {
     const isMyChannel = user.username == params.username;
 
     const [imageUrl, setImageUrl] = useState(null);
-
-    const handleCreateSubscription = async (channel) => {
-        try {
-            const resp = await subscriptionService.createSubscription(channel);
-            dispatch(addSubscription(resp.payload));
-            dispatch(updateIsSubscribed(true));
-            dispatch(incrementSubscriberCount());
-            dispatch(incrementUserSubscribedToCount());
-            dispatch(addSubscriberToChannel(resp.payload));
-            console.log("Subscription Created", resp.payload);
-        } catch (error) {
-            console.error("Error Occurred in creating Subscription", error);
-        }
-    };
-
-    const handleDeleteSubscription = async (channel) => {
-        try {
-            const resp = await subscriptionService.deleteSubscription(channel);
-
-            dispatch(updateIsSubscribed(false));
-            dispatch(removeSubscription(channel));
-            dispatch(decrementSubscriberCount());
-            dispatch(decrementUserSubscribedToCount());
-            dispatch(removeSubscriberFromChannel(user._id));
-            console.log("Unsubscribed Successfully :: ", resp.payload);
-        } catch (error) {
-            console.log(
-                "Error Occurred in deleting the subscription :: ",
-                error
-            );
-        }
-    };
 
     if (!user) {
         return null;
@@ -110,11 +62,8 @@ function ChannelUserAvatar() {
                 </span>
                 <button
                     onClick={() => {
-                        if (!channelInfo?.isSubscribed) {
-                            handleCreateSubscription(channelInfo?._id);
-                        } else {
-                            handleDeleteSubscription(channelInfo?._id);
-                        }
+                        dispatch(toggleSubscription(channelInfo._id));
+                        dispatch(toggleIsSubscribed());
                     }}
                 >
                     {channelInfo?.isSubscribed ? "Unsubscribe" : "Subscribe"}
@@ -155,7 +104,7 @@ function ChannelUserAvatar() {
                 className="group/btn mr-1 flex w-full items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto"
                 onClick={() => {
                     dispatch(setEdit(false));
-                    navigator(``);
+                    navigator(`videos`);
                 }}
             >
                 <Pencil size={20} />
@@ -164,25 +113,25 @@ function ChannelUserAvatar() {
         );
     }
 
-    const handleAvatarUpdate = async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const avatar = formData.get("avatar");
+    // const handleAvatarUpdate = async (e) => {
+    //     e.preventDefault();
+    //     const formData = new FormData(e.target);
+    //     const avatar = formData.get("avatar");
 
-        if (!avatar || (avatar instanceof File && avatar.size === 0)) {
-            toast.error("New Avatar in required.");
-            throw new Error("New Avatar is Required prince.");
-        }
+    //     if (!avatar || (avatar instanceof File && avatar.size === 0)) {
+    //         toast.error("New Avatar in required.");
+    //         throw new Error("New Avatar is Required prince.");
+    //     }
 
-        try {
-            const resp = await userService.updateUserAvatar(formData);
+    //     try {
+    //         const resp = await userService.updateUserAvatar(formData);
 
-            console.log("User Avatar Updated Successfully :: ", resp.data);
-            dispatch(updateAvatar(resp.payload.user.avatar.url));
-        } catch (error) {
-            console.log("Error in updating avatar :: ", error);
-        }
-    };
+    //         console.log("User Avatar Updated Successfully :: ", resp.data);
+    //         dispatch(updateAvatar(resp.payload.user.avatar.url));
+    //     } catch (error) {
+    //         console.log("Error in updating avatar :: ", error);
+    //     }
+    // };
 
     return (
         <div>
@@ -213,7 +162,7 @@ function ChannelUserAvatar() {
                                     </Button>
                                 </DialogTrigger>
                                 <DialogContent className="fixed lg:top-[25%] md:left-[30%] md:top-[30%] sm:top-[30%] sm:left-[25%] right-[5%] left-[5%]  lg:left-[40%] rounded-xl p-5 bg-neutral-800 sm:max-w-[425px] z-50">
-                                    <form onSubmit={handleAvatarUpdate}>
+                                    <form>
                                         <DialogHeader className="space-y-1">
                                             <DialogTitle className="text-xl font-semibold">
                                                 Edit Profile
@@ -323,15 +272,7 @@ function ChannelUserAvatar() {
                         @{isMyChannel ? user.username : channelInfo?.username}
                     </p>
                     <p className="text-sm text-gray-400">
-                        {`Subscribers . ${
-                            isMyChannel
-                                ? userChannelDetails?.subscriberCount || 0
-                                : channelInfo?.subscriberCount || 0
-                        }  Subscribed . ${
-                            isMyChannel
-                                ? userChannelDetails?.channelsSubscribedTo
-                                : channelInfo?.channelsSubscribedTo
-                        }`}
+                        {`Subscribers . ${channelInfo?.subscriberCount}  Subscribed . ${channelInfo?.channelsSubscribedTo}`}
                     </p>
                 </div>
                 <div className="inline-block">

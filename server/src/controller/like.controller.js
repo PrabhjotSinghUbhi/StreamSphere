@@ -5,6 +5,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
     try {
+        console.log("Request Params:", req.params);
         const { videoId } = req.params;
         const { videoOwnerId } = req.params;
         const user = req.user._id;

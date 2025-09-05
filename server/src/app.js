@@ -33,7 +33,7 @@ app.use(express.static("public/temp"));
 
 //import routers
 import userRoute from "./routes/user.route.js";
-import subs from "./routes/subs.route.js";
+import subs from "./routes/subscription.route.js";
 import videoRoute from "./routes/video.route.js";
 import commentRoute from "./routes/comment.route.js";
 import tweetRoute from "./routes/tweet.route.js";

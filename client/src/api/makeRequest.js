@@ -17,8 +17,6 @@ async function makeRequest(fn, options = {}) {
 
         const res = await fn();
 
-        console.log("Response is makeRequest :: ", res.data);
-
         if (loadingToast) {
             toast.dismiss(loadingToast);
             clearTimeout(timeId);

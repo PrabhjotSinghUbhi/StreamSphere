@@ -7,6 +7,7 @@ export const videoService = {
             successMessage: "Published Successfully!"
         });
     },
+
     getChannelVideo: (username) => {
         return makeRequest(
             () => api.get(`/videos/get-channel-videos/${username}`),
@@ -15,14 +16,17 @@ export const videoService = {
             }
         );
     },
+
     getVideoDetails: (video_id) => {
         return makeRequest(() => api.get(`/videos/v/${video_id}`), {
             successMessage: "Got the Video."
         });
     },
+
     getHomeVideos: () => {
         return makeRequest(() => api.get("/videos/get-all-videos"));
     },
+    
     incrementVideoCount: (video_id) => {
         return makeRequest(
             () => api.post(`/videos/v/${video_id}/increment-views`),

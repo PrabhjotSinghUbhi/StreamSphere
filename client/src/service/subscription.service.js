@@ -2,21 +2,17 @@ import { api } from "../api/api";
 import { makeRequest } from "../api/makeRequest";
 
 export const subscriptionService = {
-    createSubscription: (channel) => {
-        return makeRequest(
-            () => api.post(`subscribe/add-subscriber/${channel}`),
-            {
-                successMessage: "Subscribed"
-            }
-        );
+    toggleSubscription: (channelId) => {
+        return makeRequest(() => api.post(`/subscribe/${channelId}`), {
+            successMessage: "Subscription updated"
+        });
     },
-
-    deleteSubscription: (channel) => {
-        return makeRequest(
-            () => api.delete(`/subscribe/delete-subscriber/${channel}`),
-            {
-                successMessage: "Unsubscribed"
-            }
+    getSubscriptions: (userId) => {
+        return makeRequest(() => api.get(`/subscribe/${userId}/subscriptions`));
+    },
+    getSubscribers: (channelId) => {
+        return makeRequest(() =>
+            api.get(`/subscribe/${channelId}/subscribers`)
         );
     }
 };
