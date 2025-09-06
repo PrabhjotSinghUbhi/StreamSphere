@@ -726,11 +726,21 @@ const addToWatchHistory = asyncHandler(async (req, res) => {
         const user = await User.findById(req.user._id);
         if (!user) throw new ApiErrors(404, "User not found.");
 
-        // Prevent duplicate entries
-        if (!user.watchHistory.includes(videoId)) {
-            user.watchHistory.push(videoId);
-            await user.save();
+        // Remove the video if it already exists in history
+        user.watchHistory = user.watchHistory.filter(
+            (id) => id.toString() !== videoId
+        );
+
+        // Add the video at the start of the array
+        user.watchHistory.unshift(videoId);
+
+        // Optional: Limit watch history to last N videos (e.g., 50)
+        const MAX_HISTORY = 50;
+        if (user.watchHistory.length > MAX_HISTORY) {
+            user.watchHistory = user.watchHistory.slice(0, MAX_HISTORY);
         }
+
+        await user.save();
 
         return res
             .status(200)

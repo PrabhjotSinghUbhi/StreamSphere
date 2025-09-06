@@ -189,9 +189,12 @@ const getLikedVideos = asyncHandler(async (req, res) => {
             throw new ApiErrors(404, "No liked videos found for this user");
         }
 
+        const reverseLikedVideos = likedVideos.toReversed();
+        console.log("Liked Videos:", reverseLikedVideos);
+
         return res
             .status(200)
-            .json(new ApiResponse(likedVideos, 200, "Success"));
+            .json(new ApiResponse(reverseLikedVideos, 200, "Success"));
     } catch (error) {
         return res
             .status(500)
