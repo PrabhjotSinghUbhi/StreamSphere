@@ -29,5 +29,18 @@ export const userService = {
 
     getUserChannel: (username) => {
         return makeRequest(() => api.get(`users/c/${username}`));
+    },
+
+    getUserHistory: () => {
+        return makeRequest(() => api.get("/users/watch-history"), {
+            errorMessage: "Failed to fetch watch history",
+            successMessage: "Watch history fetched successfully"
+        });
+    },
+
+    addVideoToHistory: (videoId) => {
+        return makeRequest(() =>
+            api.post(`/users/add-to-watch-history/${videoId}`)
+        );
     }
 };

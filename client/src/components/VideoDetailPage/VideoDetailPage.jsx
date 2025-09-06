@@ -15,6 +15,8 @@ import {
 import Video from "../VideoComponent/Video";
 import VideoDetailComp from "../VideoDetailComp/VideoDetailComp";
 import ListComments from "../VideoComments/ListComments";
+import { useFormatDuration } from "../../hooks/useFormatDuration.hook";
+import { addVideoToHistory } from "../../slice/watchHistorySlice";
 
 function VideoDetailPage() {
     const { video_id } = useParams();
@@ -26,12 +28,18 @@ function VideoDetailPage() {
                 dispatch(fetchVideoById(video_id));
                 dispatch(apiIncrementVideoViewCount(video_id));
                 dispatch(incrementVideoViewCount());
+                dispatch(addVideoToHistory(video_id));
             }
         })();
     }, [video_id]);
 
     const video = useSelector((state) => state.currentVideo.currentVideo);
     const { user } = useSelector((state) => state.loginUser.login_user);
+
+    const { homeVideos } = useSelector((state) => state.homeVideos);
+    const { formatDuration } = useFormatDuration();
+
+    const suggestedVideos = homeVideos.filter((vid) => vid?._id !== video_id);
 
     return (
         <div className="h-screen overflow-y-auto bg-[#121212] text-white">
@@ -48,7 +56,7 @@ function VideoDetailPage() {
                             <ListComments />
                         </div>
                         <div className="col-span-12 flex w-full shrink-0 flex-col gap-3 lg:w-[350px] xl:w-[400px]">
-                            {/* {allVideos?.map((vid) => (
+                            {suggestedVideos?.map((vid) => (
                                 <Link
                                     key={vid._id}
                                     to={`/video/${vid?._id}`}
@@ -58,7 +66,10 @@ function VideoDetailPage() {
                                         <div className="w-full pt-[56%]">
                                             <div className="absolute inset-0">
                                                 <img
-                                                    src={vid?.thumbnail?.url}
+                                                    src={
+                                                        vid?.thumbnail?.url ||
+                                                        "https://placehold.co/600x400"
+                                                    }
                                                     alt={
                                                         vid?.title ||
                                                         "Video thumbnail"
@@ -69,10 +80,8 @@ function VideoDetailPage() {
                                             <span className="absolute bottom-1 right-1 inline-block rounded bg-black px-1.5 text-sm">
                                                 {typeof vid?.duration ===
                                                 "number"
-                                                    ? htmlFormatDuration(
-                                                          vid.duration.toFixed(
-                                                              2
-                                                          )
+                                                    ? formatDuration(
+                                                          vid?.duration
                                                       )
                                                     : "0.00"}
                                             </span>
@@ -108,7 +117,7 @@ function VideoDetailPage() {
                                         </div>
                                     </div>
                                 </Link>
-                            ))} */}
+                            ))}
                         </div>
                     </div>
                 </section>

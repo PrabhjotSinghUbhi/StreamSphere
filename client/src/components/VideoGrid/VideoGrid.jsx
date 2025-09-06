@@ -24,6 +24,7 @@ function VideoGrid() {
                                         alt={video.title}
                                         views={video.view}
                                         videoId={video._id}
+                                        createdAt={video.createdAt}
                                         key={video._id}
                                     />
                                 ))}

@@ -1,13 +1,8 @@
 import { Label } from "@radix-ui/react-label";
-import React from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
 import toast from "react-hot-toast";
-import { Form } from "react-router";
 import { userService } from "../../service/user.service";
-import { Error } from "mongoose";
 import { updateFullName } from "../../slice/userSlice";
 
 function EditPersonalInfo() {

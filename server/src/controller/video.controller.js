@@ -243,7 +243,9 @@ const getVideo = asyncHandler(async (req, res) => {
                         videoFile: 1,
                         thumbnail: 1,
                         likeCount: 1,
-                        isLiked: 1
+                        isLiked: 1,
+                        createdAt: 1,
+                        updatedAt: 1
                     }
                 }
             ],
@@ -303,7 +305,9 @@ const getAllVideos = asyncHandler(async (req, res) => {
                     view: 1,
                     description: 1,
                     videoFile: 1,
-                    thumbnail: 1
+                    thumbnail: 1,
+                    createdAt: 1,
+                    updatedAt: 1
                 }
             }
         ]);

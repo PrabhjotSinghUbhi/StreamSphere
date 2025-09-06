@@ -1,8 +1,10 @@
 /* eslint-disable no-irregular-whitespace */
 import React from "react";
 import { Link } from "react-router";
+import { useFormatDuration } from "../../hooks/useFormatDuration.hook";
 
-function VideoSmall({ duration, thumbnail, alt, title, views, videoId }) {
+function VideoSmall({ duration, thumbnail, alt, title, views, videoId, createdAt }) {
+    const { formatTime } = useFormatDuration();
     return (
         <Link to={`/video/${videoId}`} className="w-full">
             <div className="relative mb-2 w-full pt-[56%]">
@@ -15,7 +17,7 @@ function VideoSmall({ duration, thumbnail, alt, title, views, videoId }) {
             </div>
             <h6 className="mb-1 font-semibold">{title}</h6>
             <p className="flex text-sm text-gray-200">
-                {views} Views · 44 minutes ago
+                {views} Views · {formatTime(createdAt)}
             </p>
         </Link>
     );

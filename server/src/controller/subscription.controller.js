@@ -58,7 +58,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 
         const channelSubscribers = await Subscription.find({
             channel: channelId
-        }).populate("subscriber", "username avatar");
+        }).populate("subscriber", "username avatar fullName");
 
         return res
             .status(200)
@@ -69,7 +69,17 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
                     "Channel Subscribers fetched successfully."
                 )
             );
-    } catch (error) {}
+    } catch (error) {
+        return res
+            .status(error.statusCode || 500)
+            .json(
+                new ApiResponse(
+                    null,
+                    error.statusCode || 500,
+                    error.message || "Something went wrong."
+                )
+            );
+    }
 });
 
 const getSubscribedChannels = asyncHandler(async (req, res) => {

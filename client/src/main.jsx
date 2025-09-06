@@ -40,7 +40,10 @@ import {
     EditVideoPopUp,
     DeleteVideoPopUp,
     PrivacyPolicyPage,
-    TermsAndCondition
+    TermsAndCondition,
+    LikedVideosPage,
+    SubscriberList,
+    WatchHistoryPage
 } from "./components/index.js";
 import { Provider } from "react-redux";
 import store from "./store/store.js";
@@ -51,6 +54,9 @@ const route = createBrowserRouter(
         <Route path="/" element={<App />}>
             <Route path="/" element={<Layout />}>
                 <Route path="/" element={<Home />}></Route>
+                <Route path="/liked-videos" element={<LikedVideosPage />} />
+                <Route path="/subscribers" element={<SubscriberList />} />
+                <Route path="/watch-history" element={<WatchHistoryPage />} />
                 <Route path="/video/:video_id" element={<VideoDetailPage />} />
                 <Route path="channel/:username" element={<ChannelPage />}>
                     <Route

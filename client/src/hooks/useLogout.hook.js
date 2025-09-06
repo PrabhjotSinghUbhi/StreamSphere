@@ -9,8 +9,7 @@ export function useLogout() {
             console.log("Logout Hook Called");
 
             const response = await authService.logout();
-
-            navigator("/");
+            navigator("/login");
             console.log("response in logout hook :: ", response);
         } catch (error) {
             console.log("Error Occurred in Logout :: ", error);

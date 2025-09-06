@@ -44,6 +44,8 @@ const addComment = asyncHandler(async (req, res) => {
             video: videoId
         });
 
+        await newComment.populate("owner", "username avatar");
+
         return res
             .status(201)
             .json(

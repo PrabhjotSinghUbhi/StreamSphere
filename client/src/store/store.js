@@ -15,6 +15,10 @@ import storage from "redux-persist/lib/storage";
 import channelReducer from "../slice/channelSlice.js";
 import videoReducer from "../slice/videoSlice.js";
 import commentReducer from "../slice/commentSlice.js";
+import likeVideosReducer from "../slice/likeVideosSlice.js";
+import homeVideosReducer from "../slice/homeVideosSlice.js";
+import subscriberListReducer from "../slice/subscriberListSlice.js";
+import watchHistoryReducer from "../slice/watchHistorySlice.js";
 
 //1. configure reducer.
 const persistConfig = {
@@ -38,7 +42,11 @@ const store = configureStore({
         loginUser: persistedUser,
         channelInfo: channelReducer,
         currentVideo: videoReducer,
-        comments: commentReducer
+        comments: commentReducer,
+        likedVideos: likeVideosReducer,
+        homeVideos: homeVideosReducer,
+        subscriberList: subscriberListReducer,
+        watchHistory: watchHistoryReducer
     },
     devTools: {
         name: "my shadcn stream sphere."

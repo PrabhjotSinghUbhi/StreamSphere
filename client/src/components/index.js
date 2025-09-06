@@ -36,6 +36,16 @@ import DeleteVideoPopUp from "./DeleteVideoPopUp/DeleteVideoPopUp.jsx";
 import PrivacyPolicyPage from "./PrivacyPolicyPage/PrivacyPolicyPage.jsx";
 import TermsAndCondition from "./TermsAndConditions/TermsAndCondition.jsx";
 import Logout from "./Logout/Logout.jsx";
+import CommentInput from "./VideoComments/CommentInput.jsx";
+import ListComments from "./VideoComments/ListComments.jsx";
+import SingleComment from "./VideoComments/SingleComment.jsx";
+import Video from "./VideoComponent/Video.jsx";
+import VideoDetailComp from "./VideoDetailComp/VideoDetailComp.jsx";
+import VideoSmall from "./Video/VideoSmall.jsx";
+import VideoGrid from "./VideoGrid/VideoGrid.jsx";
+import LikedVideosPage from "./LikedVideosPage/LikedVideosPage.jsx";
+import SubscriberList from "./SubscriberList/SubscriberList.jsx";
+import WatchHistoryPage from "./WatchHistoryPage/WatchHistoryPage.jsx";
 
 export {
     Header,
@@ -75,5 +85,15 @@ export {
     DeleteVideoPopUp,
     PrivacyPolicyPage,
     TermsAndCondition,
-    Logout
+    Logout,
+    CommentInput,
+    ListComments,
+    SingleComment,
+    Video,
+    VideoDetailComp,
+    VideoSmall,
+    VideoGrid,
+    LikedVideosPage,
+    SubscriberList,
+    WatchHistoryPage
 };

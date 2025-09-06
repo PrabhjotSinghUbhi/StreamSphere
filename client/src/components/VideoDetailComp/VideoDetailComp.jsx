@@ -8,6 +8,7 @@ import {
     toggleVideoIsSubscribed
 } from "../../slice/videoSlice";
 import { Link } from "react-router";
+import { useFormatDuration } from "../../hooks/useFormatDuration.hook";
 
 function VideoDetailComp({ video_id, video, user }) {
     const dispatch = useDispatch();
@@ -50,27 +51,7 @@ function VideoDetailComp({ video_id, video, user }) {
         }
     };
 
-    const formatViews = (views) => {
-        if (!views) return "0";
-        if (views >= 1000000) {
-            return `${(views / 1000000).toFixed(1)}M`;
-        }
-        if (views >= 1000) {
-            return `${(views / 1000).toFixed(1)}K`;
-        }
-        return views.toString();
-    };
-
-    const formatSubscribers = (count) => {
-        if (!count) return "0";
-        if (count >= 1000000) {
-            return `${(count / 1000000).toFixed(1)}M`;
-        }
-        if (count >= 1000) {
-            return `${(count / 1000).toFixed(1)}K`;
-        }
-        return count.toString();
-    };
+    const { formatViews, formatSubscribers, formatTime   } = useFormatDuration();
 
     return (
         <div>
@@ -85,7 +66,10 @@ function VideoDetailComp({ video_id, video, user }) {
                             {video?.title || "Untitled Video"}
                         </h1>
                         <p className="flex text-sm text-gray-200">
-                            {formatViews(video?.view || 0)} Views · 18 hours ago
+                            {formatViews(video?.view || 0)} Views ·{" "}
+                            {video?.createdAt
+                                ? formatTime(video?.createdAt)
+                                : "Unknown date"}
                         </p>
                     </div>
                     <div className="w-full md:w-1/2 lg:w-full xl:w-1/2">
@@ -99,7 +83,11 @@ function VideoDetailComp({ video_id, video, user }) {
                                     }`}
                                     onClick={handleLike}
                                     disabled={isLiking}
-                                    aria-label={video?.isLiked ? "Unlike video" : "Like video"}
+                                    aria-label={
+                                        video?.isLiked
+                                            ? "Unlike video"
+                                            : "Like video"
+                                    }
                                 >
                                     <span
                                         className={`inline-block w-5 transition-all duration-300 ${
@@ -380,7 +368,10 @@ function VideoDetailComp({ video_id, video, user }) {
                                 {video?.Owner?.fullName || "Unknown User"}
                             </p>
                             <p className="text-sm text-gray-400">
-                                {formatSubscribers(video?.Owner?.subscriberCount || 0)} Subscribers
+                                {formatSubscribers(
+                                    video?.Owner?.subscriberCount || 0
+                                )}{" "}
+                                Subscribers
                             </p>
                         </div>
                     </Link>
@@ -393,8 +384,14 @@ function VideoDetailComp({ video_id, video, user }) {
                                     ? "bg-gray-600 text-white hover:bg-gray-500"
                                     : "bg-[#ae7aff] text-black hover:bg-[#9c5de5]"
                             }`}
-                            disabled={isSubscribing || video?.Owner?._id === user?._id}
-                            onClick={video?.Owner?._id === user?._id ? undefined : handleSubscribe}
+                            disabled={
+                                isSubscribing || video?.Owner?._id === user?._id
+                            }
+                            onClick={
+                                video?.Owner?._id === user?._id
+                                    ? undefined
+                                    : handleSubscribe
+                            }
                         >
                             <span className="inline-block w-5">
                                 <svg
@@ -413,27 +410,38 @@ function VideoDetailComp({ video_id, video, user }) {
                                 </svg>
                             </span>
                             {video?.Owner?._id === user?._id ? (
-                                <Link to={`/channel/${user?.username}/videos`} className="text-inherit no-underline">
+                                <Link
+                                    to={`/channel/${user?.username}/videos`}
+                                    className="text-inherit no-underline"
+                                >
                                     View Channel
                                 </Link>
                             ) : isSubscribing ? (
                                 "Processing..."
+                            ) : video?.Owner?.isSubscribed ? (
+                                "Unsubscribe"
                             ) : (
-                                video?.Owner?.isSubscribed
-                                    ? "Unsubscribe"
-                                    : "Subscribe"
+                                "Subscribe"
                             )}
                         </button>
                     </div>
                 </div>
                 <hr className="my-4 border-gray-700" />
-                <div className={`overflow-hidden transition-all duration-300 ${isDescriptionExpanded ? 'h-auto' : 'h-5'}`}>
+                <div
+                    className={`overflow-hidden transition-all duration-300 ${
+                        isDescriptionExpanded ? "h-auto" : "h-5"
+                    }`}
+                >
                     <p className="text-sm text-gray-300">
-                        {video?.description ? `🚀 ${video.description}` : "No description available."}
+                        {video?.description
+                            ? `🚀 ${video.description}`
+                            : "No description available."}
                     </p>
                     {video?.description && video.description.length > 100 && (
                         <button
-                            onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                            onClick={() =>
+                                setIsDescriptionExpanded(!isDescriptionExpanded)
+                            }
                             className="mt-2 text-[#ae7aff] hover:text-[#9c5de5] transition-colors text-sm font-medium"
                         >
                             {isDescriptionExpanded ? "Show less" : "Show more"}

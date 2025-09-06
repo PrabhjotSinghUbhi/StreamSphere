@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
 import {
+    addToWatchHistory,
     changeCurrentPassword,
     getCurrentUser,
     getUserById,
@@ -64,5 +65,6 @@ router
     .get(upload.none(), verifyJWT, getUserChannelProfile);
 
 router.route("/watch-history").get(verifyJWT, getWatchHistory);
+router.route("/add-to-watch-history/:videoId").post(verifyJWT, addToWatchHistory);
 
 export default router;

@@ -685,58 +685,74 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 });
 
 const getWatchHistory = asyncHandler(async (req, res) => {
-    const user = await User.aggregate([
-        {
-            $match: {
-                _id: new mongoose.Types.ObjectId.createFromHexString(
-                    req?.user?._id
-                )
-            }
-        },
-        {
-            $lookup: {
-                from: "videos",
-                localField: "watchHistory",
-                foreignField: "watchHistory",
-                pipeline: [
-                    {
-                        $lookup: {
-                            from: "users",
-                            localField: "Owner",
-                            foreignField: "_id",
-                            as: "Owner",
-                            pipeline: [
-                                {
-                                    $project: {
-                                        fullName: 1,
-                                        avatar: 1,
-                                        username: 1
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        $addFields: {
-                            owner: {
-                                $first: "$owner"
-                            }
-                        }
-                    }
-                ]
-            }
-        }
-    ]);
+    const userWithWatchHistory = await User.findById(req.user._id)
+        .select("watchHistory")
+        .populate("watchHistory");
+
+    console.log(userWithWatchHistory);
+
+    if (!userWithWatchHistory) {
+        throw new ApiErrors(404, "User not found.");
+    }
+
+    const populatedWatchHistory = await User.populate(userWithWatchHistory, {
+        path: "watchHistory",
+        populate: { path: "owner", select: "username fullName avatar" }
+    });
+
+    const finalHistory = populatedWatchHistory.watchHistory.reverse();
 
     return res
         .status(200)
         .json(
             new ApiResponse(
-                user[0].watchHistory,
+                finalHistory,
                 200,
                 "Fetched Watched History Successfully."
             )
         );
+});
+
+const addToWatchHistory = asyncHandler(async (req, res) => {
+    try {
+        const { videoId } = req.params;
+        if (!videoId) throw new ApiErrors(400, "Video ID is required.");
+
+        // Validate videoId as ObjectId
+        if (!mongoose.Types.ObjectId.isValid(videoId)) {
+            throw new ApiErrors(400, "Invalid Video ID.");
+        }
+
+        const user = await User.findById(req.user._id);
+        if (!user) throw new ApiErrors(404, "User not found.");
+
+        // Prevent duplicate entries
+        if (!user.watchHistory.includes(videoId)) {
+            user.watchHistory.push(videoId);
+            await user.save();
+        }
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    user,
+                    200,
+                    "Video added to watch history successfully."
+                )
+            );
+    } catch (error) {
+        console.error("Error occurred while adding to watch history:", error);
+        return res
+            .status(500)
+            .json(
+                new ApiResponse(
+                    null,
+                    500,
+                    error.message || "Something went wrong."
+                )
+            );
+    }
 });
 
 export {
@@ -751,5 +767,6 @@ export {
     getUserChannelProfile,
     getWatchHistory,
     updateUserCoverImage,
-    getUserById
+    getUserById,
+    addToWatchHistory
 };
