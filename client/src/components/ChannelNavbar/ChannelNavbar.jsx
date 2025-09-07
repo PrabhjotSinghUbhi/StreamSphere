@@ -1,8 +1,7 @@
 import React from "react";
-import { NavLink, useParams } from "react-router";
+import { NavLink } from "react-router";
 
 function ChannelNavbar() {
-    const { username } = useParams();
     return (
         <div>
             <ul className=" top-[66px] z-[2] flex flex-row gap-x-2  overflow-auto border-b-2 border-gray-400 bg-[#121212] py-2 sm:top-[82px]">
