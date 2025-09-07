@@ -24,14 +24,7 @@ const likeVideosSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(fetchLikedVideos.fulfilled, (state, action) => {
-                console.log(
-                    "ACTION PAYLOAD __ Fetched liked videos:",
-                    action.payload
-                );
                 state.likedVideos = action.payload;
-            })
-            .addCase(fetchLikedVideos.pending, () => {
-                console.log("Fetching liked videos...");
             })
             .addCase(fetchLikedVideos.rejected, (state, action) => {
                 console.error("Failed to fetch liked videos:", action.payload);

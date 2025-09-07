@@ -11,7 +11,6 @@ const editSlice = createSlice({
         setEdit: (state, action) => {
             state.edit = action.payload;
             // You can add more logic here if needed
-            console.log("Edit state changed to:", state.edit);
             
         }
     }

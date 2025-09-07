@@ -12,7 +12,6 @@ function ListComments() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        console.log("Fetching comments for video ID:", video_id);
         dispatch(fetchCurrentVideoComments(video_id));
     }, [video_id, dispatch]);
 

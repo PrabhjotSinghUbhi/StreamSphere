@@ -24,7 +24,7 @@ function ChannelPage() {
                     dispatch(fetchChannelInfo(params.username));
                 }
             } catch (error) {
-                console.log("Error in fetching the channel info :: ", error);
+                console.error("Error in fetching the channel info :: ", error);
             } finally {
                 setLoading(false);
             }

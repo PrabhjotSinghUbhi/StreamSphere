@@ -48,14 +48,11 @@ export const likeAVideo = createAsyncThunk(
     async ({ videoOwnerId, videoId }, { rejectWithValue }) => {
         try {
             const response = await likeService.likeVideo(videoOwnerId, videoId);
-            console.log("Like Video Response:", response);
             return response.payload;
         } catch (error) {
             console.error("Failed to like video:", error);
             console.error("Here are the fields:", videoOwnerId, videoId);
             return rejectWithValue(error.response.data || "Error liking video");
-        } finally {
-            console.log("Like video thunk completed.", videoOwnerId, videoId);
         }
     }
 );
@@ -108,17 +105,9 @@ const videoSlice = createSlice({
                 console.error("Failed to fetch video:", action.payload);
             });
 
-        builder
-            .addCase(likeAVideo.fulfilled, (state, action) => {
-                console.log("Like Video Fulfilled:", action.payload);
-            })
-            .addCase(likeAVideo.pending, (state, action) => {
-                console.log("Like Video Pending:", action.payload);
-            })
-            .addCase(likeAVideo.rejected, (state, action) => {
-                console.log("Like Video Rejected:", state.currentVideo);
-                console.error("Failed to like video:", action.payload);
-            });
+        builder.addCase(likeAVideo.rejected, (state, action) => {
+            console.error("Failed to like video:", action.payload);
+        });
     }
 });
 

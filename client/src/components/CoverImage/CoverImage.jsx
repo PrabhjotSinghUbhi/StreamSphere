@@ -46,12 +46,11 @@ function CoverImage() {
 
         try {
             const resp = await userService.updateCoverImage(formData);
-            console.log("CoverImage updated successfully.", resp);
 
             setStatusButton(true);
             dispatch(updateCover(resp.payload.user.coverImage.url));
         } catch (error) {
-            console.log("ERROR updating cover image :: ", error);
+            console.error("ERROR updating cover image :: ", error);
         }
     };
 

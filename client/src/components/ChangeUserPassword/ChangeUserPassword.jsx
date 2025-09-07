@@ -27,7 +27,6 @@ function ChangeUserPassword() {
         try {
             const resp = await userService.changePassword(formData);
 
-            console.log("Password Changed Successfully :: ", resp);
             logout();
         } catch (error) {
             console.error("Error in Updating password :: ", error);

@@ -36,8 +36,6 @@ const userSlice = createSlice({
             state.userChannelDetails = null;
         },
         updateFullName: (state, action) => {
-            console.log("update fullName got called", action.payload);
-
             state.user.fullName = action.payload;
         },
         addSubscription: (state, action) => {

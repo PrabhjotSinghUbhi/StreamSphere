@@ -15,7 +15,6 @@ api.interceptors.response.use(
     async (error) => {
         //save the error response for retry.
         const originalRequestResponse = error.config;
-        console.log("Error Intercepted.");
 
         //handles unauthorized request errors.
         if (error.response?.status === 401 && !originalRequestResponse._retry) {
@@ -26,13 +25,8 @@ api.interceptors.response.use(
             console.error("Error caught by the Interceptor :: ", error);
 
             try {
-                console.log("Interceptor sending request.");
+                
                 const resp = await api.post(`/users/refresh-token`);
-
-                console.log(
-                    "Access Token Refreshed successfully :: ",
-                    resp.data
-                );
 
                 return api(originalRequestResponse);
             } catch (error) {

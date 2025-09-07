@@ -26,7 +26,6 @@ function Register() {
         const formData = new FormData(e.target);
         try {
             const response = await authService.register(formData);
-            console.log("User Registered SuccessFully:", response.data);
             navigator("/login"); // Redirect to login after successful registration
         } catch (error) {
             console.error("User Register Successfully", error);

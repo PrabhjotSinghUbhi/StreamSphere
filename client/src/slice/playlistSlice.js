@@ -22,7 +22,6 @@ const playlistSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(fetchPlayList.fulfilled, (state, action) => {
-                console.log("Fetched playlist:", action.payload);
                 state.loading = false;
                 state.playlist = action.payload;
             })

@@ -9,7 +9,6 @@ import { videoService } from "../../service/video.service.js";
 
 function MyChannelVideoPage() {
     const loginUser = useSelector((state) => state.loginUser.login_user);
-    console.log("loginUser:", loginUser);
     const { userVideos = [] } = loginUser;
     const params = useParams();
     const dispatch = useDispatch();
@@ -20,10 +19,9 @@ function MyChannelVideoPage() {
                 const resp = await videoService.getChannelVideo(
                     params.username
                 );
-                console.log("Got the Videos :: ", resp);
                 dispatch(userChannelVideos(resp.payload));
             } catch (error) {
-                console.log("Error in Fetching the channel :: ", error);
+                console.error("Error in Fetching the channel :: ", error);
             }
         })();
     }, []);

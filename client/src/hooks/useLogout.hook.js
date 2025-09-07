@@ -6,13 +6,10 @@ export function useLogout() {
 
     return async function () {
         try {
-            console.log("Logout Hook Called");
-
-            const response = await authService.logout();
+            await authService.logout();
             navigator("/login");
-            console.log("response in logout hook :: ", response);
         } catch (error) {
-            console.log("Error Occurred in Logout :: ", error);
+            console.error("Error Occurred in Logout :: ", error);
         }
     };
 }

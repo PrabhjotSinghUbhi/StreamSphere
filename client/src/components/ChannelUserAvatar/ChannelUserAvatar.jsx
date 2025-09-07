@@ -19,6 +19,9 @@ import {
     toggleIsSubscribed,
     toggleSubscription
 } from "../../slice/channelSlice";
+import { userService } from "../../service/user.service";
+import { updateAvatar } from "../../slice/userSlice";
+import toast from "react-hot-toast";
 
 function ChannelUserAvatar() {
     const { edit } = useSelector((state) => state.edit);
@@ -27,14 +30,11 @@ function ChannelUserAvatar() {
 
     const params = useParams();
     const { user } = useSelector((state) => state.loginUser.login_user);
-    const { userChannelDetails } = useSelector(
-        (state) => state.loginUser.login_user
-    );
 
     const { channelInfo } = useSelector((state) => state.channelInfo);
     const isMyChannel = user.username == params.username;
 
-    const [imageUrl, setImageUrl] = useState(null);
+    const [imageUrl, setImageUrl] = useState(user?.avatar?.url);
 
     if (!user) {
         return null;
@@ -113,25 +113,24 @@ function ChannelUserAvatar() {
         );
     }
 
-    // const handleAvatarUpdate = async (e) => {
-    //     e.preventDefault();
-    //     const formData = new FormData(e.target);
-    //     const avatar = formData.get("avatar");
+    const handleAvatarUpdate = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const avatar = formData.get("avatar");
 
-    //     if (!avatar || (avatar instanceof File && avatar.size === 0)) {
-    //         toast.error("New Avatar in required.");
-    //         throw new Error("New Avatar is Required prince.");
-    //     }
+        if (!avatar || (avatar instanceof File && avatar.size === 0)) {
+            toast.error("New Avatar in required.");
+            throw new Error("New Avatar is Required prince.");
+        }
 
-    //     try {
-    //         const resp = await userService.updateUserAvatar(formData);
+        try {
+            const resp = await userService.updateUserAvatar(formData);
 
-    //         console.log("User Avatar Updated Successfully :: ", resp.data);
-    //         dispatch(updateAvatar(resp.payload.user.avatar.url));
-    //     } catch (error) {
-    //         console.log("Error in updating avatar :: ", error);
-    //     }
-    // };
+            dispatch(updateAvatar(resp.payload.user.avatar.url));
+        } catch (error) {
+            console.error("Error in updating avatar :: ", error);
+        }
+    };
 
     return (
         <div>
@@ -162,7 +161,7 @@ function ChannelUserAvatar() {
                                     </Button>
                                 </DialogTrigger>
                                 <DialogContent className="fixed lg:top-[25%] md:left-[30%] md:top-[30%] sm:top-[30%] sm:left-[25%] right-[5%] left-[5%]  lg:left-[40%] rounded-xl p-5 bg-neutral-800 sm:max-w-[425px] z-50">
-                                    <form>
+                                    <form onSubmit={handleAvatarUpdate}>
                                         <DialogHeader className="space-y-1">
                                             <DialogTitle className="text-xl font-semibold">
                                                 Edit Profile

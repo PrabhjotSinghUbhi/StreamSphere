@@ -24,7 +24,6 @@ function Login() {
         const formData = new FormData(e.target);
         try {
             const resp = await authService.login(formData);
-            console.log("RESPONSE IN HANDLE LOGIN :: ", resp);
             dispatch(setUser(resp.payload.foundUser));
             navigator("/");
         } catch (error) {

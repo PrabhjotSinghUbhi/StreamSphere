@@ -70,7 +70,6 @@ function VideoDetailComp({ video_id, video, user }) {
 
     const handleAddVideoToPlaylist = (playlistIds) => {
         if (!video_id) return;
-        console.log(playlistIds, video_id);
         playlistIds.forEach((playlistId) => {
             dispatch(addVideoToPlaylist({ playlistId, videoId: video_id }));
         });

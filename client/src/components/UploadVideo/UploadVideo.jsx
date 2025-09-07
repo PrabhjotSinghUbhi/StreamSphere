@@ -85,13 +85,12 @@ function UploadVideo() {
 
         try {
             const resp = await videoService.publishVideo(submitFormData);
-            console.log("Published a Video :: ", resp);
 
             // Reset form and close dialog
             resetForm();
             setIsOpen(false);
         } catch (error) {
-            console.log("Error in publishing Video :: ", error);
+            console.error("Error in publishing Video :: ", error);
             setErrors({ submit: "Failed to upload video. Please try again." });
         } finally {
             setIsLoading(false);

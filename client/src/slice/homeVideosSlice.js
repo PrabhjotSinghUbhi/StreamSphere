@@ -24,7 +24,6 @@ const homeVideosSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(fetchHomeVideos.fulfilled, (state, action) => {
-                console.log("Fetched home videos:", action.payload);
                 state.homeVideos = action.payload;
             })
             .addCase(fetchHomeVideos.rejected, (state, action) => {

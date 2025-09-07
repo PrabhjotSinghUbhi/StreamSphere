@@ -6,13 +6,10 @@ export const fetchCurrentVideoComments = createAsyncThunk(
     async (videoId, { rejectWithValue }) => {
         try {
             const response = await commentService.getVideoComments(videoId);
-            console.log("Fetched comments:", response);
             return response.payload;
         } catch (error) {
             console.error("Error fetching comments:", error);
             return rejectWithValue(error.response.data);
-        } finally {
-            console.log("Fetch comments thunk completed.", videoId);
         }
     }
 );
@@ -46,11 +43,7 @@ const commentSlice = createSlice({
         //!fetchCurrentVideoComments
         builder
             .addCase(fetchCurrentVideoComments.fulfilled, (state, action) => {
-                console.log("Fetched comments:", action.payload);
                 state.comments = action.payload;
-            })
-            .addCase(fetchCurrentVideoComments.pending, () => {
-                console.log("Fetching comments...");
             })
             .addCase(fetchCurrentVideoComments.rejected, (state, action) => {
                 console.error("Failed to fetch comments:", action.payload);

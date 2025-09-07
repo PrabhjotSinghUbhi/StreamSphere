@@ -33,7 +33,7 @@ function Home() {
                 dispatch(fetchHomeVideos());
                 setTimeout(() => setLoading(false), 1500); // Simulate loading
             } catch (error) {
-                console.log(
+                console.error(
                     "Error Occurred in Fetching the home videos :: ",
                     error
                 );
@@ -79,7 +79,6 @@ function Home() {
 
     const handleAddVideoToPlaylist = (playlistIds) => {
         if (!selectedVideoId) return;
-        console.log(playlistIds, selectedVideoId);
         playlistIds.forEach((playlistId) => {
             dispatch(
                 addVideoToPlaylist({ playlistId, videoId: selectedVideoId })
@@ -252,10 +251,6 @@ function Home() {
                                                           ) => {
                                                               if (open) {
                                                                   setSelectedVideoId(
-                                                                      video?._id
-                                                                  );
-                                                                  console.log(
-                                                                      "Clicked Video ID: ",
                                                                       video?._id
                                                                   );
                                                               }

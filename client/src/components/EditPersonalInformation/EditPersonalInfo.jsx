@@ -27,7 +27,6 @@ function EditPersonalInfo() {
 
         try {
             const resp = await userService.updateAccountDetails(formData);
-            console.log("users info updated successfully.", resp);
             dispatch(updateFullName(resp.payload.user.fullName));
         } catch (error) {
             console.error("Error in Updating User Info :: ", error);

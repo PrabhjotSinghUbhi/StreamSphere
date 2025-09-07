@@ -49,8 +49,6 @@ function MyChannelTweets() {
     const handleSubmit = (e) => {
         e.preventDefault();
         const tweetData = new FormData(e.target);
-        const content = tweetData.get("content");
-        console.log("Tweet content:", content);
 
         dispatch(apiPostTweet(tweetData));
     };

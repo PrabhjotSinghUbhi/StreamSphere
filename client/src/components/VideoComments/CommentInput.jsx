@@ -21,7 +21,6 @@ function CommentInput({ videoId }) {
         setError("");
         try {
             const resp = await commentService.postComment(videoId, commentData);
-            console.log("Posted comment response:", resp.payload);
             dispatch(addComment(resp.payload));
             setComment("");
         } catch (error) {

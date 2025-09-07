@@ -10,10 +10,9 @@ export function useUser(_id) {
             const resp = await api.get(`/users/get-user/${_id}`);
 
             toast.success("Successful");
-            console.log(resp.data);
             setUser(resp.data.payload);
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error(
                 error?.response?.data?.message ||
                     error.message ||
