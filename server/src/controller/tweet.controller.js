@@ -21,6 +21,8 @@ const createTweet = asyncHandler(async (req, res) => {
             throw new ApiErrors(500, "Failed to create tweet");
         }
 
+        await newTweet.populate("channel", "username avatar fullName");
+
         return res
             .status(201)
             .json(
@@ -54,6 +56,7 @@ const updateTweet = asyncHandler(async (req, res) => {
         );
 
         if (!updateTweet) throw new ApiErrors(404, "Tweet not found");
+        await updateTweet.populate("channel", "username avatar fullName");
 
         return res
             .status(200)
@@ -116,7 +119,7 @@ const getUserTweets = asyncHandler(async (req, res) => {
 
         const tweets = await Tweet.find({ channel: userId }).populate(
             "channel",
-            "username avatar"
+            "username avatar fullName"
         );
 
         return res

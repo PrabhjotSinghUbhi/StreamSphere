@@ -1,6 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
 import { MoreVertical } from "lucide-react";
 import React from "react";
+import TweetChannelDropDown from "../MyChannelTweets/TweetChannelDropDown";
 
 function SingleTweetComponent({
     userImage,
@@ -8,7 +9,9 @@ function SingleTweetComponent({
     timeAgo,
     tweetContent,
     likeCount,
-    fullName
+    fullName,
+    isMyChannel,
+    OnDeleteClick
 }) {
     return (
         <div className="flex gap-3 border-b border-gray-700 py-4 last:border-b-transparent">
@@ -33,7 +36,13 @@ function SingleTweetComponent({
                                 className="p-2 rounded-full hover:bg-neutral-800 transition-colors duration-150 text-gray-400 focus:outline-none"
                                 aria-label="More options"
                             >
-                                <MoreVertical className="h-4 w-4" />
+                                {isMyChannel ? (
+                                    <TweetChannelDropDown
+                                        OnDeleteClick={OnDeleteClick}
+                                    />
+                                ) : (
+                                    <MoreVertical size={16} />
+                                )}
                             </button>
                         </div>
                     </div>
