@@ -26,7 +26,7 @@ function MyPlaylistPage() {
 
                 {/* Content */}
                 {hasPlaylists ? (
-                    <ChannelPlayList />
+                    <ChannelPlayList isMyPlaylist={true} />
                 ) : (
                     <div className="flex flex-col items-center justify-center py-20">
                         <img

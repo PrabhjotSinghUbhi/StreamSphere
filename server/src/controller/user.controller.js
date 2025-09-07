@@ -852,6 +852,127 @@ const addToWatchLater = asyncHandler(async (req, res) => {
     }
 });
 
+const removeFromWatchLater = asyncHandler(async (req, res) => {
+    try {
+        const { videoId } = req.params;
+        if (!videoId) throw new ApiErrors(400, "Video ID is required.");
+        // Validate videoId as ObjectId
+        if (!mongoose.Types.ObjectId.isValid(videoId)) {
+            throw new ApiErrors(400, "Invalid Video ID.");
+        }
+        const user = await User.findById(req.user._id);
+        if (!user) throw new ApiErrors(404, "User not found.");
+
+        if (!user.watchLater.includes(videoId)) {
+            throw new ApiErrors(400, "Video not in watch later.");
+        }
+
+        user.watchLater = user.watchLater.filter(
+            (id) => id.toString() !== videoId
+        );
+
+        await user.save();
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    user,
+                    200,
+                    "Video removed from watch later successfully."
+                )
+            );
+    } catch (error) {
+        console.error("Error occurred while removing from watch later:", error);
+        return res
+            .status(error.statusCode || 500)
+            .json(
+                new ApiResponse(
+                    null,
+                    error.statusCode || 500,
+                    error.message || "Something went wrong."
+                )
+            );
+    }
+});
+
+const clearAllWatchHistory = asyncHandler(async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) throw new ApiErrors(404, "User not found.");
+
+        user.watchHistory = [];
+        await user.save();
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    null,
+                    200,
+                    "Cleared all watch history successfully."
+                )
+            );
+    } catch (error) {
+        return res
+            .status(error.statusCode || 500)
+            .json(
+                new ApiResponse(
+                    null,
+                    error.statusCode || 500,
+                    error.message || "Something went wrong."
+                )
+            );
+    }
+});
+
+const removeFromWatchHistory = asyncHandler(async (req, res) => {
+    try {
+        const { videoId } = req.params;
+        if (!videoId) throw new ApiErrors(400, "Video ID is required.");
+
+        //validate videoId as ObjectId
+        if (!mongoose.Types.ObjectId.isValid(videoId)) {
+            throw new ApiErrors(400, "Invalid Video ID.");
+        }
+
+        const user = await User.findById(req.user._id);
+        if (!user) throw new ApiErrors(404, "User not found.");
+        if (!user.watchHistory.includes(videoId)) {
+            throw new ApiErrors(400, "Video not in watch history.");
+        }
+
+        user.watchHistory = user.watchHistory.filter(
+            (id) => id.toString() !== videoId
+        );
+
+        await user.save();
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    user,
+                    200,
+                    "Video removed from watch history successfully."
+                )
+            );
+    } catch (error) {
+        console.error(
+            "Error occurred while removing from watch history:",
+            error
+        );
+        return res
+            .status(error.statusCode || 500)
+            .json(
+                new ApiResponse(
+                    null,
+                    error.statusCode || 500,
+                    error.message || "Something went wrong."
+                )
+            );
+    }
+});
+
 export {
     registerUser,
     loginUser,
@@ -867,5 +988,8 @@ export {
     getUserById,
     addToWatchHistory,
     getWatchLaterVideos,
-    addToWatchLater
+    addToWatchLater,
+    clearAllWatchHistory,
+    removeFromWatchLater,
+    removeFromWatchHistory
 };

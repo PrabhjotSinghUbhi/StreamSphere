@@ -44,7 +44,8 @@ import {
     LikedVideosPage,
     SubscriberList,
     WatchHistoryPage,
-    MyPlaylistPage
+    MyPlaylistPage,
+    FinalChannelTweetPage
 } from "./components/index.js";
 import { Provider } from "react-redux";
 import store from "./store/store.js";
@@ -79,6 +80,7 @@ const route = createBrowserRouter(
                     <Route path="videos" element={<ChannelVideoPage />} />
                     <Route path="playlists" element={<ChannelPlayList />} />
                     <Route path="change-info" element={<EditPersonalInfo />} />
+                    <Route path="tweets" element={<FinalChannelTweetPage />} />
                 </Route>
             </Route>
             <Route path="/login" element={<Login />}></Route>

@@ -36,7 +36,7 @@ function ChannelNavbar() {
                 </li>
                 <li className="w-full text-center">
                     <NavLink
-                        to={"/channel/tweets"}
+                        to={"tweets"}
                         className={({ isActive }) =>
                             `w-full border-b-2 ${
                                 isActive

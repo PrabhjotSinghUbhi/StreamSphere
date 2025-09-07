@@ -26,7 +26,7 @@ function PlayListPage() {
     if (loading) return <PlayListLoader />;
 
     return (
-        <div className="min-h-screen bg-[#0f0f0f] text-white">
+        <div className="min-h-screen bg-[#0f0f0f] text-white mb-30">
             <div className="flex flex-col lg:flex-row w-full max-w-7xl mx-auto px-4 py-6 gap-8">
                 {/* Playlist Info (Left Column) */}
                 <aside className="w-full lg:w-1/3">
@@ -78,7 +78,7 @@ function PlayListPage() {
 
                 {/* Playlist Videos (Right Column) */}
                 <section className="flex-1 flex flex-col gap-4">
-                    {playlist?.videos?.map((video, index) => (
+                    {playlist?.videos?.map((video) => (
                         <Link
                             key={video?._id}
                             to={`/video/${video?._id}`}

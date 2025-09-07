@@ -75,7 +75,6 @@ function Home() {
         );
     };
 
-    console.log(selectedPlaylists);
     const [selectedVideoId, setSelectedVideoId] = useState(null);
 
     const handleAddVideoToPlaylist = (playlistIds) => {
@@ -89,8 +88,6 @@ function Home() {
     };
 
     const { formatViews } = useFormatDuration();
-
-    console.log(selectedVideoId);
 
     return (
         <div className="">
@@ -297,9 +294,6 @@ function Home() {
                                                               >
                                                                   Add to
                                                                   Playlist
-                                                              </DropdownMenuItem>
-                                                              <DropdownMenuItem>
-                                                                  Share
                                                               </DropdownMenuItem>
                                                           </DropdownMenuContent>
                                                       </DropdownMenu>

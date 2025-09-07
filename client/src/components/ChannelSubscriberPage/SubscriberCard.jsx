@@ -8,7 +8,7 @@ function SubscriberCard({ username, fullName, avatar, subscribers }) {
     return (
         <div className="flex flex-col gap-y-4 py-4">
             <div className="flex w-full justify-between">
-                <Link to={`/channel/${username}`}>
+                <Link to={`/channel/${username}/videos`}>
                     <div className="flex items-center gap-x-2">
                         <div className="h-14 w-14 shrink-0">
                             <img

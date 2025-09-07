@@ -25,6 +25,18 @@ export const createPlaylist = createAsyncThunk(
     }
 );
 
+export const apiDeletePlaylist = createAsyncThunk(
+    "channelPlaylists/deletePlaylist",
+    async (playlistId, { rejectWithValue }) => {
+        try {
+            const resp = await playlistService.deletePlaylist(playlistId);
+            return resp.payload;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 export const addVideoToPlaylist = createAsyncThunk(
     "channelPlaylists/addVideoToPlaylist",
     async ({ playlistId, videoId }, { rejectWithValue }) => {
@@ -46,7 +58,13 @@ const channelPlaylistSlice = createSlice({
         channelPlaylists: [],
         loading: false
     },
-    reducers: {},
+    reducers: {
+        deletePlaylist: (state, action) => {
+            state.channelPlaylists = state.channelPlaylists.filter(
+                (playlist) => playlist._id !== action.payload
+            );
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchChannelPlaylists.pending, (state) => {
@@ -67,6 +85,6 @@ const channelPlaylistSlice = createSlice({
     }
 });
 
-export const { setChannelPlaylists, setLoading } = channelPlaylistSlice.actions;
+export const { deletePlaylist } = channelPlaylistSlice.actions;
 
 export default channelPlaylistSlice.reducer;

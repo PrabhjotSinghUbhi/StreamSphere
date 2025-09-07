@@ -25,11 +25,30 @@ export const addVideoToWatchLater = createAsyncThunk(
     }
 );
 
+export const removeFromWatchLater = createAsyncThunk(
+    "watchLater/remove",
+    async (videoId, { rejectWithValue }) => {
+        try {
+            const resp = await userService.removeFromWatchLater(videoId);
+            return resp.payload;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 const watchLaterSlice = createSlice({
     name: "watchLater",
     initialState: {
         watchLaterVideos: [],
         loading: false
+    },
+    reducers: {
+        clearAVideoFromWatchLater: (state, action) => {
+            state.watchLaterVideos = state.watchLaterVideos.filter(
+                (video) => video._id !== action.payload
+            );
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -46,5 +65,7 @@ const watchLaterSlice = createSlice({
             });
     }
 });
+
+export const { clearAVideoFromWatchLater } = watchLaterSlice.actions;
 
 export default watchLaterSlice.reducer;

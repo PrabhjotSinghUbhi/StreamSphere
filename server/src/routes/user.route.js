@@ -4,6 +4,7 @@ import {
     addToWatchHistory,
     addToWatchLater,
     changeCurrentPassword,
+    clearAllWatchHistory,
     getCurrentUser,
     getUserById,
     getUserChannelProfile,
@@ -13,6 +14,8 @@ import {
     logoutUser,
     refreshAccessToken,
     registerUser,
+    removeFromWatchHistory,
+    removeFromWatchLater,
     updateUserAvatar,
     updateUserCoverImage,
     updateUserDetails
@@ -72,5 +75,14 @@ router
     .post(verifyJWT, addToWatchHistory);
 router.route("/get-watch-later").get(verifyJWT, getWatchLaterVideos);
 router.route("/add-to-watch-later/:videoId").post(verifyJWT, addToWatchLater);
+
+router.route("/clear-all-watch-history").delete(verifyJWT, clearAllWatchHistory);
+router
+    .route("/remove-from-watch-later/:videoId")
+    .delete(verifyJWT, removeFromWatchLater);
+
+router
+    .route("/remove-from-watch-history/:videoId")
+    .delete(verifyJWT, removeFromWatchHistory);
 
 export default router;

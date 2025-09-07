@@ -59,5 +59,32 @@ export const userService = {
                 errorMessage: "Failed to add video to Watch Later"
             }
         );
+    },
+
+    clearAllWatchHistory: () => {
+        return makeRequest(() => api.delete("/users/clear-all-watch-history"), {
+            successMessage: "Watch history cleared successfully",
+            errorMessage: "Failed to clear watch history"
+        });
+    },
+
+    removeFromWatchHistory: (videoId) => {
+        return makeRequest(
+            () => api.delete(`/users/remove-from-watch-history/${videoId}`),
+            {
+                successMessage: "Video removed from watch history",
+                errorMessage: "Failed to remove video from watch history"
+            }
+        );
+    },
+
+    removeFromWatchLater: (videoId) => {
+        return makeRequest(
+            () => api.delete(`/users/remove-from-watch-later/${videoId}`),
+            {
+                successMessage: "Video removed from watch later",
+                errorMessage: "Failed to remove video from watch later"
+            }
+        );
     }
 };

@@ -47,6 +47,7 @@ import LikedVideosPage from "./LikedVideosPage/LikedVideosPage.jsx";
 import SubscriberList from "./SubscriberList/SubscriberList.jsx";
 import WatchHistoryPage from "./WatchHistoryPage/WatchHistoryPage.jsx";
 import MyPlaylistPage from "./MyPlaylistPage/MyPlaylistPage.jsx";
+import FinalChannelTweetPage from "./FinalChannelTweetPage/FinalChannelTweetPage.jsx";
 
 export {
     Header,
@@ -97,5 +98,6 @@ export {
     LikedVideosPage,
     SubscriberList,
     WatchHistoryPage,
-    MyPlaylistPage
+    MyPlaylistPage,
+    FinalChannelTweetPage
 };

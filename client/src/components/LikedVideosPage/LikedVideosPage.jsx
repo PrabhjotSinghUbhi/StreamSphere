@@ -19,7 +19,7 @@ function LikedVideosPage() {
     const { formatTime, formatViews, formatDuration } = useFormatDuration();
 
     return (
-        <div className="w-full max-w-6xl mx-auto px-4 py-6">
+        <div className="w-full max-w-6xl mx-auto px-4 py-6 mb-20">
             <h1 className="text-2xl md:text-3xl font-bold mb-6">
                 Liked Videos
             </h1>

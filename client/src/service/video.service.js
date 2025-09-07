@@ -26,13 +26,10 @@ export const videoService = {
     getHomeVideos: () => {
         return makeRequest(() => api.get("/videos/get-all-videos"));
     },
-    
+
     incrementVideoCount: (video_id) => {
-        return makeRequest(
-            () => api.post(`/videos/v/${video_id}/increment-views`),
-            {
-                successMessage: "Video view count incremented."
-            }
+        return makeRequest(() =>
+            api.post(`/videos/v/${video_id}/increment-views`)
         );
     }
 };

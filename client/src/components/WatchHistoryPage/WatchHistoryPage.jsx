@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFormatDuration } from "../../hooks/useFormatDuration.hook";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchWatchHistory } from "../../slice/watchHistorySlice";
 import EmptyWatchHistory from "./EmptyWatchHistoryComp";
+import { MoreVerticalIcon, Settings } from "lucide-react";
+import WatchLaterVideoDropDown from "../WatchLaterVideos/WatchLaterVideoDropDown";
+import WatchLaterSettingDropDown from "../WatchHistorySettingDropDown/WatchHistorySettingDropDown";
 
 function WatchHistoryPage() {
     const dispatch = useDispatch();
@@ -13,7 +16,7 @@ function WatchHistoryPage() {
         setTimeout(() => {}, 1200);
     }, [dispatch]);
 
-    const { formatDuration, formatTime } = useFormatDuration();
+    const { formatDuration, formatTime, formatViews } = useFormatDuration();
     const { watchHistory, loading } = useSelector(
         (state) => state.watchHistory
     );
@@ -56,16 +59,22 @@ function WatchHistoryPage() {
                     </span>
                 </div>
                 {/* Video Info */}
-                <div className="flex flex-col justify-between">
+                <div className="flex flex-col w-full justify-between ">
                     <div>
-                        <h3 className="font-medium text-base line-clamp-2 mb-1">
-                            {video?.title}
-                        </h3>
+                        <div className="flex justify-between items-start">
+                            <h3 className="font-medium text-base line-clamp-2 mb-1">
+                                {video?.title}
+                            </h3>
+                            <div className="mx-15  rounded-full p-1 hover:bg-neutral-800">
+                                <WatchLaterVideoDropDown videoId={video?._id} />
+                            </div>
+                        </div>
                         <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
                             {video?.description}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                            {video?.view} views • {formatTime(video?.createdAt)}
+                            {formatViews(video?.view)} views •{" "}
+                            {formatTime(video?.createdAt)}
                         </p>
                     </div>
                     <div className="flex items-center gap-2 mt-3">
@@ -84,8 +93,16 @@ function WatchHistoryPage() {
     }
 
     return (
-        <div className="w-full max-w-6xl mx-auto px-4 py-6">
-            <h2 className="text-2xl font-bold mb-6">Watch History</h2>
+        <div className="w-full max-w-6xl mx-auto px-4 py-6 mb-20">
+            <div className="flex items-center justify-between mb-4">
+                <div className="">
+                    <h2 className="text-2xl font-bold mb-1">Watch History</h2>
+                </div>
+                <div className="pr-20">
+                    <WatchLaterSettingDropDown />
+                </div>
+            </div>
+            <hr className="border-neutral-700 mb-6" />
             <div className="flex flex-col gap-6">{content}</div>
         </div>
     );

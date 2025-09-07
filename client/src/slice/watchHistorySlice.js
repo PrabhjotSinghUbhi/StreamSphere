@@ -25,11 +25,46 @@ export const addVideoToHistory = createAsyncThunk(
     }
 );
 
+export const clearWatchHistory = createAsyncThunk(
+    "watchHistory/clearHistory",
+    async (_, { rejectWithValue }) => {
+        try {
+            const resp = await userService.clearAllWatchHistory();
+            return resp.payload;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const removeVideoFromHistory = createAsyncThunk(
+    "watchHistory/removeVideo",
+    async (videoId, { rejectWithValue }) => {
+        try {
+            const resp = await userService.removeFromWatchHistory(videoId);
+            return resp.payload;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
 const watchHistorySlice = createSlice({
     name: "watchHistory",
     initialState: {
         watchHistory: [],
         loading: false
+    },
+    reducers: {
+        clearAllWatchHistory: (state) => {
+            state.watchHistory = [];
+        },
+        clearAVideoFromHistory: (state, action) => {
+           
+            state.watchHistory = state.watchHistory.filter(
+                (video) => video._id !== action.payload
+            );
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -46,5 +81,7 @@ const watchHistorySlice = createSlice({
             });
     }
 });
+
+export const { clearAllWatchHistory,clearAVideoFromHistory } = watchHistorySlice.actions;
 
 export default watchHistorySlice.reducer;

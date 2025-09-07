@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { fetchChannelInfo } from "../../slice/channelSlice";
 import ChannelPageLoader from "../ChannelLoader/ChannelLoader";
+import { setEdit } from "../../slice/editSlice";
 
 function ChannelPage() {
     const { edit } = useSelector((state) => state.edit);
@@ -28,6 +29,9 @@ function ChannelPage() {
                 setLoading(false);
             }
         })();
+        return () => {
+            dispatch(setEdit(false));
+        };
     }, [params.username, dispatch]);
 
     if (loading) {
