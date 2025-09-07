@@ -52,6 +52,7 @@ import store from "./store/store.js";
 import ChannelVideoPage from "./components/MyChannelVideoPage/MyChannelVideoPage.jsx";
 import Test from "./components/Test.jsx";
 import WatchLaterVideos from "./components/WatchLaterVideos/WatchLaterVideos.jsx";
+import ErrorBoundary from "./components/Error/ErrorBoundary.jsx";
 
 const route = createBrowserRouter(
     createRoutesFromElements(
@@ -95,8 +96,10 @@ const route = createBrowserRouter(
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-        <Provider store={store}>
-            <RouterProvider router={route}></RouterProvider>
-        </Provider>
+        <ErrorBoundary>
+            <Provider store={store}>
+                <RouterProvider router={route}></RouterProvider>
+            </Provider>
+        </ErrorBoundary>
     </StrictMode>
 );
