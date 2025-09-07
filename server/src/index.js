@@ -8,11 +8,18 @@ connectDB()
     .then(() => {
         const PORT = process.env.PORT || 8000;
 
-        app.on("error", (err) => {
-            throw err;
+        // Start the server
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
         });
 
+        // Handle server errors
+        app.on("error", (err) => {
+            console.error("Server error:", err);
+            process.exit(1); // exit process if error occurs
+        });
     })
     .catch((err) => {
         console.error("ERROR :: MongoDB :: Connection Failed !!!", err);
+        process.exit(1); // exit process if DB connection fails
     });
