@@ -53,43 +53,118 @@ import ChannelVideoPage from "./components/MyChannelVideoPage/MyChannelVideoPage
 import Test from "./components/Test.jsx";
 import WatchLaterVideos from "./components/WatchLaterVideos/WatchLaterVideos.jsx";
 import ErrorBoundary from "./components/Error/ErrorBoundary.jsx";
+import RouteError from "./components/RouteError/RouteError.jsx";
 
 const route = createBrowserRouter(
     createRoutesFromElements(
-        <Route path="/" element={<App />}>
-            <Route path="/" element={<Layout />}>
-                <Route path="/" element={<Home />}></Route>
+        <Route path="/" element={<App />} errorElement={<RouteError />}>
+            <Route path="/" element={<Layout />} errorElement={<RouteError />}>
+                <Route
+                    path="/"
+                    element={<Home />}
+                    errorElement={<RouteError />}
+                />
                 <Route
                     path="/playlist/:playlistId"
                     element={<PlayListPage />}
+                    errorElement={<RouteError />}
                 />
-                <Route path="/liked-videos" element={<LikedVideosPage />} />
-                <Route path="/my-playlists" element={<MyPlaylistPage />} />
-                <Route path="/watch-later" element={<WatchLaterVideos />} />
-                <Route path="/subscribers" element={<SubscriberList />} />
-                <Route path="/watch-history" element={<WatchHistoryPage />} />
-                <Route path="/video/:video_id" element={<VideoDetailPage />} />
-                <Route path="channel/:username" element={<ChannelPage />}>
+                <Route
+                    path="/liked-videos"
+                    element={<LikedVideosPage />}
+                    errorElement={<RouteError />}
+                />
+                <Route
+                    path="/my-playlists"
+                    element={<MyPlaylistPage />}
+                    errorElement={<RouteError />}
+                />
+                <Route
+                    path="/watch-later"
+                    element={<WatchLaterVideos />}
+                    errorElement={<RouteError />}
+                />
+                <Route
+                    path="/subscribers"
+                    element={<SubscriberList />}
+                    errorElement={<RouteError />}
+                />
+                <Route
+                    path="/watch-history"
+                    element={<WatchHistoryPage />}
+                    errorElement={<RouteError />}
+                />
+                <Route
+                    path="/video/:video_id"
+                    element={<VideoDetailPage />}
+                    errorElement={<RouteError />}
+                />
+                <Route
+                    path="channel/:username"
+                    element={<ChannelPage errorElement={<RouteError />} />}
+                >
                     <Route
                         path="change-password"
                         element={<ChangeUserPassword />}
+                        errorElement={<RouteError />}
                     />
                     <Route
                         path="subscribed"
                         element={<ChannelSubscriberPage />}
+                        errorElement={<RouteError />}
                     />
-                    <Route path="videos" element={<ChannelVideoPage />} />
-                    <Route path="playlists" element={<ChannelPlayList />} />
-                    <Route path="change-info" element={<EditPersonalInfo />} />
-                    <Route path="tweets" element={<FinalChannelTweetPage />} />
+                    <Route
+                        path="videos"
+                        element={<ChannelVideoPage />}
+                        errorElement={<RouteError />}
+                    />
+                    <Route
+                        path="playlists"
+                        element={<ChannelPlayList />}
+                        errorElement={<RouteError />}
+                    />
+                    <Route
+                        path="change-info"
+                        element={<EditPersonalInfo />}
+                        errorElement={<RouteError />}
+                    />
+                    <Route
+                        path="tweets"
+                        element={<FinalChannelTweetPage />}
+                        errorElement={<RouteError />}
+                    />
                 </Route>
             </Route>
-            <Route path="/login" element={<Login />}></Route>
-            <Route path="/register" element={<Register />} />
-            <Route path="*" element={<NotFound />} />
-            <Route path="/terms" element={<TermsAndCondition />} />
-            <Route path="/policy" element={<PrivacyPolicyPage />} />
-            <Route path="/test" element={<Test />} />
+            <Route
+                path="/login"
+                element={<Login />}
+                errorElement={<RouteError />}
+            ></Route>
+            <Route
+                path="/register"
+                element={<Register />}
+                errorElement={<RouteError />}
+            />
+            <Route
+                path="*"
+                element={<NotFound />}
+                errorElement={<RouteError />}
+            />
+            <Route
+                path="/terms"
+                element={<TermsAndCondition />}
+                errorElement={<RouteError />}
+            />
+            <Route
+                path="/policy"
+                element={<PrivacyPolicyPage />}
+                errorElement={<RouteError />}
+            />
+            <Route
+                path="/test"
+                element={<Test />}
+                errorElement={<RouteError />}
+            />
         </Route>
     )
 );
