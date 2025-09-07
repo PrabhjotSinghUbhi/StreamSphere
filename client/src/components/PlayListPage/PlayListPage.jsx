@@ -1,176 +1,124 @@
-import React, { useEffect } from "react";
+/* eslint-disable no-irregular-whitespace */
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router";
 import { fetchPlayList } from "../../slice/playlistSlice";
 import { useFormatDuration } from "../../hooks/useFormatDuration.hook";
+import PlayListLoader from "../PlaylistLoader/PlaylistLoader";
 
 function PlayListPage() {
     const dispatch = useDispatch();
     const { playlistId } = useParams();
+    const { playlist } = useSelector((state) => state.playlist);
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
-        dispatch(fetchPlayList(playlistId));
+        setLoading(true);
+        const timer = setTimeout(() => {
+            dispatch(fetchPlayList(playlistId));
+            setLoading(false);
+        }, 1200);
+        return () => clearTimeout(timer);
     }, [dispatch, playlistId]);
 
-    const { playlist, loading } = useSelector((state) => state.playlist);
     const { formatDuration, formatViews, formatTime } = useFormatDuration();
 
+    if (loading) return <PlayListLoader />;
+
     return (
-        <div className="h-screen overflow-y-scroll scrollbar-hide bg-[#121212] text-white">
-            <div className="min-h-[calc(100vh-66px)] sm:min-h-[calc(100vh-82px)]">
-                <div className="h-screen overflow-y-auto scrollbar-hide bg-[#121212] text-white">
-                    <div className="flex min-h-[calc(100vh-66px)] sm:min-h-[calc(100vh-82px)]">
-                        <section className="w-full pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0">
-                            <div className="flex flex-wrap gap-x-4 gap-y-10 p-4 xl:flex-nowrap">
-                                <div className="w-full shrink-0 sm:max-w-md xl:max-w-sm">
-                                    <div className="relative mb-2 w-full pt-[56%]">
-                                        <div className="absolute inset-0">
-                                            <img
-                                                src={
-                                                    playlist?.videos?.[0]
-                                                        ?.thumbnail?.url
-                                                }
-                                                alt="React Mastery"
-                                                className="h-full w-full"
-                                            />
-                                            <div className="absolute inset-x-0 bottom-0">
-                                                <div className="relative border-t bg-white/30 p-4 text-white backdrop-blur-sm before:absolute before:inset-0 before:bg-black/40">
-                                                    <div className="relative z-[1]">
-                                                        <p className="flex justify-between">
-                                                            <span className="inline-block">
-                                                                Playlist
-                                                            </span>
-                                                            <span className="inline-block">
-                                                                {playlist
-                                                                    ?.videos
-                                                                    ?.length ||
-                                                                    0}{" "}
-                                                                videos
-                                                            </span>
-                                                        </p>
-                                                        <p className="text-sm text-gray-200">
-                                                            100K Views · 2 hours
-                                                            ago
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <h6 className="mb-1 font-semibold">
-                                        {playlist?.name}
-                                    </h6>
-                                    <p className="flex text-sm text-gray-200">
-                                        {playlist?.description ||
-                                            "No description available."}
+        <div className="min-h-screen bg-[#0f0f0f] text-white">
+            <div className="flex flex-col lg:flex-row w-full max-w-7xl mx-auto px-4 py-6 gap-8">
+                {/* Playlist Info (Left Column) */}
+                <aside className="w-full lg:w-1/3">
+                    {/* Playlist Thumbnail */}
+                    <div className="relative mb-4 w-full pt-[56%] rounded-lg overflow-hidden">
+                        <img
+                            src={playlist?.videos?.[0]?.thumbnail?.url}
+                            alt={playlist?.name}
+                            className="absolute inset-0 w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                            <p className="flex justify-between text-sm text-gray-200">
+                                <span>Playlist</span>
+                                <span>
+                                    {playlist?.videos?.length || 0} videos
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Playlist Details */}
+                    <h2 className="text-xl font-bold mb-2">{playlist?.name}</h2>
+                    <p className="text-sm text-gray-300 mb-4">
+                        {playlist?.description || "No description available."}
+                    </p>
+
+                    {/* Owner Info */}
+                    <Link
+                        to={`/channel/${playlist?.owner?.username}/videos`}
+                        className="block"
+                    >
+                        <div className="flex items-center gap-3 mt-4">
+                            <img
+                                src={playlist?.owner?.avatar?.url}
+                                alt={playlist?.owner?.username}
+                                className="w-14 h-14 rounded-full"
+                            />
+                            <div>
+                                <h6 className="font-semibold">
+                                    {playlist?.owner?.fullName}
+                                </h6>
+                                <p className="text-sm text-gray-400">
+                                    757K subscribers
+                                </p>
+                            </div>
+                        </div>
+                    </Link>
+                </aside>
+
+                {/* Playlist Videos (Right Column) */}
+                <section className="flex-1 flex flex-col gap-4">
+                    {playlist?.videos?.map((video, index) => (
+                        <Link
+                            key={video?._id}
+                            to={`/video/${video?._id}`}
+                            className="flex gap-4 w-full group"
+                        >
+                            {/* Thumbnail */}
+                            <div className="relative w-48 shrink-0 rounded-lg overflow-hidden">
+                                <img
+                                    src={video?.thumbnail?.url}
+                                    alt={video?.title}
+                                    className="w-full h-full object-cover group-hover:brightness-90 transition"
+                                />
+                                <span className="absolute bottom-1 right-1 text-xs bg-black/70 px-1.5 rounded">
+                                    {formatDuration(video?.duration)}
+                                </span>
+                            </div>
+
+                            {/* Video Info */}
+                            <div className="flex-1">
+                                <h3 className="font-semibold line-clamp-2 group-hover:text-gray-200">
+                                    {video?.title}
+                                </h3>
+                                <p className="text-sm text-gray-400 mt-1">
+                                    {formatViews(video?.view)} views •{" "}
+                                    {formatTime(video?.createdAt)}
+                                </p>
+                                <div className="flex items-center gap-2 mt-2">
+                                    <img
+                                        src={video?.owner?.avatar?.url}
+                                        alt={video?.owner?.username}
+                                        className="w-8 h-8 rounded-full"
+                                    />
+                                    <p className="text-sm text-gray-300">
+                                        {video?.owner?.fullName}
                                     </p>
-                                    <div className="mt-6 flex items-center gap-x-3">
-                                        <div className="h-16 w-16 shrink-0">
-                                            <img
-                                                src={
-                                                    playlist?.owner?.avatar?.url
-                                                }
-                                                alt={playlist?.owner?.username}
-                                                className="h-full w-full rounded-full"
-                                            />
-                                        </div>
-                                        <div className="w-full">
-                                            <h6 className="font-semibold">
-                                                {playlist?.owner?.fullName}
-                                            </h6>
-                                            <p className="text-sm text-gray-300">
-                                                757K Subscribers
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="flex w-full flex-col gap-y-4">
-                                    {/* {Video List} */}
-                                    {playlist?.videos?.map((video) => (
-                                        <Link
-                                            key={video?._id}
-                                            to={`/video/${video?._id}`}
-                                        >
-                                            <div className="border">
-                                                <div className="w-full max-w-3xl gap-x-4 sm:flex">
-                                                    <div className="relative mb-2 w-full sm:mb-0 sm:w-5/12">
-                                                        <div className="w-full pt-[56%]">
-                                                            <div className="absolute inset-0">
-                                                                <img
-                                                                    src={
-                                                                        video
-                                                                            ?.thumbnail
-                                                                            ?.url
-                                                                    }
-                                                                    alt={
-                                                                        video?.title
-                                                                    }
-                                                                    className="h-full w-full"
-                                                                />
-                                                            </div>
-                                                            <span className="absolute bottom-1 right-1 inline-block rounded bg-black px-1.5 text-sm">
-                                                                {formatDuration(
-                                                                    video?.duration
-                                                                )}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex gap-x-2 px-2 sm:w-7/12 sm:px-0">
-                                                        <div className="h-10 w-10 shrink-0 sm:hidden">
-                                                            <img
-                                                                src="https://images.pexels.com/photos/3532545/pexels-photo-3532545.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                                                                alt="codemaster"
-                                                                className="h-full w-full rounded-full"
-                                                            />
-                                                        </div>
-                                                        <div className="w-full">
-                                                            <h6 className="mb-1 font-semibold sm:max-w-[75%]">
-                                                                {video?.title}
-                                                            </h6>
-                                                            <p className="flex text-sm text-gray-200 sm:mt-3">
-                                                                {formatViews(
-                                                                    video?.view
-                                                                )}
-                                                                 Views ·{" "}
-                                                                {formatTime(
-                                                                    video?.createdAt
-                                                                )}
-                                                            </p>
-                                                            <div className="flex items-center gap-x-4">
-                                                                <div className="mt-2 hidden h-10 w-10 shrink-0 sm:block">
-                                                                    <img
-                                                                        src={
-                                                                            video
-                                                                                ?.owner
-                                                                                ?.avatar
-                                                                                ?.url
-                                                                        }
-                                                                        alt={
-                                                                            video
-                                                                                ?.owner
-                                                                                ?.username
-                                                                        }
-                                                                        className="h-full w-full rounded-full"
-                                                                    />
-                                                                </div>
-                                                                <p className="text-sm text-gray-200">
-                                                                    {
-                                                                        video
-                                                                            ?.owner
-                                                                            ?.fullName
-                                                                    }
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </Link>
-                                    ))}
                                 </div>
                             </div>
-                        </section>
-                    </div>
-                </div>
+                        </Link>
+                    ))}
+                </section>
             </div>
         </div>
     );

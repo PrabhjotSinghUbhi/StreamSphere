@@ -22,6 +22,7 @@ import watchHistoryReducer from "../slice/watchHistorySlice.js";
 import channelPlaylistReducer from "../slice/channelPlaylistSlice.js";
 import subscriptionListReducer from "../slice/subscriptionListSlice.js";
 import playlistReducer from "../slice/playlistSlice.js";
+import watchLaterReducer from "../slice/watchLaterSlice.js";
 
 //1. configure reducer.
 const persistConfig = {
@@ -52,7 +53,8 @@ const store = configureStore({
         watchHistory: watchHistoryReducer,
         channelPlaylists: channelPlaylistReducer,
         subscriptionList: subscriptionListReducer,
-        playlist: playlistReducer
+        playlist: playlistReducer,
+        watchLaterVideos: watchLaterReducer
     },
     devTools: {
         name: "my shadcn stream sphere."

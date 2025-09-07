@@ -1,7 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
 import React, { useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { MoreVertical } from "lucide-react";
+import { MoreVertical, Play } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -38,9 +38,9 @@ function ChannelPlayList() {
                             to={`/playlist/${playlist?._id}`}
                             key={playlist?._id}
                         >
-                            <Card className="bg-neutral-900 border border-neutral-800 overflow-hidden hover:shadow-lg transition">
+                            <Card className="group bg-transparent border-0 rounded-lg overflow-hidden transition">
                                 {/* Thumbnail */}
-                                <div className="relative aspect-video">
+                                <div className="relative aspect-video rounded-md overflow-hidden">
                                     <img
                                         src={
                                             playlist?.videos?.length === 0
@@ -49,137 +49,92 @@ function ChannelPlayList() {
                                                       ?.thumbnail?.url
                                         }
                                         alt={playlist?.name}
-                                        className="absolute inset-0 h-full w-full object-cover"
+                                        className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
                                     />
+
+                                    {/* Thumbnail stack effect */}
+                                    <div className="absolute top-1 right-1 h-3 w-5 bg-black/40 rounded-sm -rotate-1" />
+                                    <div className="absolute top-2 right-2 h-3 w-5 bg-black/60 rounded-sm rotate-2" />
+
+                                    {/* Hover overlay Play button */}
+                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+                                        <button className="bg-purple-600 flex text-white px-3 py-1.5 text-sm rounded-md font-medium shadow hover:bg-purple-700">
+                                            <Play /> <span>
+                                                Play all
+                                            </span>
+                                        </button>
+                                    </div>
+
+                                    {/* Video count tag */}
                                     <div className="absolute right-2 bottom-2 text-xs bg-black/70 px-2 py-0.5 rounded">
                                         {playlist?.videos?.length || 0} videos
                                     </div>
                                 </div>
 
                                 {/* Content */}
-                                <CardContent className="p-3">
-                                    <div className="flex items-start justify-between">
-                                        <div className="flex-1">
-                                            <h6 className="font-semibold text-sm line-clamp-1">
-                                                {playlist?.name}
-                                            </h6>
-                                            <p className="text-xs text-neutral-400 line-clamp-2 mt-1">
-                                                {playlist?.description}
-                                            </p>
-                                            <p className="text-xs text-neutral-500 mt-2">
-                                                {formatTime(
-                                                    playlist?.createdAt
-                                                )}
-                                            </p>
+                                <CardContent className="p-3 flex items-start justify-between">
+                                    <div className="flex-1 min-w-0">
+                                        <h6 className="font-semibold text-sm line-clamp-1 text-white group-hover:text-purple-500 transition">
+                                            {playlist?.name}
+                                        </h6>
+                                        <div className="flex items-center gap-2 mt-1 text-xs text-neutral-400">
+                                            {playlist?.owner?.avatar?.url && (
+                                                <img
+                                                    src={
+                                                        playlist?.owner?.avatar
+                                                            ?.url
+                                                    }
+                                                    alt={
+                                                        playlist?.owner
+                                                            ?.fullName
+                                                    }
+                                                    className="h-5 w-5 rounded-full"
+                                                />
+                                            )}
+                                            <span>
+                                                {playlist?.owner?.fullName ||
+                                                    "Unknown"}
+                                            </span>
+                                            <span>•</span>
+                                            <span>
+                                                {playlist?.videos?.length || 0}{" "}
+                                                videos
+                                            </span>
                                         </div>
-
-                                        {/* Dropdown Menu */}
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <button className="p-1 rounded-full hover:bg-neutral-800">
-                                                    <MoreVertical className="h-4 w-4 text-neutral-400 hover:text-neutral-200" />
-                                                </button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent
-                                                align="end"
-                                                className="w-40"
-                                            >
-                                                <DropdownMenuItem>
-                                                    Play all
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem>
-                                                    Add to Watch Later
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem>
-                                                    Share
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem>
-                                                    <button
-                                                        onClick={() =>
-                                                            setIsDialogOpen(
-                                                                true
-                                                            )
-                                                        }
-                                                        className="w-full text-left"
-                                                    >
-                                                        Add to Playlist
-                                                    </button>
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                        {/* Dialog for Add to Playlist */}
-                                        <Dialog
-                                            open={isDialogOpen}
-                                            onClose={() =>
-                                                setIsDialogOpen(false)
-                                            }
-                                        >
-                                            <form>
-                                                <div className="sm:max-w-[425px] p-6 bg-neutral-900 rounded-lg shadow-lg">
-                                                    <div className="flex flex-col gap-2 text-center sm:text-left mb-4">
-                                                        <h2 className="text-lg leading-none font-semibold">
-                                                            Edit profile
-                                                        </h2>
-                                                        <p className="text-muted-foreground text-sm">
-                                                            Make changes to your
-                                                            profile here. Click
-                                                            save when
-                                                            you&apos;re done.
-                                                        </p>
-                                                    </div>
-                                                    <div className="grid gap-4">
-                                                        <div className="grid gap-3">
-                                                            <label
-                                                                htmlFor="name-1"
-                                                                className="text-sm font-medium"
-                                                            >
-                                                                Name
-                                                            </label>
-                                                            <input
-                                                                id="name-1"
-                                                                name="name"
-                                                                defaultValue="Pedro Duarte"
-                                                                className="w-full border rounded p-2 bg-neutral-800 text-white"
-                                                            />
-                                                        </div>
-                                                        <div className="grid gap-3">
-                                                            <label
-                                                                htmlFor="username-1"
-                                                                className="text-sm font-medium"
-                                                            >
-                                                                Username
-                                                            </label>
-                                                            <input
-                                                                id="username-1"
-                                                                name="username"
-                                                                defaultValue="@peduarte"
-                                                                className="w-full border rounded p-2 bg-neutral-800 text-white"
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex justify-end gap-2 mt-6">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() =>
-                                                                setIsDialogOpen(
-                                                                    false
-                                                                )
-                                                            }
-                                                            className="px-4 py-2 rounded border"
-                                                        >
-                                                            Cancel
-                                                        </button>
-                                                        <button
-                                                            type="submit"
-                                                            className="px-4 py-2 rounded bg-neutral-800 text-white"
-                                                        >
-                                                            Save changes
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </Dialog>
                                     </div>
+
+                                    {/* Dropdown Menu (⋮) */}
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <button className="p-1 rounded-full hover:bg-neutral-800">
+                                                <MoreVertical className="h-5 w-5 text-neutral-400 hover:text-neutral-200" />
+                                            </button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent
+                                            align="end"
+                                            className="w-44"
+                                        >
+                                            <DropdownMenuItem>
+                                                Play all
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                                Add to Watch Later
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                                Share
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                                <button
+                                                    onClick={() =>
+                                                        setIsDialogOpen(true)
+                                                    }
+                                                    className="w-full text-left"
+                                                >
+                                                    Save to playlist
+                                                </button>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </CardContent>
                             </Card>
                         </Link>

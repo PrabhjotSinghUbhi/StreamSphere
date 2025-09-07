@@ -765,6 +765,93 @@ const addToWatchHistory = asyncHandler(async (req, res) => {
     }
 });
 
+const getWatchLaterVideos = asyncHandler(async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const watchLaterVideos = await User.findById(userId).populate([
+            {
+                path: "watchLater",
+                populate: {
+                    path: "owner",
+                    select: "username fullName avatar"
+                }
+            }
+        ]);
+        if (!watchLaterVideos) {
+            throw new ApiErrors(404, "User not found.");
+        }
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    watchLaterVideos?.watchLater,
+                    200,
+                    "Fetched Watch Later Videos Successfully."
+                )
+            );
+    } catch (error) {
+        console.error(
+            "Error occurred while fetching watch later videos:",
+            error
+        );
+        return res
+            .status(500)
+            .json(
+                new ApiResponse(
+                    null,
+                    500,
+                    error.message || "Something went wrong."
+                )
+            );
+    }
+});
+
+const addToWatchLater = asyncHandler(async (req, res) => {
+    try {
+        const { videoId } = req.params;
+        if (!videoId) throw new ApiErrors(400, "Video ID is required.");
+
+        // Validate videoId as ObjectId
+        if (!mongoose.Types.ObjectId.isValid(videoId)) {
+            throw new ApiErrors(400, "Invalid Video ID.");
+        }
+
+        const user = await User.findById(req.user._id).select(
+            "-refreshTokens -password -refreshToken -email"
+        );
+        if (!user) throw new ApiErrors(404, "User not found.");
+
+        if (user.watchLater.includes(videoId)) {
+            throw new ApiErrors(400, "Video already in watch later.");
+        }
+
+        user.watchLater.push(videoId);
+        await user.save();
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    user,
+                    200,
+                    "Video added to watch later successfully."
+                )
+            );
+    } catch (error) {
+        console.error("Error occurred while adding to watch later:", error);
+        return res
+            .status(500)
+            .json(
+                new ApiResponse(
+                    null,
+                    500,
+                    error.message || "Something went wrong."
+                )
+            );
+    }
+});
+
 export {
     registerUser,
     loginUser,
@@ -778,5 +865,7 @@ export {
     getWatchHistory,
     updateUserCoverImage,
     getUserById,
-    addToWatchHistory
+    addToWatchHistory,
+    getWatchLaterVideos,
+    addToWatchLater
 };

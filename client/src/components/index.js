@@ -46,6 +46,7 @@ import VideoGrid from "./VideoGrid/VideoGrid.jsx";
 import LikedVideosPage from "./LikedVideosPage/LikedVideosPage.jsx";
 import SubscriberList from "./SubscriberList/SubscriberList.jsx";
 import WatchHistoryPage from "./WatchHistoryPage/WatchHistoryPage.jsx";
+import MyPlaylistPage from "./MyPlaylistPage/MyPlaylistPage.jsx";
 
 export {
     Header,
@@ -95,5 +96,6 @@ export {
     VideoGrid,
     LikedVideosPage,
     SubscriberList,
-    WatchHistoryPage
+    WatchHistoryPage,
+    MyPlaylistPage
 };

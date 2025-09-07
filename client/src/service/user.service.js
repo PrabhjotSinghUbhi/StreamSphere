@@ -42,5 +42,22 @@ export const userService = {
         return makeRequest(() =>
             api.post(`/users/add-to-watch-history/${videoId}`)
         );
+    },
+
+    getWatchLater: () => {
+        return makeRequest(() => api.get("/users/get-watch-later"), {
+            errorMessage: "Failed to fetch watch later list",
+            successMessage: "Watch later list fetched successfully"
+        });
+    },
+
+    addToWatchLater: (videoId) => {
+        return makeRequest(
+            () => api.post(`/users/add-to-watch-later/${videoId}`),
+            {
+                successMessage: "Video added to Watch Later",
+                errorMessage: "Failed to add video to Watch Later"
+            }
+        );
     }
 };

@@ -43,12 +43,14 @@ import {
     TermsAndCondition,
     LikedVideosPage,
     SubscriberList,
-    WatchHistoryPage
+    WatchHistoryPage,
+    MyPlaylistPage
 } from "./components/index.js";
 import { Provider } from "react-redux";
 import store from "./store/store.js";
 import ChannelVideoPage from "./components/MyChannelVideoPage/MyChannelVideoPage.jsx";
 import Test from "./components/Test.jsx";
+import WatchLaterVideos from "./components/WatchLaterVideos/WatchLaterVideos.jsx";
 
 const route = createBrowserRouter(
     createRoutesFromElements(
@@ -60,6 +62,8 @@ const route = createBrowserRouter(
                     element={<PlayListPage />}
                 />
                 <Route path="/liked-videos" element={<LikedVideosPage />} />
+                <Route path="/my-playlists" element={<MyPlaylistPage />} />
+                <Route path="/watch-later" element={<WatchLaterVideos />} />
                 <Route path="/subscribers" element={<SubscriberList />} />
                 <Route path="/watch-history" element={<WatchHistoryPage />} />
                 <Route path="/video/:video_id" element={<VideoDetailPage />} />

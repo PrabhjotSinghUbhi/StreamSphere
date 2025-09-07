@@ -14,13 +14,12 @@ import { MoreVertical, Plus, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
 import { Button } from "../ui/button";
 import { DialogFooter, DialogHeader } from "../ui/dialog";
-import { Input } from "../ui/input";
 import CreatePlaylistDialog from "../Dialogs/CreatePlaylistDialog/CreatePlaylist";
 import {
     addVideoToPlaylist,
     fetchChannelPlaylists
 } from "../../slice/channelPlaylistSlice";
-import { Label } from "@radix-ui/react-label";
+import { addVideoToWatchLater } from "../../slice/watchLaterSlice";
 
 function Home() {
     const { formatDuration, formatTime } = useFormatDuration();
@@ -88,6 +87,8 @@ function Home() {
             );
         });
     };
+
+    const { formatViews } = useFormatDuration();
 
     console.log(selectedVideoId);
 
@@ -267,7 +268,15 @@ function Home() {
                                                               <MoreVertical className="h-5 w-5 text-neutral-400 hover:text-neutral-200" />
                                                           </DropdownMenuTrigger>
                                                           <DropdownMenuContent align="end">
-                                                              <DropdownMenuItem>
+                                                              <DropdownMenuItem
+                                                                  onClick={() => {
+                                                                      dispatch(
+                                                                          addVideoToWatchLater(
+                                                                              video?._id
+                                                                          )
+                                                                      );
+                                                                  }}
+                                                              >
                                                                   Save to Watch
                                                                   Later
                                                               </DropdownMenuItem>
@@ -297,7 +306,8 @@ function Home() {
                                                   </div>
 
                                                   <p className="flex text-sm text-gray-200">
-                                                      {video?.view} Views ·{" "}
+                                                      {formatViews(video?.view)}{" "}
+                                                      Views ·{" "}
                                                       {formatTime(
                                                           video?.createdAt
                                                       )}
