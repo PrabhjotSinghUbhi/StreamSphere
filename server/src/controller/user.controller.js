@@ -27,8 +27,6 @@ const generateAccessRefreshTokens = async function (userId) {
 
 const registerUser = asyncHandler(async (req, res) => {
     try {
-        console.log("Register User Function Called.");
-
         const { username, email, fullName, password, confirmPassword } =
             req.body;
 
@@ -61,15 +59,6 @@ const registerUser = asyncHandler(async (req, res) => {
         const avatarLocalPath = req?.files?.avatar?.[0]?.path;
         const coverImageLocalPath = req?.files?.coverImage?.[0]?.path;
 
-        console.log(
-            "hey prince here is the avatar local path",
-            avatarLocalPath
-        );
-        console.log(
-            "hey prince here is the cover local path",
-            coverImageLocalPath
-        );
-
         if (!avatarLocalPath)
             throw new ApiErrors(400, "Avatar image not uploaded correctly.");
 
@@ -98,7 +87,6 @@ const registerUser = asyncHandler(async (req, res) => {
         const isCreated = await User.findById(userCreated._id).select(
             "-password -refreshToken"
         );
-        console.log(req.files);
 
         // throw error if user not found.
         if (!isCreated)
@@ -175,7 +163,6 @@ const loginUser = asyncHandler(async (req, res) => {
                 )
             );
     } catch (error) {
-        console.log("Error Occurred in Login User: ", error.message);
         return res
             .status(error.statusCode || 500)
             .json(
@@ -198,8 +185,6 @@ const logoutUser = asyncHandler(async (req, res) => {
             }
         ).select("-password -refreshToken");
 
-        console.log(resLogOut);
-
         const options = {
             httpOnly: true,
             secure: false,
@@ -218,19 +203,14 @@ const logoutUser = asyncHandler(async (req, res) => {
                 )
             );
     } catch (error) {
-        console.log("Error :: Logging out the user :: ", error.message);
         return res.status(500).json(new ApiResponse(null, 500, error.message));
     }
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
-    console.log("refresh access token was called.");
-
     try {
         const incomingRefreshToken =
             req.cookies.refreshToken || req.body.refreshToken;
-
-        console.log("Got the refresh Token :: ", incomingRefreshToken);
 
         if (!incomingRefreshToken)
             throw new ApiErrors(401, "Unauthorized request.");
@@ -279,10 +259,6 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
                 )
             );
     } catch (error) {
-        console.log(
-            "Error Occurred in Refreshing the access token :: ",
-            error.message
-        );
         return res
             .status(403)
             .json(
@@ -343,7 +319,6 @@ const getCurrentUser = asyncHandler(async (req, res) => {
                 )
             );
     } catch (error) {
-        console.log("Error Occurred in Fetching the user", error.message);
         throw new ApiErrors(
             501,
             `Something went wrong in Fetching the current user ${error.message}.`
@@ -352,8 +327,6 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 });
 
 const getUserById = asyncHandler(async (req, res) => {
-    console.log("getUserById got called");
-
     try {
         const { userId } = req.params;
 
@@ -418,8 +391,6 @@ const getUserById = asyncHandler(async (req, res) => {
             }
         ]);
 
-        console.log(userWithSubscription);
-
         if (!userWithSubscription || !userWithSubscription.length)
             return res
                 .status(404)
@@ -480,7 +451,10 @@ const updateUserDetails = asyncHandler(async (req, res) => {
                 )
             );
     } catch (error) {
-        console.log("Error Occurred in updating user details.", error.message);
+        console.error(
+            "Error Occurred in updating user details.",
+            error.message
+        );
         throw new ApiErrors(
             {},
             500,
@@ -494,24 +468,15 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
         const avatarLocalPath = req?.file?.path;
         if (!avatarLocalPath) throw new ApiErrors(401, "Invalid Request.");
 
-        console.log("User Sent by the verifyJWT Middleware :: ", req.user);
-
         //delete previous avatar.
         const deleteAvatarResponse = await deleteImageFromCloudinary(
             req?.user?.avatar?.public_id
-        );
-
-        console.log(
-            "Previous Avatar Deleted Successfully :: ",
-            deleteAvatarResponse
         );
 
         const avatarUploaded = await uploadFileOnCloudinary(avatarLocalPath);
 
         if (!avatarUploaded)
             throw new ApiErrors(400, "Error While Uploading the avatar.");
-
-        console.log("avatar changed successfully: ", avatarUploaded.url);
 
         const userId = req.user?._id;
 
@@ -534,7 +499,6 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
                 new ApiResponse({ user }, 200, "Avatar Updated Successfully.")
             );
     } catch (error) {
-        console.log("Error while Updating the avatar: ", error.message);
         throw new ApiErrors(
             500,
             `Something went wrong while updating the avatar: ${error.message}`
@@ -552,21 +516,11 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
             req?.user?.coverImage?.public_id
         );
 
-        console.log(
-            "Cover Image deleted successfully :: ",
-            deleteCoverImageResponse
-        );
-
         const coverImageUploaded =
             await uploadFileOnCloudinary(coverImageLocalPath);
 
         if (!coverImageUploaded)
             throw new ApiErrors(400, "Error While Uploading the coverImage.");
-
-        console.log(
-            "coverImage changed successfully: ",
-            coverImageUploaded.url
-        );
 
         const userId = req.user?._id;
 
@@ -593,17 +547,14 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
                 )
             );
     } catch (error) {
-        console.log("Error while Updating the Cover Image: ", error.message);
+        console.error("Error while Updating the Cover Image: ", error.message);
     }
 });
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
-    console.log("getUserChannelProfile got called");
     try {
         const { username } = req.params;
         if (!username?.trim()) throw new ApiErrors(401, "Username is missing.");
-
-        console.log("Username is :: ", username);
 
         const channel = await User.aggregate([
             {
@@ -663,9 +614,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 }
             }
         ]);
-
-        console.log(channel);
-
+        
         if (!channel?.length)
             throw new ApiErrors(501, "Channel Does not exists.");
 
@@ -679,7 +628,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 )
             );
     } catch (error) {
-        console.log("ERROR in GETTING CHANNEL :: ", error.message);
+        console.error("ERROR in GETTING CHANNEL :: ", error.message);
         return res.status(404).json(new ApiResponse(null, 404, error.message));
     }
 });
@@ -688,8 +637,6 @@ const getWatchHistory = asyncHandler(async (req, res) => {
     const userWithWatchHistory = await User.findById(req.user._id)
         .select("watchHistory")
         .populate("watchHistory");
-
-    console.log(userWithWatchHistory);
 
     if (!userWithWatchHistory) {
         throw new ApiErrors(404, "User not found.");

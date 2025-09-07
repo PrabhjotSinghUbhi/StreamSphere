@@ -18,8 +18,6 @@ const createPlaylist = asyncHandler(async (req, res) => {
             owner: user
         });
 
-        console.log("Created the playlist :: ", createdPlaylist);
-
         return res
             .status(201)
             .json(
@@ -51,8 +49,6 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
         const userPlaylists = await PlayList.find({ owner: userID }).populate(
             "videos"
         );
-
-        console.log("User playlists :: ", userPlaylists);
 
         return res
             .status(200)
@@ -215,8 +211,6 @@ const updatePlaylist = asyncHandler(async (req, res) => {
         const { playlistId } = req.params;
         const { name, description } = req.body;
 
-        console.log("name is ", name);
-        console.log("description is ", description);
 
         if (!playlistId) throw new ApiErrors(400, "Playlist ID is required");
 

@@ -23,7 +23,7 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
         req.user = user;
         next();
     } catch (error) {
-        console.log(
+        console.error(
             "Error Occurred in Generating or Validating Refresh Tokens",
             error.message
         );

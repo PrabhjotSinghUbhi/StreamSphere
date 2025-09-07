@@ -8,18 +8,11 @@ const connectDB = async () => {
             `${process.env.MONGODB_URI}/${DB_NAME}`
         );
 
-        console.log(
-            "Here is the connectionInstance :: ",
-            connectionInstance.connection.host
-        );
-
         app.on("error", (err) => {
             console.error("ERROR :: APP :: DB Connection:: ", err);
         });
-
-        console.log(`MongoDB connected: ${connectionInstance.connection.host}`);
     } catch (error) {
-        console.log("ERROR :: DB Connection :: ", error);
+        console.error("ERROR :: DB Connection :: ", error);
         process.exit(1);
     }
 };

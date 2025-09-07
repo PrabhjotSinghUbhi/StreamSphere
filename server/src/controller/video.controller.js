@@ -26,17 +26,8 @@ const publishVideo = asyncHandler(async (req, res) => {
             throw new ApiErrors(400, "Fields not uploaded correctly.");
         }
 
-        console.log("hey prince here is the video local path", videoLocalPath);
-        console.log(
-            "hey prince here is the thumbnail local path",
-            thumbnailLocalPath
-        );
-
         const video = await uploadFileOnCloudinary(videoLocalPath);
         const thumbnail = await uploadFileOnCloudinary(thumbnailLocalPath);
-
-        console.log("Updated on Cloudinary Video :: ", video);
-        console.log("Updated on Cloudinary Thumbnail :: ", thumbnail);
 
         const publishedVideo = await Video.create({
             title,
@@ -68,7 +59,7 @@ const publishVideo = asyncHandler(async (req, res) => {
                 )
             );
     } catch (error) {
-        console.log("Error Occurred in publishing the video :: ", error);
+        console.error("Error Occurred in publishing the video :: ", error);
         return res
             .status(error.statusCode || 500)
             .json(
@@ -85,8 +76,6 @@ const publishVideo = asyncHandler(async (req, res) => {
 const getChannelVideos = asyncHandler(async (req, res) => {
     try {
         const { username } = req.params;
-
-        console.log("username :: ", username);
 
         if (!username) {
             throw new ApiErrors(400, "Username missing...");
@@ -116,7 +105,10 @@ const getChannelVideos = asyncHandler(async (req, res) => {
                 )
             );
     } catch (error) {
-        console.log("Error Occurred in Fetching the channel videos :: ", error);
+        console.error(
+            "Error Occurred in Fetching the channel videos :: ",
+            error
+        );
         return res
             .status(error.statusCode || 500)
             .json(
@@ -252,8 +244,6 @@ const getVideo = asyncHandler(async (req, res) => {
             { let: { currentUserId: req?.user?._id } }
         );
 
-        console.log("Heres is the aggregated Video :: ", video);
-
         if (!video?.length) {
             throw new ApiErrors(400, "Error in Getting Video.");
         }
@@ -262,7 +252,7 @@ const getVideo = asyncHandler(async (req, res) => {
             .status(200)
             .json(new ApiResponse(video[0], 200, "got Video Successfully"));
     } catch (error) {
-        console.log("Error in Getting the video :: ", error);
+        console.error("Error in Getting the video :: ", error);
         return res
             .status(error.statusCode || 500)
             .json(
@@ -312,15 +302,13 @@ const getAllVideos = asyncHandler(async (req, res) => {
             }
         ]);
 
-        console.log("Got All videos of the Channel :: ", videos);
-
         return res
             .status(200)
             .json(
                 new ApiResponse(videos, 200, "All videos fetched successfully!")
             );
     } catch (error) {
-        console.log("Error fetching all videos:", error);
+        console.error("Error fetching all videos:", error);
         return res
             .status(error.statusCode || 500)
             .json(
@@ -354,7 +342,7 @@ const updateViewCount = asyncHandler(async (req, res) => {
             .status(200)
             .json(new ApiResponse(video, 200, "View count updated!"));
     } catch (error) {
-        console.log("Error updating view count:", error);
+        console.error("Error updating view count:", error);
         return res
             .status(error.statusCode || 500)
             .json(
@@ -388,7 +376,7 @@ const updateVideo = asyncHandler(async (req, res) => {
             .status(200)
             .json(new ApiResponse(video, 200, "Video updated successfully!"));
     } catch (error) {
-        console.log("Error updating video:", error);
+        console.error("Error updating video:", error);
         return res
             .status(error.statusCode || 500)
             .json(
@@ -414,7 +402,7 @@ const deleteVideo = asyncHandler(async (req, res) => {
             .status(200)
             .json(new ApiResponse(video, 200, "Video deleted successfully!"));
     } catch (error) {
-        console.log("Error deleting video:", error);
+        console.error("Error deleting video:", error);
         return res
             .status(error.statusCode || 500)
             .json(

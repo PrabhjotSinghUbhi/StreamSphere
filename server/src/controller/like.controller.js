@@ -5,7 +5,6 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
     try {
-        console.log("Request Params:", req.params);
         const { videoId } = req.params;
         const { videoOwnerId } = req.params;
         const user = req.user._id;
@@ -29,7 +28,6 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
             likedBy: user,
             video: videoId
         });
-        console.log(createVideoLike);
         if (!createVideoLike) {
             throw new ApiErrors(500, "Failed to create video like");
         }
@@ -65,16 +63,11 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
         if (!tweetOwnerId)
             throw new ApiErrors(400, "Tweet Owner ID is required");
 
-        console.log("Tweet ID:", tweetId);
-        console.log("Tweet Owner ID:", tweetOwnerId);
-
         const existingLike = await Like.findOne({
             tweets: tweetId,
             likedBy: user,
             owner: tweetOwnerId
         });
-
-        console.log("____________________", existingLike);
 
         if (existingLike) {
             await Like.deleteOne({ _id: existingLike._id });
@@ -88,8 +81,6 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
             tweets: tweetId,
             owner: tweetOwnerId
         });
-
-        console.log(createTweetLike);
 
         if (!createTweetLike) {
             throw new ApiErrors(500, "Failed to create tweet like");
@@ -145,8 +136,6 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
             owner: commentOwnerId
         });
 
-        console.log(createCommentLike);
-
         if (!createCommentLike) {
             throw new ApiErrors(500, "Failed to create comment like");
         }
@@ -190,7 +179,6 @@ const getLikedVideos = asyncHandler(async (req, res) => {
         }
 
         const reverseLikedVideos = likedVideos.toReversed();
-        console.log("Liked Videos:", reverseLikedVideos);
 
         return res
             .status(200)
