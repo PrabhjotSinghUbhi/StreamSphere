@@ -30,10 +30,8 @@ export const playlistService = {
     },
 
     addVideoToPlaylist: (playlistId, videoId) => {
-        return (
-            makeRequest(() =>
-                api.post(`/playlists/add-video/${playlistId}/${videoId}`)
-            ),
+        return makeRequest(
+            () => api.post(`/playlists/add-video/${playlistId}/${videoId}`),
             {
                 successMessage: "Video added to playlist successfully!"
             }

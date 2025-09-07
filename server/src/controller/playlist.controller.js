@@ -76,11 +76,26 @@ const getPlaylistById = asyncHandler(async (req, res) => {
         const { playlistId } = req.params;
         if (!playlistId) throw new ApiErrors(400, "Playlist ID is required");
 
-        const playlist = await PlayList.findById(playlistId).populate("videos");
+        const playlist = await PlayList.findById(playlistId).populate([
+            {
+                path: "videos",
+                select: "title _id duration thumbnail view owner"
+            },
+            { path: "owner", select: "username avatar fullName" }
+        ]);
 
         if (!playlist) throw new ApiErrors(404, "Playlist not found");
 
-        return res.status(200).json(new ApiResponse(playlist, 200, "Success"));
+        const finalPlaylist = await playlist?.populate({
+            path: "videos.owner",
+            select: "username avatar fullName"
+        });
+
+        if (!finalPlaylist) throw new ApiErrors(404, "Playlist not found");
+
+        return res
+            .status(200)
+            .json(new ApiResponse(finalPlaylist, 200, "Success"));
     } catch (error) {
         return res
             .status(error.statusCode || 500)

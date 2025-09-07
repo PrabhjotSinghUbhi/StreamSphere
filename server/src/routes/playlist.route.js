@@ -9,10 +9,11 @@ import {
     removeVideoFromPlaylist,
     updatePlaylist
 } from "../controller/playlist.controller.js";
+import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
-router.route("/create-playlist").post(verifyJWT, createPlaylist);
+router.route("/create-playlist").post(upload.none(), verifyJWT, createPlaylist);
 router.route("/get-user-playlist/:userID").get(verifyJWT, getUserPlaylists);
 router.route("/get-playlist/:playlistId").get(verifyJWT, getPlaylistById);
 router
@@ -22,6 +23,8 @@ router
     .route("/remove-video/:playlistId/:videoId")
     .delete(verifyJWT, removeVideoFromPlaylist);
 router.route("/delete-playlist/:playlistId").delete(verifyJWT, deletePlaylist);
-router.route("/update-playlist/:playlistId").put(verifyJWT, updatePlaylist);
+router
+    .route("/update-playlist/:playlistId")
+    .put(upload.none(), verifyJWT, updatePlaylist);
 
 export default router;

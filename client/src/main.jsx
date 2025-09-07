@@ -48,12 +48,17 @@ import {
 import { Provider } from "react-redux";
 import store from "./store/store.js";
 import ChannelVideoPage from "./components/MyChannelVideoPage/MyChannelVideoPage.jsx";
+import Test from "./components/Test.jsx";
 
 const route = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<App />}>
             <Route path="/" element={<Layout />}>
                 <Route path="/" element={<Home />}></Route>
+                <Route
+                    path="/playlist/:playlistId"
+                    element={<PlayListPage />}
+                />
                 <Route path="/liked-videos" element={<LikedVideosPage />} />
                 <Route path="/subscribers" element={<SubscriberList />} />
                 <Route path="/watch-history" element={<WatchHistoryPage />} />
@@ -68,6 +73,7 @@ const route = createBrowserRouter(
                         element={<ChannelSubscriberPage />}
                     />
                     <Route path="videos" element={<ChannelVideoPage />} />
+                    <Route path="playlists" element={<ChannelPlayList />} />
                     <Route path="change-info" element={<EditPersonalInfo />} />
                 </Route>
             </Route>
@@ -76,6 +82,7 @@ const route = createBrowserRouter(
             <Route path="*" element={<NotFound />} />
             <Route path="/terms" element={<TermsAndCondition />} />
             <Route path="/policy" element={<PrivacyPolicyPage />} />
+            <Route path="/test" element={<Test />} />
         </Route>
     )
 );

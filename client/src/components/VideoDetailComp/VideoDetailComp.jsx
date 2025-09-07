@@ -9,6 +9,21 @@ import {
 } from "../../slice/videoSlice";
 import { Link } from "react-router";
 import { useFormatDuration } from "../../hooks/useFormatDuration.hook";
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Plus, X } from "lucide-react";
+import CreatePlaylistDialog from "../Dialogs/CreatePlaylistDialog/CreatePlaylist";
+import {
+    addVideoToPlaylist,
+    fetchChannelPlaylists
+} from "../../slice/channelPlaylistSlice";
+import { useSelector } from "react-redux";
 
 function VideoDetailComp({ video_id, video, user }) {
     const dispatch = useDispatch();
@@ -51,10 +66,115 @@ function VideoDetailComp({ video_id, video, user }) {
         }
     };
 
-    const { formatViews, formatSubscribers, formatTime   } = useFormatDuration();
+    const { formatViews, formatSubscribers, formatTime } = useFormatDuration();
+
+    const handleAddVideoToPlaylist = (playlistIds) => {
+        if (!video_id) return;
+        console.log(playlistIds, video_id);
+        playlistIds.forEach((playlistId) => {
+            dispatch(addVideoToPlaylist({ playlistId, videoId: video_id }));
+        });
+    };
+
+    const [addToPlaylistOpen, setAddToPlaylistOpen] = useState(false);
+    const closeAddToPlaylist = () => setAddToPlaylistOpen(false);
+
+    const { channelPlaylists } = useSelector((state) => state.channelPlaylists);
+    const channelPlaylistsLoading = useSelector(
+        (state) => state.channelPlaylists.loading
+    );
+
+    const [selectedPlaylists, setSelectedPlaylists] = useState([]);
+    const [createPlaylistOpen, setCreatePlaylistOpen] = useState(false);
+
+    const handleCheckboxChange = (playlistId) => {
+        setSelectedPlaylists((prev) =>
+            prev.includes(playlistId)
+                ? prev.filter((id) => id !== playlistId)
+                : [...prev, playlistId]
+        );
+    };
+
+    const openCreatePlaylist = () => {
+        setCreatePlaylistOpen(true);
+    };
+
+    const closeCreatePlaylist = () => {
+        setCreatePlaylistOpen(false);
+    };
 
     return (
         <div>
+            <Dialog
+                modal
+                open={addToPlaylistOpen}
+                onOpenChange={closeAddToPlaylist}
+            >
+                <DialogContent className="fixed w-fit">
+                    <DialogHeader>
+                        <DialogTitle>Save Video to..</DialogTitle>
+                    </DialogHeader>
+
+                    {channelPlaylistsLoading ? (
+                        <p>Loading Playlists...</p>
+                    ) : (
+                        <div className="grid gap-4 mt-4 max-h-60 overflow-y-auto">
+                            {/* Example Playlist Items */}
+                            {channelPlaylists.map((playlist) => (
+                                <div
+                                    key={playlist._id}
+                                    className="flex items-center  rounded gap-2"
+                                >
+                                    <label
+                                        key={playlist._id}
+                                        className=""
+                                    ></label>
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedPlaylists.includes(
+                                            playlist._id
+                                        )}
+                                        onChange={() =>
+                                            handleCheckboxChange(playlist._id)
+                                        }
+                                    />
+                                    {playlist?.name?.substring(0, 25) + "..."}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    <DialogFooter className="mt-4 flex justify-end gap-2">
+                        <div className="flex flex-col gap-2 mr-auto">
+                            <Button
+                                onClick={openCreatePlaylist}
+                                className="w-full"
+                                variant={"outline"}
+                            >
+                                <span>
+                                    <Plus />
+                                </span>{" "}
+                                New Playlist
+                            </Button>
+                            <Button
+                                className="w-full"
+                                variant={"default"}
+                                onClick={() => {
+                                    handleAddVideoToPlaylist(selectedPlaylists);
+                                }}
+                            >
+                                Save Changes
+                            </Button>
+                        </div>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <CreatePlaylistDialog
+                open={createPlaylistOpen}
+                onClose={closeCreatePlaylist}
+            />
+
             <div
                 className="group mb-4 w-full rounded-lg border p-4 duration-200 hover:bg-white/5 focus:bg-white/5"
                 role="button"
@@ -128,7 +248,15 @@ function VideoDetailComp({ video_id, video, user }) {
                                 </button>
                             </div>
                             <div className="relative block">
-                                <button className="peer flex items-center gap-x-2 rounded-lg bg-white px-4 py-1.5 text-black hover:bg-gray-100 transition-colors">
+                                <button
+                                    onClick={() => {
+                                        setAddToPlaylistOpen(true);
+                                        dispatch(
+                                            fetchChannelPlaylists(user._id)
+                                        );
+                                    }}
+                                    className="peer flex items-center gap-x-2 rounded-lg bg-white px-4 py-1.5 text-black hover:bg-gray-100 transition-colors"
+                                >
                                     <span className="inline-block w-5">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -147,7 +275,7 @@ function VideoDetailComp({ video_id, video, user }) {
                                     </span>
                                     Save
                                 </button>
-                                <div className="absolute right-0 top-full z-10 hidden w-64 overflow-hidden rounded-lg bg-[#121212] p-4 shadow shadow-slate-50/30 hover:block peer-focus:block border border-gray-700">
+                                {/* <div className="absolute right-0 top-full z-10 hidden w-64 overflow-hidden rounded-lg bg-[#121212] p-4 shadow shadow-slate-50/30 hover:block peer-focus:block border border-gray-700">
                                     <h3 className="mb-4 text-center text-lg font-semibold text-white">
                                         Save to playlist
                                     </h3>
@@ -345,7 +473,7 @@ function VideoDetailComp({ video_id, video, user }) {
                                             Create new playlist
                                         </button>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

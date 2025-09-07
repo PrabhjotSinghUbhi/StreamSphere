@@ -1,34 +1,28 @@
 /* eslint-disable no-irregular-whitespace */
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import ChannelEmptySubscribers from "../ChannelEmptySubscribers/ChannelEmptySubscribers";
 import { useParams } from "react-router";
 import SubscriberCard from "./SubscriberCard";
+import { fetchSubscriptions } from "../../slice/subscriptionListSlice";
+import { Skeleton } from "../ui/skeleton";
 
 function ChannelSubscriberPage() {
-    const { user, userChannelDetails } = useSelector(
-        (state) => state.loginUser.login_user
+    const { _id } = useSelector((state) => state.loginUser.login_user.user);
+    const dispatch = useDispatch();
+    useEffect(() => {
+        if (_id) {
+            dispatch(fetchSubscriptions(_id));
+        }
+    }, [_id, dispatch]);
+
+    const { subscriptions, loading } = useSelector(
+        (state) => state.subscriptionList
     );
-
-    const { channelInfo } = useSelector((state) => state.channelInfo);
-
-    const params = useParams();
-    const isOwner = user.username == params.username;
-
-    //is the channel is we are viewing is of owner the userChannel state will have a subscribedTo array which will contain the id's of the user/channel the user has subscribedTo -> by map each one we and show their channel SORTED.
-
-    //if the channel is not of the user, the channelInfo state will have info about the channel and same thing can be done in that case.
-
-    let subscribedTo;
-    if (isOwner) {
-        subscribedTo = userChannelDetails?.subscribedTo;
-    } else {
-        subscribedTo = channelInfo && channelInfo.subscribedTo;
-    }
 
     return (
         <div>
-            {subscribedTo?.length === 0 ? (
+            {subscriptions?.length === 0 ? (
                 <ChannelEmptySubscribers />
             ) : (
                 <div className="h-screen overflow-y-scroll scrollbar-hide bg-[#121212] text-white">
@@ -59,10 +53,36 @@ function ChannelSubscriberPage() {
                                         placeholder="Search"
                                     />
                                 </div>
-                                {subscribedTo.map((subscription) => (
+                                {loading && (
+                                    <div className="w-full flex justify-between">
+                                        <div className="flex pt-5  space-x-4">
+                                            <Skeleton className="h-12 w-12 rounded-full" />
+                                            <div className="space-y-2">
+                                                <Skeleton className="h-4 w-[250px]" />
+                                                <Skeleton className="h-4 w-[200px]" />
+                                            </div>
+                                        </div>
+                                        <div className="">
+                                            <Skeleton className="h-12 pt-5 mt-4 w-[200px]" />
+                                        </div>
+                                    </div>
+                                )}
+                                {subscriptions?.map((subscription) => (
                                     <SubscriberCard
-                                        _id={subscription?.channel}
-                                        key={subscription?._id}
+                                        _id={subscription?.channel._id}
+                                        key={subscription?.channel?._id}
+                                        username={
+                                            subscription?.channel?.username
+                                        }
+                                        fullName={
+                                            subscription?.channel?.fullName
+                                        }
+                                        avatar={
+                                            subscription?.channel?.avatar?.url
+                                        }
+                                        subscribers={
+                                            subscription?.totalSubscribersCount
+                                        }
                                     />
                                 ))}
                             </div>

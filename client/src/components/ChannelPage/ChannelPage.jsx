@@ -4,26 +4,35 @@ import CoverImage from "../CoverImage/CoverImage";
 import ChannelUserAvatar from "../ChannelUserAvatar/ChannelUserAvatar";
 import EditUserNavbar from "../EditUserNavBar/EditUserNavbar";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { fetchChannelInfo } from "../../slice/channelSlice";
+import ChannelPageLoader from "../ChannelLoader/ChannelLoader";
 
 function ChannelPage() {
     const { edit } = useSelector((state) => state.edit);
     const dispatch = useDispatch();
     //getting username from params.
     const params = useParams();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         (async () => {
             try {
+                setLoading(true);
                 if (params.username) {
                     dispatch(fetchChannelInfo(params.username));
                 }
             } catch (error) {
                 console.log("Error in fetching the channel info :: ", error);
+            } finally {
+                setLoading(false);
             }
         })();
-    }, [params]);
+    }, [params.username, dispatch]);
+
+    if (loading) {
+        return <ChannelPageLoader />;
+    }
 
     return (
         <div>

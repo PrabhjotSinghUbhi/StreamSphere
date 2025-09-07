@@ -1,39 +1,9 @@
 /* eslint-disable no-irregular-whitespace */
-import React, { useEffect } from "react";
-import PropTypes from "prop-types";
-import { useUser } from "../../hooks/useUser.hook";
-import { Skeleton } from "../ui/skeleton";
-import toast from "react-hot-toast";
+import React from "react";
 import { Link, useNavigate } from "react-router";
-import { navigate } from "../../Helper/navigate";
 
-function SubscriberCard({ _id }) {
-    const { user, fetchUser } = useUser(_id);
+function SubscriberCard({ username, fullName, avatar, subscribers }) {
     const navigator = useNavigate();
-
-    useEffect(() => {
-        fetchUser();
-    }, []);
-
-    if (!user) {
-        return (
-            <div className="w-full flex justify-between">
-                <div className="flex pt-5  space-x-4">
-                    <Skeleton className="h-12 w-12 rounded-full" />
-                    <div className="space-y-2">
-                        <Skeleton className="h-4 w-[250px]" />
-                        <Skeleton className="h-4 w-[200px]" />
-                    </div>
-                </div>
-                <div className="">
-                    <Skeleton className="h-12 pt-5 mt-4 w-[200px]" />
-                </div>
-            </div>
-        );
-    }
-
-    toast.dismissAll("completed.");
-    const { avatar, fullName, subscribers, isSubscribed, username } = user;
 
     return (
         <div className="flex flex-col gap-y-4 py-4">
@@ -42,7 +12,7 @@ function SubscriberCard({ _id }) {
                     <div className="flex items-center gap-x-2">
                         <div className="h-14 w-14 shrink-0">
                             <img
-                                src={avatar.url}
+                                src={avatar || "/user.png"}
                                 alt="Code Master"
                                 className="h-full w-full rounded-full"
                                 onError={(e) => (e.target.src = "/user.png")}
@@ -51,7 +21,7 @@ function SubscriberCard({ _id }) {
                         <div className="block">
                             <h6 className="font-semibold">{fullName}</h6>
                             <p className="text-sm text-gray-300">
-                                {subscribers.length} Subscribers
+                                {subscribers} Subscribers
                             </p>
                         </div>
                     </div>

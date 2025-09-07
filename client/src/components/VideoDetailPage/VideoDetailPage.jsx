@@ -12,6 +12,7 @@ import ListComments from "../VideoComments/ListComments";
 import { useFormatDuration } from "../../hooks/useFormatDuration.hook";
 import { addVideoToHistory } from "../../slice/watchHistorySlice";
 import { Skeleton } from "@/components/ui/skeleton";
+import VideoSmall from "../Video/VideoSmall";
 
 function VideoDetailPage() {
     const { video_id } = useParams();

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Subscription } from "../models/subscription.model.js";
 import { ApiErrors } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -86,9 +87,37 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
     try {
         const { subscriberId } = req.params;
 
-        const subscribedChannels = await Subscription.find({
-            subscriber: subscriberId
-        }).populate("channel", "name");
+        const subscribedChannels = await Subscription.aggregate([
+            {
+                $match: {
+                    subscriber: new mongoose.Types.ObjectId(subscriberId)
+                }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "channel",
+                    foreignField: "_id",
+                    as: "channel"
+                }
+            },
+            {
+                $unwind: "$channel"
+            },
+            {
+                $lookup: {
+                    from: "subscriptions",
+                    localField: "channel._id",
+                    foreignField: "channel",
+                    as: "totalSubscribers"
+                }
+            },
+            {
+                $addFields: {
+                    totalSubscribersCount: { $size: "$totalSubscribers" }
+                }
+            }
+        ]);
 
         return res
             .status(200)
