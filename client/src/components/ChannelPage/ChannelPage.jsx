@@ -1,5 +1,5 @@
 import { Outlet, useParams } from "react-router";
-import ChannelNavbar from "../ChannelNavBar/ChannelNavbar";
+import ChannelNavbar from "../ChannelNavbar/ChannelNavbar";
 import CoverImage from "../CoverImage/CoverImage";
 import ChannelUserAvatar from "../ChannelUserAvatar/ChannelUserAvatar";
 import EditUserNavbar from "../EditUserNavBar/EditUserNavbar";

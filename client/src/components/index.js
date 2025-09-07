@@ -19,7 +19,7 @@ import ChannelEmptySubscribers from "./ChannelEmptySubscribers/ChannelEmptySubsc
 import ChannelSubscriberPage from "./ChannelSubscriberPage/ChannelSubscriberPage.jsx";
 import MyChannelEmptyVideoPage from "./MyChannelEmptyVideoPage/MyChannelEmptyVideoPage.jsx";
 import UploadVideos from "./UploadVideo/UploadVideo.jsx";
-import ChannelNavbar from "./ChannelNavBar/ChannelNavbar.jsx";
+import ChannelNavbar from "./ChannelNavbar/ChannelNavbar.jsx";
 import CoverImage from "./CoverImage/CoverImage.jsx";
 import MyChannelVideoUpload from "./MyChannelVideoUpload/MyChannelVideoUpload.jsx";
 import UploadingFileLoader from "./UploadingFileLoader/UploadingFileLoader.jsx";
