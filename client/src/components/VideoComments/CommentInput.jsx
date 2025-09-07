@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { commentService } from "../../service/comment.service";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addComment } from "../../slice/commentSlice";
 
 function CommentInput({ videoId }) {

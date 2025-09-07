@@ -1,12 +1,11 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 import { removeUser } from "../slice/userSlice";
-import { useDispatch } from "react-redux";
 import store from "../store/store";
 import { navigate } from "../Helper/navigate";
 
 export const api = axios.create({
-    baseURL: "http://localhost:8000/api/v1",
+    baseURL: import.meta.env.VITE_STREAM_SPHERE_SERVER_URI,
     withCredentials: true
 });
 
@@ -25,9 +24,7 @@ api.interceptors.response.use(
             console.error("Error caught by the Interceptor :: ", error);
 
             try {
-                
-                const resp = await api.post(`/users/refresh-token`);
-
+                await api.post(`/users/refresh-token`);
                 return api(originalRequestResponse);
             } catch (error) {
                 console.error("Things got in the catch og interceptor.");

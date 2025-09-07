@@ -137,8 +137,8 @@ const loginUser = asyncHandler(async (req, res) => {
         //options for sending secure cookies.
         const options = {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax"
+            secure: true,
+            sameSite: "strict"
         };
 
         return res
@@ -187,8 +187,8 @@ const logoutUser = asyncHandler(async (req, res) => {
 
         const options = {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax"
+            secure: true,
+            sameSite: "strict"
         };
 
         return res
@@ -229,8 +229,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
         const options = {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax"
+            secure: true,
+            sameSite: "strict"
         };
 
         const { accessToken, refreshToken } = await generateAccessRefreshTokens(
@@ -614,7 +614,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 }
             }
         ]);
-        
+
         if (!channel?.length)
             throw new ApiErrors(501, "Channel Does not exists.");
 

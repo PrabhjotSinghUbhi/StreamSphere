@@ -84,7 +84,7 @@ function UploadVideo() {
         submitFormData.append("description", formData.description.trim());
 
         try {
-            const resp = await videoService.publishVideo(submitFormData);
+            await videoService.publishVideo(submitFormData);
 
             // Reset form and close dialog
             resetForm();

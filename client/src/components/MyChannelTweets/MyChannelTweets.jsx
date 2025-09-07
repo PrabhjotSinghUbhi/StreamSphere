@@ -9,7 +9,6 @@ function MyChannelTweets() {
     const { channelTweets, loading } = useSelector(
         (state) => state?.channelTweets
     );
-    const { user } = useSelector((state) => state?.loginUser?.login_user);
     const { formatTime } = useFormatDuration();
     const dispatch = useDispatch();
 
