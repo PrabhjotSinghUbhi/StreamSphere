@@ -17,7 +17,7 @@ function Header() {
             <nav className="mx-auto flex max-w-7xl items-center py-2">
                 <div className=" w-12 shrink-0 sm:w-16">
                     <img
-                        src="/public/logo.png"
+                        src="https://res.cloudinary.com/prabhjotsingh/image/upload/v1757313106/logo_anhmgo.png"
                         alt="logo"
                         className="scale-250"
                     />
