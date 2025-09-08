@@ -137,8 +137,7 @@ const loginUser = asyncHandler(async (req, res) => {
         //options for sending secure cookies.
         const options = {
             httpOnly: true,
-            secure: true,
-            sameSite: "strict"
+            secure: true
         };
 
         return res
@@ -187,8 +186,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
         const options = {
             httpOnly: true,
-            secure: true,
-            sameSite: "strict"
+            secure: true
         };
 
         return res
@@ -229,8 +227,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
         const options = {
             httpOnly: true,
-            secure: true,
-            sameSite: "strict"
+            secure: true
         };
 
         const { accessToken, refreshToken } = await generateAccessRefreshTokens(
