@@ -25,7 +25,9 @@ function Home() {
     const { formatDuration, formatTime } = useFormatDuration();
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
-    const { _id } = useSelector((state) => state.loginUser.login_user.user);
+    const { _id } = useSelector(
+        (state) => state?.loginUser && state.loginUser.login_user._id
+    );
 
     useEffect(() => {
         (async () => {

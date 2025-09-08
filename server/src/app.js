@@ -6,11 +6,22 @@ const app = express();
 
 app.get("/", (req, res) => res.send("Root working"));
 
+const allowedOrigins = [
+    process.env.CORS_ORIGIN,
+    "https://stream-sphere-client.vercel.app"
+];
+
 // allowing the cross-origin-resource-sharing (cors).
 app.use(
     cors({
         credentials: true,
-        origin: process.env.CORS_ORIGIN
+        origin: (origin, callback) => {
+            if (allowedOrigins.includes(origin) || !origin) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        }
     })
 );
 // use to parse the cookies.
