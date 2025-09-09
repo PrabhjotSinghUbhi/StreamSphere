@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Logo from "../Logo.jsx";
+import Logo from "../Logo";
 import { Link, useNavigate } from "react-router";
 import { authService } from "../../service/auth.service";
 import { Label } from "@radix-ui/react-label";
@@ -37,7 +37,7 @@ function Register() {
             <div className="mx-auto w-full max-w-2xl rounded-2xl shadow-xl bg-black/40 backdrop-blur-lg p-8 space-y-6 border border-[#ae7aff]/20">
                 {/* Logo */}
                 <div className="flex m-0 justify-center">
-                    <img src="/public/logo.png" alt="Logo" width={250} height={250} />
+                    <Logo heightAndWidth={250} />
                 </div>
                 <h1 className="text-center text-3xl font-bold text-[#ae7aff] drop-shadow-md">
                     Create Your Account
