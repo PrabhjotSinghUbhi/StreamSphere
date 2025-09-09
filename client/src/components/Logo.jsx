@@ -3,7 +3,7 @@ import React from "react";
 const Logo = ({ heightAndWidth }) => {
     return (
         <img
-            src="/public/logo.png"
+            src="/logo.png"
             alt="logo"
             height={heightAndWidth}
             width={heightAndWidth}
