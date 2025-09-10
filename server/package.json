@@ -1,6 +1,6 @@
 {
     "name": "stream_sphere",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A Project to learn backend development in node js environment using express js.",
     "keywords": [
         "ExpressJs",
