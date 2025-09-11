@@ -280,7 +280,7 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 **Prabhjot Singh**
 - GitHub: [@PrabhjotSinghUbhi](https://github.com/PrabhjotSinghUbhi)
-- LinkedIn: [Prabhjot Singh](https://linkedin.com/in/prabhjot-singh)
+- LinkedIn: [Prabhjot Singh](https://www.linkedin.com/in/prabhjotsinghubhi)
 
 ## � Acknowledgments
 
