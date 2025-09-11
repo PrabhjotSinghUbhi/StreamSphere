@@ -26,7 +26,7 @@ function Home() {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
     const _id = useSelector(
-        (state) => state.loginUser.login_user.user._id || null
+        (state) => state.loginUser?.login_user?.user?._id || "user_not_logged_in"
     );
 
     useEffect(() => {

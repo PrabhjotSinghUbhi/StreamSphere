@@ -5,7 +5,8 @@ import store from "../store/store";
 import { navigate } from "../Helper/navigate";
 
 export const api = axios.create({
-    baseURL: import.meta.env.VITE_STREAM_SPHERE_SERVER_URI,
+    // baseURL: import.meta.env.VITE_STREAM_SPHERE_SERVER_URI,
+    baseURL: "http://localhost:8000/api/v1",
     withCredentials: true
 });
 
@@ -17,8 +18,6 @@ api.interceptors.response.use(
 
         //handles unauthorized request errors.
         if (error.response?.status === 401 && !originalRequestResponse._retry) {
-            toast.dismissAll();
-            toast.error(error.response.data.message || "Unauthorized Request");
 
             originalRequestResponse._retry = true;
             console.error("Error caught by the Interceptor :: ", error);

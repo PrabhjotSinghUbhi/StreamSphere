@@ -24,7 +24,10 @@ export const videoService = {
     },
 
     getHomeVideos: () => {
-        return makeRequest(() => api.get("/videos/get-all-videos"));
+        return makeRequest(() => api.get("/videos/get-all-videos"), {
+            successMessage: "Home Videos",
+            errorMessage: "Error occurred."
+        });
     },
 
     incrementVideoCount: (video_id) => {
