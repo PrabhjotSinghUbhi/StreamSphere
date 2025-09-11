@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import uploadFileOnCloudinary from "../utils/uploadOnCloudinary.js";
 import mongoose from "mongoose";
 import deleteImageFromCloudinary from "../utils/deleteFromCloudinary.js";
+import path from "path";
 
 const generateAccessRefreshTokens = async function (userId) {
     try {
@@ -137,7 +138,9 @@ const loginUser = asyncHandler(async (req, res) => {
         //options for sending secure cookies.
         const options = {
             httpOnly: true,
-            secure: true
+            secure: true,
+            sameSite: "None",
+            path: "/"
         };
 
         return res
@@ -186,7 +189,9 @@ const logoutUser = asyncHandler(async (req, res) => {
 
         const options = {
             httpOnly: true,
-            secure: true
+            secure: true,
+            sameSite: "None",
+            path: "/"
         };
 
         return res
@@ -227,7 +232,9 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
         const options = {
             httpOnly: true,
-            secure: true
+            secure: true,
+            sameSite: "None",
+            path: "/"
         };
 
         const { accessToken, refreshToken } = await generateAccessRefreshTokens(
