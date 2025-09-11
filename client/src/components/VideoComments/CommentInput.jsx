@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { commentService } from "../../service/comment.service";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addComment } from "../../slice/commentSlice";
+import { LoginDialog } from "../Dialogs/LoginAlertDialog/LoginAlertDialog";
 
 function CommentInput({ videoId }) {
     const [comment, setComment] = useState("");
@@ -31,8 +32,15 @@ function CommentInput({ videoId }) {
         }
     };
 
+    const { user } = useSelector((state) => state.loginUser.login_user);
+    const [loginDialogOpen, setLoginDialogOpen] = useState(false);
+
     return (
         <div className="w-full">
+            <LoginDialog
+                open={loginDialogOpen}
+                onClose={() => setLoginDialogOpen(false)}
+            />
             <form onSubmit={handleSubmit} className="flex gap-2">
                 <input
                     type="text"
@@ -45,7 +53,12 @@ function CommentInput({ videoId }) {
                 />
                 <button
                     type="submit"
-                    disabled={loading || !comment.trim()}
+                    disabled={
+                        loading ||
+                        !comment.trim() ||
+                        user === null ||
+                        user === undefined
+                    }
                     className="cursor-pointer rounded-lg bg-blue-500 px-4 py-1 text-white disabled:opacity-50"
                 >
                     {loading ? "Posting..." : "Post"}

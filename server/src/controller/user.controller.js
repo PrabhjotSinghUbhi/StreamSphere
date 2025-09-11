@@ -264,11 +264,11 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             );
     } catch (error) {
         return res
-            .status(403)
+            .status(error.statusCode || 403)
             .json(
                 new ApiResponse(
                     null,
-                    403,
+                    error.statusCode || 403,
                     error.message || "Something went wrong in refreshing access"
                 )
             );

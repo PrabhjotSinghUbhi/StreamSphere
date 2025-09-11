@@ -28,7 +28,7 @@ router.route("/publish-video").post(
 );
 
 router.route("/get-channel-videos/:username").get(verifyJWT, getChannelVideos);
-router.route("/v/:video_id").get(verifyJWT, getVideo);
+router.route("/v/:video_id").get(getVideo);
 router.route("/get-all-videos").get(getAllVideos);
 router.route("/v/:video_id/increment-views").post(verifyJWT, updateViewCount);
 router.route("/v/delete/:video_id").delete(verifyJWT, deleteVideo);

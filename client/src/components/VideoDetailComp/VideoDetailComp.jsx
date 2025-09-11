@@ -7,7 +7,7 @@ import {
     toggleSubscriptionInVideo,
     toggleVideoIsSubscribed
 } from "../../slice/videoSlice";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useFormatDuration } from "../../hooks/useFormatDuration.hook";
 import {
     Dialog,
@@ -24,17 +24,23 @@ import {
     fetchChannelPlaylists
 } from "../../slice/channelPlaylistSlice";
 import { useSelector } from "react-redux";
+import { LoginDialog } from "../Dialogs/LoginAlertDialog/LoginAlertDialog";
 
 function VideoDetailComp({ video_id, video, user }) {
     const dispatch = useDispatch();
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
     const [isLiking, setIsLiking] = useState(false);
     const [isSubscribing, setIsSubscribing] = useState(false);
+    const [isLoginDialogOpen, setLoginDialogOpen] = useState(false);
 
     const handleLike = async () => {
         if (isLiking) return;
         setIsLiking(true);
         try {
+            if (user === null || user === undefined) {
+                setLoginDialogOpen(true);
+                return;
+            }
             await dispatch(
                 likeAVideo({
                     videoOwnerId: video?.Owner?._id,
@@ -57,6 +63,10 @@ function VideoDetailComp({ video_id, video, user }) {
         if (isSubscribing) return;
         setIsSubscribing(true);
         try {
+            if (user === null || user === undefined) {
+                setLoginDialogOpen(true);
+                return;
+            }
             await dispatch(toggleSubscriptionInVideo(video?.Owner?._id));
             dispatch(toggleVideoIsSubscribed());
         } catch (error) {
@@ -70,6 +80,10 @@ function VideoDetailComp({ video_id, video, user }) {
 
     const handleAddVideoToPlaylist = (playlistIds) => {
         if (!video_id) return;
+        if (user === null || user === undefined) {
+            setLoginDialogOpen(true);
+            return;
+        }
         playlistIds.forEach((playlistId) => {
             dispatch(addVideoToPlaylist({ playlistId, videoId: video_id }));
         });
@@ -102,8 +116,14 @@ function VideoDetailComp({ video_id, video, user }) {
         setCreatePlaylistOpen(false);
     };
 
+    const navigator = useNavigate();
+
     return (
         <div>
+            <LoginDialog
+                open={isLoginDialogOpen}
+                onClose={() => setLoginDialogOpen(false)}
+            />
             <Dialog
                 modal
                 open={addToPlaylistOpen}
@@ -249,6 +269,13 @@ function VideoDetailComp({ video_id, video, user }) {
                             <div className="relative block">
                                 <button
                                     onClick={() => {
+                                        if (
+                                            user === null ||
+                                            user === undefined
+                                        ) {
+                                            setLoginDialogOpen(true);
+                                            return;
+                                        }
                                         setAddToPlaylistOpen(true);
                                         dispatch(
                                             fetchChannelPlaylists(user._id)
@@ -274,213 +301,24 @@ function VideoDetailComp({ video_id, video, user }) {
                                     </span>
                                     Save
                                 </button>
-                                {/* <div className="absolute right-0 top-full z-10 hidden w-64 overflow-hidden rounded-lg bg-[#121212] p-4 shadow shadow-slate-50/30 hover:block peer-focus:block border border-gray-700">
-                                    <h3 className="mb-4 text-center text-lg font-semibold text-white">
-                                        Save to playlist
-                                    </h3>
-                                    <div className="mb-4 max-h-48 overflow-y-auto">
-                                        <ul>
-                                            <li className="mb-2 last:mb-0">
-                                                <label
-                                                    className="group/label inline-flex cursor-pointer items-center gap-x-3"
-                                                    htmlFor="Collections-checkbox"
-                                                >
-                                                    <input
-                                                        type="checkbox"
-                                                        className="peer hidden"
-                                                        id="Collections-checkbox"
-                                                    />
-                                                    <span className="inline-flex h-4 w-4 items-center justify-center rounded-[4px] border border-transparent bg-white text-white group-hover/label:border-[#ae7aff] peer-checked:border-[#ae7aff] peer-checked:text-[#ae7aff]">
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth="3"
-                                                            stroke="currentColor"
-                                                            aria-hidden="true"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M4.5 12.75l6 6 9-13.5"
-                                                            />
-                                                        </svg>
-                                                    </span>
-                                                    Collections
-                                                </label>
-                                            </li>
-                                            <li className="mb-2 last:mb-0">
-                                                <label
-                                                    className="group/label inline-flex cursor-pointer items-center gap-x-3"
-                                                    htmlFor="JavaScript Basics-checkbox"
-                                                >
-                                                    <input
-                                                        type="checkbox"
-                                                        className="peer hidden"
-                                                        id="JavaScript Basics-checkbox"
-                                                    />
-                                                    <span className="inline-flex h-4 w-4 items-center justify-center rounded-[4px] border border-transparent bg-white text-white group-hover/label:border-[#ae7aff] peer-checked:border-[#ae7aff] peer-checked:text-[#ae7aff]">
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth="3"
-                                                            stroke="currentColor"
-                                                            aria-hidden="true"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M4.5 12.75l6 6 9-13.5"
-                                                            />
-                                                        </svg>
-                                                    </span>
-                                                    JavaScript Basics
-                                                </label>
-                                            </li>
-                                            <li className="mb-2 last:mb-0">
-                                                <label
-                                                    className="group/label inline-flex cursor-pointer items-center gap-x-3"
-                                                    htmlFor="C++ Tuts-checkbox"
-                                                >
-                                                    <input
-                                                        type="checkbox"
-                                                        className="peer hidden"
-                                                        id="C++ Tuts-checkbox"
-                                                    />
-                                                    <span className="inline-flex h-4 w-4 items-center justify-center rounded-[4px] border border-transparent bg-white text-white group-hover/label:border-[#ae7aff] peer-checked:border-[#ae7aff] peer-checked:text-[#ae7aff]">
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth="3"
-                                                            stroke="currentColor"
-                                                            aria-hidden="true"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M4.5 12.75l6 6 9-13.5"
-                                                            />
-                                                        </svg>
-                                                    </span>
-                                                    C++ Tuts
-                                                </label>
-                                            </li>
-                                            <li className="mb-2 last:mb-0">
-                                                <label
-                                                    className="group/label inline-flex cursor-pointer items-center gap-x-3"
-                                                    htmlFor="Feel Good Music-checkbox"
-                                                >
-                                                    <input
-                                                        type="checkbox"
-                                                        className="peer hidden"
-                                                        id="Feel Good Music-checkbox"
-                                                    />
-                                                    <span className="inline-flex h-4 w-4 items-center justify-center rounded-[4px] border border-transparent bg-white text-white group-hover/label:border-[#ae7aff] peer-checked:border-[#ae7aff] peer-checked:text-[#ae7aff]">
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth="3"
-                                                            stroke="currentColor"
-                                                            aria-hidden="true"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M4.5 12.75l6 6 9-13.5"
-                                                            />
-                                                        </svg>
-                                                    </span>
-                                                    Feel Good Music
-                                                </label>
-                                            </li>
-                                            <li className="mb-2 last:mb-0">
-                                                <label
-                                                    className="group/label inline-flex cursor-pointer items-center gap-x-3"
-                                                    htmlFor="Ed Sheeran-checkbox"
-                                                >
-                                                    <input
-                                                        type="checkbox"
-                                                        className="peer hidden"
-                                                        id="Ed Sheeran-checkbox"
-                                                    />
-                                                    <span className="inline-flex h-4 w-4 items-center justify-center rounded-[4px] border border-transparent bg-white text-white group-hover/label:border-[#ae7aff] peer-checked:border-[#ae7aff] peer-checked:text-[#ae7aff]">
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth="3"
-                                                            stroke="currentColor"
-                                                            aria-hidden="true"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M4.5 12.75l6 6 9-13.5"
-                                                            />
-                                                        </svg>
-                                                    </span>
-                                                    Ed Sheeran
-                                                </label>
-                                            </li>
-                                            <li className="mb-2 last:mb-0">
-                                                <label
-                                                    className="group/label inline-flex cursor-pointer items-center gap-x-3"
-                                                    htmlFor="Python-checkbox"
-                                                >
-                                                    <input
-                                                        type="checkbox"
-                                                        className="peer hidden"
-                                                        id="Python-checkbox"
-                                                    />
-                                                    <span className="inline-flex h-4 w-4 items-center justify-center rounded-[4px] border border-transparent bg-white text-white group-hover/label:border-[#ae7aff] peer-checked:border-[#ae7aff] peer-checked:text-[#ae7aff]">
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth="3"
-                                                            stroke="currentColor"
-                                                            aria-hidden="true"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M4.5 12.75l6 6 9-13.5"
-                                                            />
-                                                        </svg>
-                                                    </span>
-                                                    Python
-                                                </label>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <label
-                                            htmlFor="playlist-name"
-                                            className="mb-1 inline-block cursor-pointer text-white"
-                                        >
-                                            Name
-                                        </label>
-                                        <input
-                                            className="w-full rounded-lg border border-transparent bg-white px-3 py-2 text-black outline-none focus:border-[#ae7aff]"
-                                            id="playlist-name"
-                                            placeholder="Enter playlist name"
-                                        />
-                                        <button className="mx-auto mt-4 rounded-lg bg-[#ae7aff] px-4 py-2 text-black hover:bg-[#9c5de5] transition-colors">
-                                            Create new playlist
-                                        </button>
-                                    </div>
-                                </div> */}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="mt-4 flex items-center justify-between">
                     <Link
-                        to={`/channel/${video?.Owner?.username}/videos`}
-                        className="flex items-center gap-x-4 hover:opacity-80 transition-opacity"
+                        to={``}
+                        className={`flex items-center gap-x-4 hover:opacity-80 transition-opacity`}
+                        onClick={() => {
+                            if (user === null || user === undefined) {
+                                setLoginDialogOpen(true);
+                                return;
+                            } else {
+                                navigator(
+                                    `/channel/${video?.Owner?.username}/videos`
+                                );
+                            }
+                        }}
                     >
                         <div className="mt-2 h-12 w-12 shrink-0">
                             <img
@@ -514,11 +352,15 @@ function VideoDetailComp({ video_id, video, user }) {
                             disabled={
                                 isSubscribing || video?.Owner?._id === user?._id
                             }
-                            onClick={
+                            onClick={() => {
+                                if (user === null || user === undefined) {
+                                    setLoginDialogOpen(true);
+                                    return;
+                                }
                                 video?.Owner?._id === user?._id
                                     ? undefined
-                                    : handleSubscribe
-                            }
+                                    : handleSubscribe();
+                            }}
                         >
                             <span className="inline-block w-5">
                                 <svg

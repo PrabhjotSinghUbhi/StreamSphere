@@ -20,13 +20,14 @@ import {
     fetchChannelPlaylists
 } from "../../slice/channelPlaylistSlice";
 import { addVideoToWatchLater } from "../../slice/watchLaterSlice";
+import { LoginDialog } from "../Dialogs/LoginAlertDialog/LoginAlertDialog";
 
 function Home() {
     const { formatDuration, formatTime } = useFormatDuration();
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
     const _id = useSelector(
-        (state) => state.loginUser?.login_user?.user?._id || "user_not_logged_in"
+        (state) => state.loginUser?.login_user?.user?._id || null
     );
 
     useEffect(() => {
@@ -45,6 +46,7 @@ function Home() {
 
     const { homeVideos } = useSelector((state) => state.homeVideos);
     const [addToPlaylistOpen, setAddToPlaylistOpen] = useState(false);
+    const [loginDialogOpen, setLoginDialogOpen] = useState(false);
 
     const openAddToPlayList = () => {
         setAddToPlaylistOpen(true);
@@ -77,6 +79,8 @@ function Home() {
         );
     };
 
+    console.log("ID : ", _id);
+
     const [selectedVideoId, setSelectedVideoId] = useState(null);
 
     const handleAddVideoToPlaylist = (playlistIds) => {
@@ -92,6 +96,11 @@ function Home() {
 
     return (
         <div className="">
+            <LoginDialog
+                open={loginDialogOpen}
+                onClose={() => setLoginDialogOpen(false)}
+            />
+
             <Dialog
                 modal
                 open={addToPlaylistOpen}
@@ -259,11 +268,23 @@ function Home() {
                                                           }}
                                                       >
                                                           <DropdownMenuTrigger className="p-1">
-                                                              <MoreVertical className="h-5 w-5 text-neutral-400 hover:text-neutral-200" />
+                                                              <MoreVertical className="h-5 w-5 cursor-pointer text-neutral-400 hover:text-neutral-200" />
                                                           </DropdownMenuTrigger>
                                                           <DropdownMenuContent align="end">
                                                               <DropdownMenuItem
+                                                                  className="cursor-pointer"
                                                                   onClick={() => {
+                                                                      if (
+                                                                          _id ===
+                                                                              null ||
+                                                                          _id ===
+                                                                              undefined
+                                                                      ) {
+                                                                          setLoginDialogOpen(
+                                                                              true
+                                                                          );
+                                                                          return;
+                                                                      }
                                                                       dispatch(
                                                                           addVideoToWatchLater(
                                                                               video?._id
@@ -276,6 +297,14 @@ function Home() {
                                                               </DropdownMenuItem>
                                                               <DropdownMenuItem
                                                                   onClick={() => {
+                                                                      if (
+                                                                          !_id
+                                                                      ) {
+                                                                          setLoginDialogOpen(
+                                                                              true
+                                                                          );
+                                                                          return;
+                                                                      }
                                                                       openAddToPlayList();
                                                                       if (
                                                                           channelPlaylists.length ===

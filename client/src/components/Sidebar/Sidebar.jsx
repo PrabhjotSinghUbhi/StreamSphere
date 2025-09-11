@@ -3,18 +3,29 @@ import PropTypes from "prop-types";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router";
 import { Clock } from "lucide-react";
+import { useSelector } from "react-redux";
+import { useState } from "react";
+import { LoginDialog } from "../Dialogs/LoginAlertDialog/LoginAlertDialog";
 
 function Sidebar({ className }) {
     const navigator = useNavigate();
+    const [loginDialogOpen, setLoginDialogOpen] = useState(false);
+    const isLoggedIn = useSelector((state) => state.loginUser.login_user.user);
 
     return (
         <aside
             className={`group fixed inset-x-0 bottom-0 z-40 w-full shrink-0 border-t border-white bg-[#121212] px-2 py-2 sm:absolute sm:inset-y-0 sm:max-w-[70px] sm:border-r sm:border-t-0 sm:py-6 sm:hover:max-w-[250px] lg:sticky lg:max-w-[250px] ${className}`}
         >
+            <LoginDialog
+                open={loginDialogOpen}
+                onClose={() => setLoginDialogOpen(false)}
+            />
             <ul className="flex justify-around gap-y-2 sm:sticky sm:top-[106px] sm:min-h-[calc(100vh-130px)] sm:flex-col">
                 <li className="">
                     <button
-                        onClick={() => navigator("/")}
+                        onClick={() => {
+                            navigator("/");
+                        }}
                         className="flex flex-col items-center justify-center border-white py-1 focus:text-[#ae7aff] sm:w-full sm:flex-row sm:border sm:p-1.5 sm:hover:bg-[#ae7aff] sm:hover:text-black sm:focus:border-[#ae7aff] sm:focus:bg-[#ae7aff] sm:focus:text-black sm:group-hover:justify-start sm:group-hover:px-4 lg:justify-start lg:px-4"
                         variant={"default"}
                     >
@@ -41,7 +52,16 @@ function Sidebar({ className }) {
                 </li>
                 <li className="hidden sm:block">
                     <button
-                        onClick={() => navigator("/liked-videos")}
+                        onClick={() => {
+                            if (
+                                isLoggedIn === null ||
+                                isLoggedIn === undefined
+                            ) {
+                                setLoginDialogOpen(true);
+                                return;
+                            }
+                            navigator("/liked-videos");
+                        }}
                         className="flex flex-col items-center justify-center border-white py-1 focus:text-[#ae7aff] sm:w-full sm:flex-row sm:border sm:p-1.5 sm:hover:bg-[#ae7aff] sm:hover:text-black sm:focus:border-[#ae7aff] sm:focus:bg-[#ae7aff] sm:focus:text-black sm:group-hover:justify-start sm:group-hover:px-4 lg:justify-start lg:px-4"
                     >
                         <span className="inline-block w-5 shrink-0 sm:group-hover:mr-4 lg:mr-4">
@@ -67,7 +87,16 @@ function Sidebar({ className }) {
                 </li>
                 <li className="">
                     <button
-                        onClick={() => navigator("/watch-history")}
+                        onClick={() => {
+                            if (
+                                isLoggedIn === null ||
+                                isLoggedIn === undefined
+                            ) {
+                                setLoginDialogOpen(true);
+                                return;
+                            }
+                            navigator("/watch-history");
+                        }}
                         className="flex flex-col items-center justify-center border-white py-1 focus:text-[#ae7aff] sm:w-full sm:flex-row sm:border sm:p-1.5 sm:hover:bg-[#ae7aff] sm:hover:text-black sm:focus:border-[#ae7aff] sm:focus:bg-[#ae7aff] sm:focus:text-black sm:group-hover:justify-start sm:group-hover:px-4 lg:justify-start lg:px-4"
                     >
                         <span className="inline-block w-5 shrink-0 sm:group-hover:mr-4 lg:mr-4">
@@ -93,7 +122,16 @@ function Sidebar({ className }) {
                 </li>
                 <li className="hidden sm:block">
                     <button
-                        onClick={() => navigator("/watch-later")}
+                        onClick={() => {
+                            if (
+                                isLoggedIn === null ||
+                                isLoggedIn === undefined
+                            ) {
+                                setLoginDialogOpen(true);
+                                return;
+                            }
+                            navigator("/watch-later");
+                        }}
                         className="flex flex-col items-center justify-center border-white py-1 focus:text-[#ae7aff] sm:w-full sm:flex-row sm:border sm:p-1.5 sm:hover:bg-[#ae7aff] sm:hover:text-black sm:focus:border-[#ae7aff] sm:focus:bg-[#ae7aff] sm:focus:text-black sm:group-hover:justify-start sm:group-hover:px-4 lg:justify-start lg:px-4"
                     >
                         <span className="inline-block w-5 shrink-0 sm:group-hover:mr-4 lg:mr-4">
@@ -106,7 +144,16 @@ function Sidebar({ className }) {
                 </li>
                 <li className="">
                     <button
-                        onClick={() => navigator("/my-playlists")}
+                        onClick={() => {
+                            if (
+                                isLoggedIn === null ||
+                                isLoggedIn === undefined
+                            ) {
+                                setLoginDialogOpen(true);
+                                return;
+                            }
+                            navigator("/my-playlists");
+                        }}
                         className="flex flex-col items-center justify-center border-white py-1 focus:text-[#ae7aff] sm:w-full sm:flex-row sm:border sm:p-1.5 sm:hover:bg-[#ae7aff] sm:hover:text-black sm:focus:border-[#ae7aff] sm:focus:bg-[#ae7aff] sm:focus:text-black sm:group-hover:justify-start sm:group-hover:px-4 lg:justify-start lg:px-4"
                     >
                         <span className="inline-block w-5 shrink-0 sm:group-hover:mr-4 lg:mr-4">
@@ -132,7 +179,16 @@ function Sidebar({ className }) {
                 </li>
                 <li className="">
                     <button
-                        onClick={() => navigator("/subscribers")}
+                        onClick={() => {
+                            if (
+                                isLoggedIn === null ||
+                                isLoggedIn === undefined
+                            ) {
+                                setLoginDialogOpen(true);
+                                return;
+                            }
+                            navigator("/subscribers");
+                        }}
                         className="flex flex-col items-center justify-center border-white py-1 focus:text-[#ae7aff] sm:w-full sm:flex-row sm:border sm:p-1.5 sm:hover:bg-[#ae7aff] sm:hover:text-black sm:focus:border-[#ae7aff] sm:focus:bg-[#ae7aff] sm:focus:text-black sm:group-hover:justify-start sm:group-hover:px-4 lg:justify-start lg:px-4"
                     >
                         <span className="inline-block w-5 shrink-0 sm:group-hover:mr-4 lg:mr-4">

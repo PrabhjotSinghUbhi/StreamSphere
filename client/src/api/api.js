@@ -1,5 +1,4 @@
 import axios from "axios";
-import toast from "react-hot-toast";
 import { removeUser } from "../slice/userSlice";
 import store from "../store/store";
 import { navigate } from "../Helper/navigate";

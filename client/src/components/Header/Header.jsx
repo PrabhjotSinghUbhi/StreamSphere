@@ -5,15 +5,22 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "../ui/button";
 import { useLogout } from "../../hooks/useLogout.hook";
 import { setEdit } from "../../slice/editSlice";
+import { useState } from "react";
+import { LoginDialog } from "../Dialogs/LoginAlertDialog/LoginAlertDialog";
 
 function Header() {
     const navigator = useNavigate();
     const isLoggedIn = useSelector((state) => state.loginUser.login_user.user);
     const logout = useLogout();
     const dispatch = useDispatch();
+    const [loginDialogOpen, setLoginDialogOpen] = useState(false);
 
     return (
         <header className="sticky inset-x-0 top-0 z-50 w-full border-b border-white bg-[#121212] px-4">
+            <LoginDialog
+                open={loginDialogOpen}
+                onClose={() => setLoginDialogOpen(false)}
+            />
             <nav className="mx-auto flex max-w-7xl items-center py-2">
                 <div className=" w-12 shrink-0 sm:w-16">
                     <img
@@ -135,6 +142,13 @@ function Header() {
                             <button
                                 className="flex w-full items-center justify-start gap-x-4 border border-white px-4 py-1.5 text-left hover:bg-[#ae7aff] hover:text-black focus:border-[#ae7aff] focus:bg-[#ae7aff] focus:text-black"
                                 onClick={() => {
+                                    if (
+                                        isLoggedIn === null ||
+                                        isLoggedIn === undefined
+                                    ) {
+                                        setLoginDialogOpen(true);
+                                        return;
+                                    }
                                     navigator("/liked-videos");
                                 }}
                             >
@@ -160,6 +174,13 @@ function Header() {
                         <li className="w-full">
                             <button
                                 onClick={() => {
+                                    if (
+                                        isLoggedIn === null ||
+                                        isLoggedIn === undefined
+                                    ) {
+                                        setLoginDialogOpen(true);
+                                        return;
+                                    }
                                     navigator("/watch-later");
                                 }}
                                 className="flex w-full items-center justify-start gap-x-4 border border-white px-4 py-1.5 text-left hover:bg-[#ae7aff] hover:text-black focus:border-[#ae7aff] focus:bg-[#ae7aff] focus:text-black"

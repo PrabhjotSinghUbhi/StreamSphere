@@ -18,17 +18,21 @@ function VideoDetailPage() {
     const { video_id } = useParams();
     const dispatch = useDispatch();
 
+    const { user } = useSelector((state) => state.loginUser.login_user);
+
     useEffect(() => {
+        dispatch(fetchVideoById(video_id));
+        if (user === undefined || user === null) {
+            return;
+        }
         if (video_id) {
-            dispatch(fetchVideoById(video_id));
             dispatch(apiIncrementVideoViewCount(video_id));
             dispatch(incrementVideoViewCount());
             dispatch(addVideoToHistory(video_id));
         }
-    }, [video_id]);
+    }, [video_id, dispatch, user]);
 
     const video = useSelector((state) => state.currentVideo.currentVideo);
-    const { user } = useSelector((state) => state.loginUser.login_user);
     const { homeVideos } = useSelector((state) => state.homeVideos);
 
     const { formatDuration } = useFormatDuration();

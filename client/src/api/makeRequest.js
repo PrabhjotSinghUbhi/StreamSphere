@@ -1,4 +1,8 @@
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
+import getStoredState from "redux-persist/es/getStoredState";
+import store from "../store/store";
+import { LoginDialog } from "../components/Dialogs/LoginAlertDialog/LoginAlertDialog";
 
 async function makeRequest(fn, options = {}) {
     const {
@@ -37,7 +41,17 @@ async function makeRequest(fn, options = {}) {
             error.response?.data?.error ||
             (error.request ? "Network error. Try again." : "Unexpected error");
 
-        if (showErrorToast) toast.error(message);
+        const real_message =
+            message &&
+            !message.includes("undefined") &&
+            !message.includes("TypeError")
+                ? message
+                : error?.response?.data?.error ||
+                  (error?.request
+                      ? "Network error. Try again."
+                      : "Unexpected error");
+
+        if (showErrorToast) toast.error(real_message);
 
         throw error;
     }

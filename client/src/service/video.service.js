@@ -26,7 +26,8 @@ export const videoService = {
     getHomeVideos: () => {
         return makeRequest(() => api.get("/videos/get-all-videos"), {
             successMessage: "Home Videos",
-            errorMessage: "Error occurred."
+            errorMessage: "Error occurred.",
+            showToast: false
         });
     },
 

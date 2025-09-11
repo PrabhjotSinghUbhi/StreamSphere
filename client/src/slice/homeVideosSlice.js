@@ -9,9 +9,7 @@ export const fetchHomeVideos = createAsyncThunk(
             return response.payload;
         } catch (error) {
             console.error("Error fetching home videos:", error);
-            return rejectWithValue(
-                error.response.data || "Error fetching home videos"
-            );
+            return rejectWithValue("Error fetching home videos");
         }
     }
 );
