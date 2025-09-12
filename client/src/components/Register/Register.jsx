@@ -24,20 +24,10 @@ function Register() {
             maxWidthOrHeight: 800,
             useWebWorker: true
         };
-        console.log(
-            "Original file size:",
-            (file.size / 1024 / 1024).toFixed(2),
-            "MB"
-        );
 
         try {
             const compressedFile = await imageCompression(file, options);
-            console.log(
-                "Compressed file size:",
-                (compressedFile.size / 1024 / 1024).toFixed(2),
-                "MB"
-            );
-
+            
             setCompressedAvatar(compressedFile);
             // Create a preview URL for the compressed image
 
@@ -56,19 +46,9 @@ function Register() {
             maxWidthOrHeight: 1600,
             useWebWorker: true
         };
-        console.log(
-            "original file size:",
-            (file.size / 1024 / 1024).toFixed(2),
-            "MB"
-        );
 
         try {
-            const compressedFile = await imageCompression(file, options);
-            console.log(
-                "Compressed file size:",
-                (compressedFile.size / 1024 / 1024).toFixed(2),
-                "MB"
-            );
+            const compressedFile = await imageCompression(file, options);    
             setCompressedCover(compressedFile);
             // Create a preview URL for the compressed image
 

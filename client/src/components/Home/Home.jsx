@@ -79,8 +79,6 @@ function Home() {
         );
     };
 
-    console.log("ID : ", _id);
-
     const [selectedVideoId, setSelectedVideoId] = useState(null);
 
     const handleAddVideoToPlaylist = (playlistIds) => {
