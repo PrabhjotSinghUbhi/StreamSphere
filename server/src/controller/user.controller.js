@@ -63,11 +63,20 @@ const registerUser = asyncHandler(async (req, res) => {
         if (!avatarLocalPath)
             throw new ApiErrors(400, "Avatar image not uploaded correctly.");
 
-        // uploading thing will definitely take time, so use await.
-        const avatar = await uploadFileOnCloudinary(avatarLocalPath);
-        if (!avatar) throw new ApiErrors(400, "Avatar field is required.");
+        const cloudinaryOptions = {
+            quality: "auto",
+            fetch_format: "auto"
+        };
 
-        const coverImage = await uploadFileOnCloudinary(coverImageLocalPath);
+        // uploading thing will definitely take time, so use await.
+        const [avatar, coverImage] = await Promise.all([
+            uploadFileOnCloudinary(avatarLocalPath, cloudinaryOptions),
+            coverImageLocalPath
+                ? uploadFileOnCloudinary(coverImageLocalPath, cloudinaryOptions)
+                : null
+        ]);
+
+        if (!avatar) throw new ApiErrors(400, "Avatar field is required.");
 
         const userCreated = await User.create({
             fullName,
@@ -85,9 +94,12 @@ const registerUser = asyncHandler(async (req, res) => {
         });
 
         // check for the user in the database.
-        const isCreated = await User.findById(userCreated._id).select(
-            "-password -refreshToken"
-        );
+        // const isCreated = await User.findById(userCreated._id).select(
+        //     "-password -refreshToken"
+        // );
+        const isCreated = userCreated.toObject();
+        delete isCreated.password;
+        delete isCreated.refreshToken;
 
         // throw error if user not found.
         if (!isCreated)
