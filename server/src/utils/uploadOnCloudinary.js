@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import fs from "fs";
 import { v2 as cloudinary } from "cloudinary";
+import { safeUnlink } from "./safeUnlink.js";
 
 dotenv.config();
 
@@ -16,12 +17,14 @@ const uploadFileOnCloudinary = async (localFilePath) => {
     try {
         if (!localFilePath) return null;
         const response = await cloudinary.uploader.upload(localFilePath, {
-            resource_type: "auto"
+            resource_type: "auto",
+            quality: "auto",
+            fetch_format: "auto"
         });
-        fs.unlinkSync(localFilePath);
+        safeUnlink(localFilePath);
         return response;
     } catch (error) {
-        fs.unlinkSync(localFilePath);
+        safeUnlink(localFilePath);
         console.error("Cloudinary Upload Error Occurred", error.message);
     }
 };

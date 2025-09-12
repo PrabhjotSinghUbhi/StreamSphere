@@ -1,29 +1,93 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import Logo from "../Logo";
 import { Link, useNavigate } from "react-router";
 import { authService } from "../../service/auth.service";
 import { Label } from "@radix-ui/react-label";
 import { Button } from "../ui/button";
+import imageCompression from "browser-image-compression";
 
 function Register() {
     const [avatarPreview, setAvatarPreview] = useState(null);
     const [coverPreview, setCoverPreview] = useState(null);
 
+    const [compressedAvatar, setCompressedAvatar] = useState(null);
+    const [compressedCover, setCompressedCover] = useState(null);
+
     const navigator = useNavigate();
 
-    const handleAvatarChange = (e) => {
+    const handleAvatarChange = async (e) => {
         const file = e.target.files[0];
-        if (file) setAvatarPreview(URL.createObjectURL(file));
+
+        if (!file) return;
+        const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 800,
+            useWebWorker: true
+        };
+        console.log(
+            "Original file size:",
+            (file.size / 1024 / 1024).toFixed(2),
+            "MB"
+        );
+
+        try {
+            const compressedFile = await imageCompression(file, options);
+            console.log(
+                "Compressed file size:",
+                (compressedFile.size / 1024 / 1024).toFixed(2),
+                "MB"
+            );
+
+            setCompressedAvatar(compressedFile);
+            // Create a preview URL for the compressed image
+
+            const previewURL = URL.createObjectURL(compressedFile);
+            setAvatarPreview(previewURL);
+        } catch (error) {
+            console.error("Error during image compression:", error);
+        }
     };
 
-    const handleCoverChange = (e) => {
+    const handleCoverChange = async (e) => {
         const file = e.target.files[0];
-        if (file) setCoverPreview(URL.createObjectURL(file));
+        if (!file) return;
+        const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1600,
+            useWebWorker: true
+        };
+        console.log(
+            "original file size:",
+            (file.size / 1024 / 1024).toFixed(2),
+            "MB"
+        );
+
+        try {
+            const compressedFile = await imageCompression(file, options);
+            console.log(
+                "Compressed file size:",
+                (compressedFile.size / 1024 / 1024).toFixed(2),
+                "MB"
+            );
+            setCompressedCover(compressedFile);
+            // Create a preview URL for the compressed image
+
+            const previewURL = URL.createObjectURL(compressedFile);
+            setCoverPreview(previewURL);
+        } catch (error) {
+            console.error("Error during image compression:", error);
+        }
     };
 
     const handleRegisterForm = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
+        if (compressedAvatar) {
+            formData.set("avatar", compressedAvatar, compressedAvatar.name);
+        }
+        if (compressedCover) {
+            formData.set("coverImage", compressedCover, compressedCover.name);
+        }
         try {
             await authService.register(formData);
             navigator("/login"); // Redirect to login after successful registration
@@ -37,7 +101,7 @@ function Register() {
             <div className="mx-auto w-full max-w-2xl rounded-2xl shadow-xl bg-black/40 backdrop-blur-lg p-8 space-y-6 border border-[#ae7aff]/20">
                 {/* Logo */}
                 <div className="flex m-0 justify-center">
-                    <Logo heightAndWidth={250} />
+                    <img src="/logo.png" alt="logo" height={250} width={250} />
                 </div>
                 <h1 className="text-center text-3xl font-bold text-[#ae7aff] drop-shadow-md">
                     Create Your Account
@@ -73,6 +137,7 @@ function Register() {
                                 <input
                                     type="file"
                                     name="coverImage"
+                                    id="coverImage"
                                     accept="image/*"
                                     onChange={handleCoverChange}
                                     className="absolute inset-0 opacity-0 cursor-pointer"
