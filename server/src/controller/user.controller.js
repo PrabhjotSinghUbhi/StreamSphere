@@ -70,9 +70,9 @@ const registerUser = asyncHandler(async (req, res) => {
 
         // uploading thing will definitely take time, so use await.
         const [avatar, coverImage] = await Promise.all([
-            uploadFileOnCloudinary(avatarLocalPath, cloudinaryOptions),
+            uploadFileOnCloudinary(avatarLocalPath),
             coverImageLocalPath
-                ? uploadFileOnCloudinary(coverImageLocalPath, cloudinaryOptions)
+                ? uploadFileOnCloudinary(coverImageLocalPath)
                 : null
         ]);
 
