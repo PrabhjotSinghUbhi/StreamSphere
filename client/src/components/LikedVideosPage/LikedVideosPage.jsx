@@ -85,11 +85,6 @@ function LikedVideosPage() {
                                                   )}
                                               </span>
                                           </div>
-                                          {/* Description snippet */}
-                                          <p className="text-sm text-muted-foreground line-clamp-2">
-                                              {likedVideo?.video?.description ||
-                                                  "No description available."}
-                                          </p>
                                       </div>
                                   </CardContent>
                               </Card>

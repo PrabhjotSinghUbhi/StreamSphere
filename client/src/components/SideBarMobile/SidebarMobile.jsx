@@ -1,90 +1,60 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import SearchIcon from "../SearchIcon";
-import { useDispatch, useSelector } from "react-redux";
+import {
+    Sheet,
+    SheetClose,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger
+} from "@/components/ui/sheet";
 import { Button } from "../ui/button";
-import { useLogout } from "../../hooks/useLogout.hook";
-import { setEdit } from "../../slice/editSlice";
-import { useState } from "react";
+import { X, Menu } from "lucide-react";
 import { LoginDialog } from "../Dialogs/LoginAlertDialog/LoginAlertDialog";
-import SidebarMobile from "../SideBarMobile/SidebarMobile";
+import { SheetDescription, SheetFooter } from "../ui/sheet";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { useDispatch, useSelector } from "react-redux";
+import { useLogout } from "../../hooks/useLogout.hook";
 
-function Header() {
-    const navigator = useNavigate();
+function SidebarMobile() {
     const isLoggedIn = useSelector((state) => state.loginUser.login_user.user);
+    const navigator = useNavigate();
     const logout = useLogout();
-    const dispatch = useDispatch();
     const [loginDialogOpen, setLoginDialogOpen] = useState(false);
+    const [openSidebar, setOpenSidebar] = useState(false);
 
     return (
-        <header className="sticky inset-x-0 top-0 z-50 w-full border-b border-white bg-[#121212] px-4">
+        <div className="">
             <LoginDialog
                 open={loginDialogOpen}
                 onClose={() => setLoginDialogOpen(false)}
             />
-            <nav className="mx-auto flex max-w-7xl items-center py-2">
-                <div className=" w-12 shrink-0 sm:w-16">
-                    <img
-                        src="https://res.cloudinary.com/prabhjotsingh/image/upload/v1757313106/logo_anhmgo.png"
-                        alt="logo"
-                        className="scale-250"
-                    />
-                </div>
-                <div className="relative mx-auto hidden w-full max-w-md overflow-hidden sm:block">
-                    <input
-                        className="w-full border border-white bg-transparent text-white py-1 pl-8 pr-3 placeholder-white outline-none sm:py-2"
-                        placeholder="Search"
-                    />
-                    <span className="absolute left-2.5 top-1/2 inline-block -translate-y-1/2">
-                        <SearchIcon />
-                    </span>
-                </div>
-                <button className="ml-auto sm:hidden">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        aria-hidden="true"
-                        className=" h-6 w-6"
+            <Sheet open={openSidebar} onOpenChange={setOpenSidebar}>
+                <SheetTrigger asChild>
+                    <Button
+                        variant="ghost"
+                        onClick={() => setOpenSidebar(true)}
                     >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                        ></path>
-                    </svg>
-                </button>
-                <button className="group peer ml-4 flex w-6 shrink-0 flex-wrap gap-y-1.5 sm:hidden">
-                    <SidebarMobile />
-                </button>
-                <div className="fixed inset-y-0 right-0 flex w-full max-w-xs shrink-0 translate-x-full flex-col border-l border-white bg-[#121212] duration-200 hover:translate-x-0 peer-focus:translate-x-0 sm:static sm:ml-4 sm:w-auto sm:translate-x-0 sm:border-none">
-                    <div className="relative flex w-full items-center justify-between border-b border-white px-4 py-2 sm:hidden">
-                        <span className="inline-block w-12">
-                            <img src="/smallLogo.png" alt="logo" className="" />
-                        </span>
-                        <button className="inline-block w-8">
-                            {/* <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="currentColor"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                ></path>
-                            </svg> */}
-                        </button>
-                    </div>
-                    <ul className="my-4 flex w-full flex-wrap gap-2 px-4 sm:hidden">
+                        <Menu className="scale-150" />
+                    </Button>
+                </SheetTrigger>
+                <SheetContent>
+                    <SheetHeader>
+                        <SheetTitle className="justify-center flex">
+                            <img
+                                src="/croppedLogo.png"
+                                alt="logo"
+                                height={350}
+                                width={350}
+                                className="p-5 m-0"
+                            />
+                        </SheetTitle>
+                    </SheetHeader>
+                    <ul className=" flex w-full flex-wrap gap-2 px-4 sm:hidden">
                         <li className="w-full">
                             <button
-                                className="flex w-full items-center justify-start gap-x-4 border border-white px-4 py-1.5 text-left hover:bg-[#ae7aff] hover:text-black focus:border-[#ae7aff] focus:bg-[#ae7aff] focus:text-black"
+                                className="flex w-full items-center hover:bg-[#ae7aff] justify-start gap-x-4 border border-white px-4 py-1.5 text-left hover:text-black focus:text-black"
                                 onClick={() => {
                                     if (
                                         isLoggedIn === null ||
@@ -94,6 +64,7 @@ function Header() {
                                         return;
                                     }
                                     navigator("/liked-videos");
+                                    setOpenSidebar(false);
                                 }}
                             >
                                 <span className="inline-block w-full max-w-[20px] group-hover:mr-4 lg:mr-4">
@@ -102,6 +73,7 @@ function Header() {
                                         viewBox="0 0 22 22"
                                         fill="none"
                                         xmlns="http://www.w3.org/2000/svg"
+                                        color="white"
                                     >
                                         <path
                                             d="M6 21V10M1 12V19C1 20.1046 1.89543 21 3 21H16.4262C17.907 21 19.1662 19.9197 19.3914 18.4562L20.4683 11.4562C20.7479 9.6389 19.3418 8 17.5032 8H14C13.4477 8 13 7.55228 13 7V3.46584C13 2.10399 11.896 1 10.5342 1C10.2093 1 9.91498 1.1913 9.78306 1.48812L6.26394 9.40614C6.10344 9.76727 5.74532 10 5.35013 10H3C1.89543 10 1 10.8954 1 12Z"
@@ -112,7 +84,7 @@ function Header() {
                                         ></path>
                                     </svg>
                                 </span>
-                                <span>Liked Videos</span>
+                                <span className="text-white">Liked Videos</span>
                             </button>
                         </li>
                         <li className="w-full">
@@ -126,6 +98,7 @@ function Header() {
                                         return;
                                     }
                                     navigator("/watch-later");
+                                    setOpenSidebar(false);
                                 }}
                                 className="flex w-full items-center justify-start gap-x-4 border border-white px-4 py-1.5 text-left hover:bg-[#ae7aff] hover:text-black focus:border-[#ae7aff] focus:bg-[#ae7aff] focus:text-black"
                             >
@@ -205,72 +178,74 @@ function Header() {
                             </button>
                         </li>
                     </ul>
-                    {isLoggedIn ? (
-                        <div
-                            className="flex items-center justify-between gap-6 px-4 py-2 
-  bg-background border border-border rounded-xl shadow-sm"
-                        >
-                            {/* Avatar Link */}
-                            <Link
-                                to={`/channel/${isLoggedIn.username}/videos`}
-                                onClick={() => {
-                                    dispatch(setEdit(false));
-                                }}
-                                className="relative group"
+                    <SheetFooter>
+                        {isLoggedIn ? (
+                            <div
+                                className="flex items-center justify-between gap-6 px-4 py-2 
+                         bg-background border border-border rounded-xl shadow-sm"
                             >
-                                <img
-                                    src={isLoggedIn.avatar.url}
-                                    alt="avatar"
-                                    height={48}
-                                    width={48}
-                                    onError={(e) =>
-                                        (e.currentTarget.src = "/user.png")
-                                    }
-                                    className="h-12 w-12 rounded-full border-2 border-primary 
-        transition duration-300 group-hover:scale-105 group-hover:shadow-md"
-                                />
-                                {/* Online Status */}
-                                <span
-                                    className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full 
-      bg-green-500 border border-background"
-                                ></span>
-                            </Link>
-
-                            {/* Actions */}
-                            <div>
-                                <Button
-                                    variant={"destructive"}
-                                    onClick={logout}
-                                    className="cursor-pointer"
+                                {/* Avatar Link */}
+                                <Link
+                                    to={`/channel/${isLoggedIn.username}/videos`}
+                                    onClick={() => {
+                                        dispatch(setEdit(false));
+                                    }}
+                                    className="relative group"
                                 >
-                                    Logout
-                                </Button>
+                                    <img
+                                        src={isLoggedIn.avatar.url}
+                                        alt="avatar"
+                                        height={48}
+                                        width={48}
+                                        onError={(e) =>
+                                            (e.currentTarget.src = "/user.png")
+                                        }
+                                        className="h-12 w-12 rounded-full border-2 border-primary 
+                               transition duration-300 group-hover:scale-105 group-hover:shadow-md"
+                                    />
+                                    {/* Online Status */}
+                                    <span
+                                        className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full 
+                             bg-green-500 border border-background"
+                                    ></span>
+                                </Link>
+
+                                {/* Actions */}
+                                <div>
+                                    <Button
+                                        variant={"destructive"}
+                                        onClick={logout}
+                                        className="cursor-pointer"
+                                    >
+                                        Logout
+                                    </Button>
+                                </div>
                             </div>
-                        </div>
-                    ) : (
-                        <div className="mb-8 mt-auto flex w-full flex-wrap gap-4 px-4 sm:mb-0 sm:mt-0 sm:items-center sm:px-0">
-                            <button
-                                onClick={() => {
-                                    navigator("/login");
-                                }}
-                                className="w-full bg-[#383737] px-3 py-2 hover:bg-[#4f4e4e] sm:w-auto sm:bg-transparent"
-                            >
-                                Log in
-                            </button>
-                            <button
-                                onClick={() => {
-                                    navigator("/register");
-                                }}
-                                className="mr-1 w-full bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto"
-                            >
-                                Sign up
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </nav>
-        </header>
+                        ) : (
+                            <div className="mb-8 mt-auto flex w-full flex-wrap gap-4 px-4 sm:mb-0 sm:mt-0 sm:items-center sm:px-0">
+                                <button
+                                    onClick={() => {
+                                        navigator("/login");
+                                    }}
+                                    className="w-full bg-[#383737] px-3 py-2 hover:bg-[#4f4e4e] sm:w-auto sm:bg-transparent"
+                                >
+                                    Log in
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        navigator("/register");
+                                    }}
+                                    className="mr-1 w-full bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto"
+                                >
+                                    Sign up
+                                </button>
+                            </div>
+                        )}
+                    </SheetFooter>
+                </SheetContent>
+            </Sheet>
+        </div>
     );
 }
 
-export default Header;
+export default SidebarMobile;

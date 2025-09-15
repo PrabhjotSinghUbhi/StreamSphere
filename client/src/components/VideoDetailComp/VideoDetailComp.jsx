@@ -41,7 +41,7 @@ function VideoDetailComp({ video_id, video, user }) {
                 setLoginDialogOpen(true);
                 return;
             }
-            await dispatch(
+            dispatch(
                 likeAVideo({
                     videoOwnerId: video?.Owner?._id,
                     videoId: video_id
@@ -67,7 +67,7 @@ function VideoDetailComp({ video_id, video, user }) {
                 setLoginDialogOpen(true);
                 return;
             }
-            await dispatch(toggleSubscriptionInVideo(video?.Owner?._id));
+            dispatch(toggleSubscriptionInVideo(video?.Owner?._id));
             dispatch(toggleVideoIsSubscribed());
         } catch (error) {
             console.error("Error toggling subscription:", error);

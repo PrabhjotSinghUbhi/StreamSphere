@@ -60,10 +60,9 @@ const watchHistorySlice = createSlice({
             state.watchHistory = [];
         },
         clearAVideoFromHistory: (state, action) => {
-           
             state.watchHistory = state.watchHistory.filter(
                 (video) => video._id !== action.payload
-            );
+            );  
         }
     },
     extraReducers: (builder) => {
@@ -82,6 +81,7 @@ const watchHistorySlice = createSlice({
     }
 });
 
-export const { clearAllWatchHistory,clearAVideoFromHistory } = watchHistorySlice.actions;
+export const { clearAllWatchHistory, clearAVideoFromHistory } =
+    watchHistorySlice.actions;
 
 export default watchHistorySlice.reducer;

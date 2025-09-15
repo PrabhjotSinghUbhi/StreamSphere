@@ -2,10 +2,16 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router";
-import { Clock } from "lucide-react";
+import { Clock, Menu } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import { LoginDialog } from "../Dialogs/LoginAlertDialog/LoginAlertDialog";
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTrigger,
+} from "../ui/sheet";
 
 function Sidebar({ className }) {
     const navigator = useNavigate();

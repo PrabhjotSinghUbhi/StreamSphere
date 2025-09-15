@@ -7,6 +7,7 @@ import EmptyWatchHistory from "./EmptyWatchHistoryComp";
 import { MoreVerticalIcon, Settings } from "lucide-react";
 import WatchLaterVideoDropDown from "../WatchLaterVideos/WatchLaterVideoDropDown";
 import WatchLaterSettingDropDown from "../WatchHistorySettingDropDown/WatchHistorySettingDropDown";
+import { Link } from "react-router";
 
 function WatchHistoryPage() {
     const dispatch = useDispatch();
@@ -43,62 +44,63 @@ function WatchHistoryPage() {
         content = <EmptyWatchHistory />;
     } else {
         content = watchHistory.map((video) => (
-            <div
-                key={video?._id}
-                className="flex flex-col sm:flex-row gap-4 cursor-pointer group"
-            >
-                {/* Thumbnail */}
-                <div className="relative w-full sm:w-64 flex-shrink-0 aspect-video overflow-hidden rounded-lg">
-                    <img
-                        src={video?.thumbnail?.url}
-                        alt={video?.title}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                    <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded">
-                        {formatDuration(video?.duration)}
-                    </span>
-                </div>
-                {/* Video Info */}
-                <div className="flex flex-col w-full justify-between ">
-                    <div>
-                        <div className="flex justify-between items-start">
-                            <h3 className="font-medium text-base line-clamp-2 mb-1">
-                                {video?.title}
-                            </h3>
-                            <div className="mx-15  rounded-full p-1 hover:bg-neutral-800">
-                                <WatchLaterVideoDropDown videoId={video?._id} />
-                            </div>
-                        </div>
-                        <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                            {video?.description}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                            {formatViews(video?.view)} views •{" "}
-                            {formatTime(video?.createdAt)}
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-2 mt-3">
+            <Link key={video?._id} to={`/video/${video?._id}`}>
+                <div
+                    key={video?._id}
+                    className="flex flex-col sm:flex-row gap-4 cursor-pointer group"
+                >
+                    {/* Thumbnail */}
+                    <div className="relative w-full sm:w-64 flex-shrink-0 aspect-video overflow-hidden rounded-lg">
                         <img
-                            src={video?.owner?.avatar?.url}
-                            alt={video?.owner?.username}
-                            className="h-8 w-8 rounded-full object-cover border"
+                            src={video?.thumbnail?.url}
+                            alt={video?.title}
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
-                        <span className="text-sm font-medium">
-                            {video?.owner?.fullName}
+                        <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded">
+                            {formatDuration(video?.duration)}
                         </span>
                     </div>
+                    {/* Video Info */}
+                    <div className="flex flex-col w-full justify-between ">
+                        <div>
+                            <div className="flex justify-between items-start">
+                                <h3 className="font-medium text-base line-clamp-2 mb-1">
+                                    {video?.title}
+                                </h3>
+                                <div className="mx-15  rounded-full p-1 hover:bg-neutral-800">
+                                    <WatchLaterVideoDropDown
+                                        videoId={video?._id}
+                                    />
+                                </div>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                                {formatViews(video?.view)} views •{" "}
+                                {formatTime(video?.createdAt)}
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-2 mt-3">
+                            <img
+                                src={video?.owner?.avatar?.url}
+                                alt={video?.owner?.username}
+                                className="h-8 w-8 rounded-full object-cover border"
+                            />
+                            <span className="text-sm font-medium">
+                                {video?.owner?.fullName}
+                            </span>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </Link>
         ));
     }
 
     return (
-        <div className="w-full max-w-6xl mx-auto px-4 py-6 mb-20">
-            <div className="flex items-center justify-between mb-4">
+        <div className="w-full max-w-6xl mx-auto px-4 py-6 relative mb-20">
+            <div className="flex items-center mb-4 justify-between">
                 <div className="">
                     <h2 className="text-2xl font-bold mb-1">Watch History</h2>
                 </div>
-                <div className="pr-20">
+                <div className="">
                     <WatchLaterSettingDropDown />
                 </div>
             </div>

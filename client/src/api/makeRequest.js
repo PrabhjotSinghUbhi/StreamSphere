@@ -6,7 +6,7 @@ import { LoginDialog } from "../components/Dialogs/LoginAlertDialog/LoginAlertDi
 
 async function makeRequest(fn, options = {}) {
     const {
-        showToast = true,
+        showToast = false,
         successMessage = null,
         showErrorToast = true
     } = options;
@@ -44,7 +44,8 @@ async function makeRequest(fn, options = {}) {
         const real_message =
             message &&
             !message.includes("undefined") &&
-            !message.includes("TypeError")
+            !message.includes("TypeError") &&
+            !message.includes("watchHistory")
                 ? message
                 : error?.response?.data?.error ||
                   (error?.request

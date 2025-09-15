@@ -13,6 +13,7 @@ import {
     clearAllWatchHistory,
     clearWatchHistory
 } from "../../slice/watchHistorySlice";
+import { Button } from "../ui/button";
 
 function WatchLaterSettingDropDown() {
     const dispatch = useDispatch();
@@ -21,7 +22,9 @@ function WatchLaterSettingDropDown() {
         <div>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Settings />
+                    <Button variant={"ghost"} className="scale-150">
+                        <Settings />
+                    </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuLabel>Settings</DropdownMenuLabel>

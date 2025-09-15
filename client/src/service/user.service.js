@@ -39,8 +39,11 @@ export const userService = {
     },
 
     addVideoToHistory: (videoId) => {
-        return makeRequest(() =>
-            api.post(`/users/add-to-watch-history/${videoId}`)
+        return makeRequest(
+            () => api.post(`/users/add-to-watch-history/${videoId}`),
+            {
+                showToast: false
+            }
         );
     },
 
