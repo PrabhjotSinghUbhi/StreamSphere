@@ -291,7 +291,9 @@ function Header() {
                     {/* login or avatar */}
                     <div className="ml-auto flex items-center">
                         {isLoggedIn ? (
-                            <Link to={`/channel/${isLoggedIn?.username}/videos`}>
+                            <Link
+                                to={`/channel/${isLoggedIn?.username}/videos`}
+                            >
                                 <img
                                     src={isLoggedIn?.avatar?.url || "/user.png"}
                                     alt="User Avatar"
