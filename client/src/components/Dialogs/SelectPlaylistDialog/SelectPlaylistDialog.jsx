@@ -8,7 +8,7 @@ import { Plus } from "lucide-react";
 function SelectPlaylistDialog({ addToPlaylistOpen, closeAddToPlaylist }) {
     return (
         <div>
-            <Dialog modal open={addToPlaylistOpen}>
+            <Dialog modal open={addToPlaylistOpen}> 
                 <DialogContent className="fixed top-1/2 left-1/2 z-50 p-6 bg-[#121212] text-white rounded-lg border border-neutral-800 transform -translate-x-1/2 -translate-y-1/2">
                     <DialogHeader>
                         <DialogTitle>Save Video to..</DialogTitle>
@@ -36,11 +36,11 @@ function SelectPlaylistDialog({ addToPlaylistOpen, closeAddToPlaylist }) {
 
                     <DialogFooter className="mt-4 flex justify-end gap-2">
                         <div className="flex flex-col gap-2 mr-auto">
-                            <Button className="w-full" variant={"outline"}>
+                            <Button className="w-full" variant={"outline"} >
                                 <span>
                                     <Plus />
                                 </span>{" "}
-                                New Playlist
+                                New Playlist    
                             </Button>
                             <Button
                                 onClick={closeAddToPlaylist}

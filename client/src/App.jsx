@@ -14,7 +14,6 @@ function App() {
 
     return (
         <Provider store={store}>
-            <Toaster />
             <div className="h-screen overflow-y-auto bg-[#121212] text-white">
                 <Outlet />
             </div>

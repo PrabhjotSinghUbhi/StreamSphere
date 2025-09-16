@@ -7,7 +7,12 @@ function HeaderTwo() {
         <header className="sticky inset-x-0 top-0 z-50 w-full border-b border-white bg-[#121212] px-4">
             <nav className="mx-auto flex max-w-7xl items-center ">
                 <div className="">
-                    <img src="/logo.png" alt="logo" height={150} width={150} />
+                    <img
+                        src="https://res.cloudinary.com/prabhjotsingh/image/upload/v1757937893/croppedLogo_yjocsl.png"
+                        alt="logo"
+                        height={150}
+                        width={150}
+                    />
                 </div>
                 <button className="group  peer ml-auto flex w-6 shrink-0 flex-wrap gap-y-1.5 md:hidden">
                     <span className="block h-[2px] w-full bg-white group-hover:bg-[#ae7aff]"></span>

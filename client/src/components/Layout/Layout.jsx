@@ -9,7 +9,7 @@ function Layout() {
             <div className="flex">
                 <Sidebar />
                 <div className="w-full scrollbar-hide">
-                    <Outlet />
+                    {/* <Outlet /> */}
                 </div> 
             </div>
         </div>

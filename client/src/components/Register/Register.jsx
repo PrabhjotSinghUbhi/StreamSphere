@@ -27,7 +27,7 @@ function Register() {
 
         try {
             const compressedFile = await imageCompression(file, options);
-            
+
             setCompressedAvatar(compressedFile);
             // Create a preview URL for the compressed image
 
@@ -48,7 +48,7 @@ function Register() {
         };
 
         try {
-            const compressedFile = await imageCompression(file, options);    
+            const compressedFile = await imageCompression(file, options);
             setCompressedCover(compressedFile);
             // Create a preview URL for the compressed image
 
@@ -81,7 +81,12 @@ function Register() {
             <div className="mx-auto w-full max-w-2xl rounded-2xl shadow-xl bg-black/40 backdrop-blur-lg p-8 space-y-6 border border-[#ae7aff]/20">
                 {/* Logo */}
                 <div className="flex m-0 justify-center">
-                    <img src="/logo.png" alt="logo" height={250} width={250} />
+                    <img
+                        src="https://res.cloudinary.com/prabhjotsingh/image/upload/v1757937893/croppedLogo_yjocsl.png"
+                        alt="logo"
+                        height={250}
+                        width={250}
+                    />
                 </div>
                 <h1 className="text-center text-3xl font-bold text-[#ae7aff] drop-shadow-md">
                     Create Your Account

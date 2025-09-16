@@ -57,7 +57,7 @@ function Header() {
                     </svg>
                 </button>
                 <button className="group peer ml-4 flex w-6 shrink-0 flex-wrap gap-y-1.5 sm:hidden">
-                    <SidebarMobile />
+                    <SidebarMobile />   
                 </button>
                 <div className="fixed inset-y-0 right-0 flex w-full max-w-xs shrink-0 translate-x-full flex-col border-l border-white bg-[#121212] duration-200 hover:translate-x-0 peer-focus:translate-x-0 sm:static sm:ml-4 sm:w-auto sm:translate-x-0 sm:border-none">
                     <div className="relative flex w-full items-center justify-between border-b border-white px-4 py-2 sm:hidden">

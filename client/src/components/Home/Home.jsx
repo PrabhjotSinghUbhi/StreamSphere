@@ -203,57 +203,101 @@ function Home() {
                                       </div>
                                   ))
                                 : homeVideos?.map((video) => (
-                                      <div key={video?._id} className="w-full">
+                                      <div
+                                          key={video?._id}
+                                          className="group w-full"
+                                      >
                                           <Link
                                               to={`/video/${video?._id}`}
-                                              className="block"
+                                              className="block focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-neutral-900 rounded-lg transition-all duration-200"
+                                              aria-label={`Watch ${video?.title}`}
                                           >
-                                              <div className="relative mb-2 w-full pt-[56%]">
+                                              {/* Thumbnail Container */}
+                                              <div className="relative mb-3 w-full pt-[56%] overflow-hidden rounded-lg bg-neutral-800">
                                                   <img
                                                       src={
                                                           video?.thumbnail?.url
                                                       }
                                                       alt={video?.title}
-                                                      className="absolute inset-0 h-full w-full object-cover"
+                                                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                      loading="lazy"
                                                   />
-                                                  <span className="absolute bottom-1 right-1 inline-block rounded bg-black px-1.5 text-sm">
+
+                                                  {/* Duration Badge */}
+                                                  <span className="absolute bottom-2 right-2 inline-flex items-center justify-center rounded-md bg-black/80 backdrop-blur-sm px-2 py-1 text-xs sm:text-sm font-medium text-white">
                                                       {formatDuration(
                                                           video?.duration
                                                       )}
                                                   </span>
+
+                                                  {/* Hover Play Overlay */}
+                                                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20">
+                                                      <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 sm:p-4 transform scale-90 group-hover:scale-100 transition-transform duration-200">
+                                                          <svg
+                                                              className="w-5 h-5 sm:w-6 sm:h-6 text-black ml-0.5"
+                                                              fill="currentColor"
+                                                              viewBox="0 0 24 24"
+                                                          >
+                                                              <path d="M8 5v14l11-7z" />
+                                                          </svg>
+                                                      </div>
+                                                  </div>
                                               </div>
                                           </Link>
 
-                                          <div className="flex gap-x-2">
+                                          {/* Video Info Section */}
+                                          <div className="flex gap-3">
                                               {/* Avatar */}
-                                              <div className="h-10 w-10 shrink-0">
-                                                  <img
-                                                      src={
-                                                          video?.Owner?.avatar
-                                                              ?.url ||
-                                                          "/user.png"
-                                                      }
-                                                      alt={
-                                                          video?.Owner?.fullName
-                                                      }
-                                                      className="h-full w-full rounded-full"
-                                                  />
-                                              </div>
+                                              <Link
+                                                  to={`/channel/${video?.Owner?._id}`}
+                                                  className="flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-neutral-900 rounded-full"
+                                                  aria-label={`Go to ${video?.Owner?.fullName}'s channel`}
+                                              >
+                                                  <div className="h-9 w-9 sm:h-10 sm:w-10 overflow-hidden rounded-full bg-neutral-700 transition-transform duration-200 hover:scale-105">
+                                                      <img
+                                                          src={
+                                                              video?.Owner
+                                                                  ?.avatar
+                                                                  ?.url ||
+                                                              "/user.png"
+                                                          }
+                                                          alt={
+                                                              video?.Owner
+                                                                  ?.fullName
+                                                          }
+                                                          className="h-full w-full object-cover"
+                                                          loading="lazy"
+                                                      />
+                                                  </div>
+                                              </Link>
 
-                                              {/* Title + Channel + Stats + Dropdown */}
-                                              <div className="flex w-full flex-col">
+                                              {/* Content Area */}
+                                              <div className="flex-1 min-w-0">
                                                   <div className="flex items-start justify-between gap-2">
-                                                      <h6 className="mb-1 font-semibold">
-                                                          {video?.title
-                                                              ?.length > 40
-                                                              ? video?.title.substring(
-                                                                    0,
-                                                                    40
-                                                                ) + "..."
-                                                              : video?.title}
-                                                      </h6>
+                                                      {/* Title */}
+                                                      <div className="flex-1 min-w-0">
+                                                          <Link
+                                                              to={`/video/${video?._id}`}
+                                                              className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-neutral-900 rounded"
+                                                          >
+                                                              <h3 className="text-sm sm:text-base font-semibold text-white line-clamp-2 leading-tight hover:text-neutral-200 transition-colors duration-200">
+                                                                  {video?.title}
+                                                              </h3>
+                                                          </Link>
 
-                                                      {/* Dropdown menu next to title */}
+                                                          {/* Channel Name - Mobile */}
+                                                          <Link
+                                                              to={`/channel/${video?.Owner?._id}`}
+                                                              className="block sm:hidden mt-1 text-xs text-neutral-400 hover:text-neutral-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-neutral-900 rounded"
+                                                          >
+                                                              {
+                                                                  video?.Owner
+                                                                      ?.fullName
+                                                              }
+                                                          </Link>
+                                                      </div>
+
+                                                      {/* Dropdown Menu */}
                                                       <DropdownMenu
                                                           onOpenChange={(
                                                               open
@@ -265,12 +309,19 @@ function Home() {
                                                               }
                                                           }}
                                                       >
-                                                          <DropdownMenuTrigger className="p-1">
-                                                              <MoreVertical className="h-5 w-5 cursor-pointer text-neutral-400 hover:text-neutral-200" />
+                                                          <DropdownMenuTrigger
+                                                              className="flex-shrink-0 p-1.5 rounded-full hover:bg-neutral-800 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary"
+                                                              aria-label="Video options"
+                                                          >
+                                                              <MoreVertical className="h-4 w-4 sm:h-5 sm:w-5 text-neutral-400 hover:text-neutral-200 transition-colors duration-200" />
                                                           </DropdownMenuTrigger>
-                                                          <DropdownMenuContent align="end">
+
+                                                          <DropdownMenuContent
+                                                              align="end"
+                                                              className="w-48 sm:w-52 bg-neutral-800 border-neutral-700"
+                                                          >
                                                               <DropdownMenuItem
-                                                                  className="cursor-pointer"
+                                                                  className="cursor-pointer text-sm py-2.5 px-3 hover:bg-neutral-700 focus:bg-neutral-700 text-white"
                                                                   onClick={() => {
                                                                       if (
                                                                           _id ===
@@ -290,10 +341,27 @@ function Home() {
                                                                       );
                                                                   }}
                                                               >
+                                                                  <svg
+                                                                      className="w-4 h-4 mr-3"
+                                                                      fill="none"
+                                                                      stroke="currentColor"
+                                                                      viewBox="0 0 24 24"
+                                                                  >
+                                                                      <path
+                                                                          strokeLinecap="round"
+                                                                          strokeLinejoin="round"
+                                                                          strokeWidth={
+                                                                              2
+                                                                          }
+                                                                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                                      />
+                                                                  </svg>
                                                                   Save to Watch
                                                                   Later
                                                               </DropdownMenuItem>
+
                                                               <DropdownMenuItem
+                                                                  className="cursor-pointer text-sm py-2.5 px-3 hover:bg-neutral-700 focus:bg-neutral-700 text-white"
                                                                   onClick={() => {
                                                                       if (
                                                                           !_id
@@ -316,23 +384,100 @@ function Home() {
                                                                       }
                                                                   }}
                                                               >
+                                                                  <svg
+                                                                      className="w-4 h-4 mr-3"
+                                                                      fill="none"
+                                                                      stroke="currentColor"
+                                                                      viewBox="0 0 24 24"
+                                                                  >
+                                                                      <path
+                                                                          strokeLinecap="round"
+                                                                          strokeLinejoin="round"
+                                                                          strokeWidth={
+                                                                              2
+                                                                          }
+                                                                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                                                                      />
+                                                                  </svg>
                                                                   Add to
                                                                   Playlist
+                                                              </DropdownMenuItem>
+
+                                                              <DropdownMenuItem
+                                                                  className="cursor-pointer text-sm py-2.5 px-3 hover:bg-neutral-700 focus:bg-neutral-700 text-white"
+                                                                  onClick={() => {
+                                                                      navigator.clipboard.writeText(
+                                                                          `${window.location.origin}/video/${video?._id}`
+                                                                      );
+                                                                      // You could add a toast notification here
+                                                                  }}
+                                                              >
+                                                                  <svg
+                                                                      className="w-4 h-4 mr-3"
+                                                                      fill="none"
+                                                                      stroke="currentColor"
+                                                                      viewBox="0 0 24 24"
+                                                                  >
+                                                                      <path
+                                                                          strokeLinecap="round"
+                                                                          strokeLinejoin="round"
+                                                                          strokeWidth={
+                                                                              2
+                                                                          }
+                                                                          d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
+                                                                      />
+                                                                  </svg>
+                                                                  Share Video
                                                               </DropdownMenuItem>
                                                           </DropdownMenuContent>
                                                       </DropdownMenu>
                                                   </div>
 
-                                                  <p className="flex text-sm text-gray-200">
-                                                      {formatViews(video?.view)}{" "}
-                                                      Views ·{" "}
-                                                      {formatTime(
-                                                          video?.createdAt
-                                                      )}
-                                                  </p>
-                                                  <p className="text-sm text-gray-200">
+                                                  {/* Channel Name - Desktop */}
+                                                  <Link
+                                                      to={`/channel/${video?.Owner?._id}`}
+                                                      className="hidden sm:block mt-1 text-sm text-neutral-400 hover:text-neutral-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 focus:ring-offset-neutral-900 rounded truncate"
+                                                  >
                                                       {video?.Owner?.fullName}
-                                                  </p>
+                                                  </Link>
+
+                                                  {/* Video Stats */}
+                                                  <div className="mt-1 flex items-center text-xs sm:text-sm text-neutral-400 space-x-1 overflow-hidden">
+                                                      <span className="truncate">
+                                                          {formatViews(
+                                                              video?.view
+                                                          )}{" "}
+                                                          views
+                                                      </span>
+                                                      <span className="flex-shrink-0">
+                                                          •
+                                                      </span>
+                                                      <time
+                                                          dateTime={
+                                                              video?.createdAt
+                                                          }
+                                                          className="hover:text-neutral-300 transition-colors duration-200 truncate"
+                                                      >
+                                                          {formatTime(
+                                                              video?.createdAt
+                                                          )}
+                                                      </time>
+                                                  </div>
+
+                                                  {/* Progress Bar (if video has been watched) */}
+                                                  {video?.watchProgress && (
+                                                      <div className="mt-2 w-full bg-neutral-700 rounded-full h-1">
+                                                          <div
+                                                              className="bg-primary h-1 rounded-full transition-all duration-300"
+                                                              style={{
+                                                                  width: `${Math.min(
+                                                                      video.watchProgress,
+                                                                      100
+                                                                  )}%`
+                                                              }}
+                                                          />
+                                                      </div>
+                                                  )}
                                               </div>
                                           </div>
                                       </div>
