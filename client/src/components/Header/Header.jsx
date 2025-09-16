@@ -26,6 +26,8 @@ import {
     SheetTrigger,
     SheetDescription
 } from "@/components/ui/sheet";
+import Logout from "../Logout/Logout";
+import { useLogout } from "../../hooks/useLogout.hook";
 
 const navigationItems = [
     {
@@ -97,7 +99,7 @@ const bottomNavigationItems = [
 
 function Header() {
     const isLoggedIn = useSelector((state) => state.loginUser.login_user.user);
-    // const logout = useLogout();
+    const logout = useLogout();
     const [loginDialogOpen, setLoginDialogOpen] = useState(false);
     const navigate = useNavigate();
     const [sheetOpen, setSheetOpen] = useState(false);
@@ -147,18 +149,138 @@ function Header() {
     };
 
     return (
-        <header className="sticky inset-x-0 top-0 z-50 w-full border-b border-white bg-[#121212] px-4">
+        <header className="sticky inset-x-0 top-0 z-50 w-full border-b border-white bg-[#121212] ">
             <LoginDialog
                 open={loginDialogOpen}
                 onClose={() => setLoginDialogOpen(false)}
             />
-            <nav className="mx-auto flex max-w-7xl items-center py-2">
-                <div className=" w-12 shrink-0 sm:w-16">
-                    <img
-                        src="https://res.cloudinary.com/prabhjotsingh/image/upload/v1757313106/logo_anhmgo.png"
-                        alt="logo"
-                        className="scale-250"
-                    />
+            <nav className="mx-auto flex max-w-7xl py-2">
+                <div className=" top-0 left-0 z-50 flex items-center h-14 px-4 ">
+                    <span className="mr-2">
+                        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                            <SheetTrigger
+                                className="scale-135 mt-1.5 mr-1.5 "
+                                asChild
+                            >
+                                <button className="flex flex-col items-center justify-center p-2 text-white hover:text-white transition-colors duration-200">
+                                    <Menu className="w-5 h-5 mb-1" />
+                                </button>
+                            </SheetTrigger>
+
+                            <SheetContent
+                                side="left"
+                                className="w-80 bg-[#121212] border-l border-neutral-800 p-0"
+                            >
+                                <SheetHeader className="px-6 py-4 border-b border-neutral-800">
+                                    <div className="flex items-center justify-between">
+                                        <SheetTitle className="text-white text-lg font-semibold">
+                                            Menu
+                                        </SheetTitle>
+                                    </div>
+                                    <SheetDescription className="text-neutral-400 text-sm">
+                                        Access all your favorite features
+                                    </SheetDescription>
+                                </SheetHeader>
+
+                                <div className="flex flex-col h-full">
+                                    {/* User Section */}
+                                    {isLoggedIn && (
+                                        <div className="px-6 py-4 border-b border-neutral-800">
+                                            <div className="flex items-center space-x-3">
+                                                <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                                                    <span className="text-black font-semibold text-sm">
+                                                        {isLoggedIn?.fullName?.charAt(
+                                                            0
+                                                        ) || "U"}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <p className="text-white font-medium">
+                                                        {isLoggedIn?.fullName ||
+                                                            "User"}
+                                                    </p>
+                                                    <p className="text-neutral-400 text-sm">
+                                                        {isLoggedIn?.email ||
+                                                            "user@example.com"}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Main Navigation */}
+                                    <nav className="flex-1 px-2 py-4 space-y-1">
+                                        <div className="px-4 py-2">
+                                            <h3 className="text-neutral-400 text-xs font-semibold uppercase tracking-wide">
+                                                Library
+                                            </h3>
+                                        </div>
+                                        {navigationItems.map((item) => (
+                                            <NavItem
+                                                key={item.id}
+                                                item={item}
+                                                isMobile={true}
+                                            />
+                                        ))}
+                                    </nav>
+
+                                    {/* Bottom Section */}
+                                    <div className="px-2 py-4 border-t border-neutral-800 space-y-1">
+                                        <div className="px-4 py-2">
+                                            <h3 className="text-neutral-400 text-xs font-semibold uppercase tracking-wide">
+                                                More
+                                            </h3>
+                                        </div>
+                                        {bottomNavigationItems.map((item) => (
+                                            <NavItem
+                                                key={item.id}
+                                                item={item}
+                                                isMobile={true}
+                                            />
+                                        ))}
+
+                                        {/* Sign Out Button */}
+                                        {isLoggedIn && (
+                                            <button
+                                                onClick={() => {
+                                                    // Add your sign out logic here
+                                                    setSheetOpen(false);
+                                                    logout();
+                                                }}
+                                                className="flex items-center w-full px-4 py-3 text-left text-red-400 hover:bg-red-500/10 rounded-lg transition-colors duration-200"
+                                            >
+                                                <svg
+                                                    className="w-5 h-5 mr-3"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                                                    />
+                                                </svg>
+                                                <span className="text-sm font-medium">
+                                                    Sign Out
+                                                </span>
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            </SheetContent>
+                        </Sheet>
+                    </span>
+                    <span>
+                        <img
+                            src="https://res.cloudinary.com/prabhjotsingh/image/upload/v1757937893/croppedLogo_yjocsl.png"
+                            alt="logo"
+                            className="scale-100 ml-3"
+                            height={190}
+                            width={100}
+                        />
+                    </span>
                 </div>
                 <div className="relative mx-auto hidden w-full max-w-md overflow-hidden sm:block">
                     <input
@@ -186,121 +308,7 @@ function Header() {
                         ></path>
                     </svg>
                 </button>
-                <button className="group peer ml-4 flex w-6 shrink-0 flex-wrap gap-y-1.5 sm:hidden">
-                    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-                        <SheetTrigger
-                            className="scale-135 mt-1.5 mr-1.5 "
-                            asChild
-                        >
-                            <button className="flex flex-col items-center justify-center p-2 text-white hover:text-white transition-colors duration-200">
-                                <Menu className="w-5 h-5 mb-1" />
-                            </button>
-                        </SheetTrigger>
-
-                        <SheetContent
-                            side="right"
-                            className="w-80 bg-[#121212] border-l border-neutral-800 p-0"
-                        >
-                            <SheetHeader className="px-6 py-4 border-b border-neutral-800">
-                                <div className="flex items-center justify-between">
-                                    <SheetTitle className="text-white text-lg font-semibold">
-                                        Menu
-                                    </SheetTitle>
-                                </div>
-                                <SheetDescription className="text-neutral-400 text-sm">
-                                    Access all your favorite features
-                                </SheetDescription>
-                            </SheetHeader>
-
-                            <div className="flex flex-col h-full">
-                                {/* User Section */}
-                                {isLoggedIn && (
-                                    <div className="px-6 py-4 border-b border-neutral-800">
-                                        <div className="flex items-center space-x-3">
-                                            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                                                <span className="text-black font-semibold text-sm">
-                                                    {isLoggedIn?.fullName?.charAt(
-                                                        0
-                                                    ) || "U"}
-                                                </span>
-                                            </div>
-                                            <div>
-                                                <p className="text-white font-medium">
-                                                    {isLoggedIn?.fullName ||
-                                                        "User"}
-                                                </p>
-                                                <p className="text-neutral-400 text-sm">
-                                                    {isLoggedIn?.email ||
-                                                        "user@example.com"}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Main Navigation */}
-                                <nav className="flex-1 px-2 py-4 space-y-1">
-                                    <div className="px-4 py-2">
-                                        <h3 className="text-neutral-400 text-xs font-semibold uppercase tracking-wide">
-                                            Library
-                                        </h3>
-                                    </div>
-                                    {navigationItems.map((item) => (
-                                        <NavItem
-                                            key={item.id}
-                                            item={item}
-                                            isMobile={true}
-                                        />
-                                    ))}
-                                </nav>
-
-                                {/* Bottom Section */}
-                                <div className="px-2 py-4 border-t border-neutral-800 space-y-1">
-                                    <div className="px-4 py-2">
-                                        <h3 className="text-neutral-400 text-xs font-semibold uppercase tracking-wide">
-                                            More
-                                        </h3>
-                                    </div>
-                                    {bottomNavigationItems.map((item) => (
-                                        <NavItem
-                                            key={item.id}
-                                            item={item}
-                                            isMobile={true}
-                                        />
-                                    ))}
-
-                                    {/* Sign Out Button */}
-                                    {isLoggedIn && (
-                                        <button
-                                            onClick={() => {
-                                                // Add your sign out logic here
-                                                setSheetOpen(false);
-                                            }}
-                                            className="flex items-center w-full px-4 py-3 text-left text-red-400 hover:bg-red-500/10 rounded-lg transition-colors duration-200"
-                                        >
-                                            <svg
-                                                className="w-5 h-5 mr-3"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                                                />
-                                            </svg>
-                                            <span className="text-sm font-medium">
-                                                Sign Out
-                                            </span>
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                        </SheetContent>
-                    </Sheet>
-                </button>
+                <button className="group peer ml-4 flex w-6 shrink-0 flex-wrap gap-y-1.5 sm:hidden"></button>
             </nav>
         </header>
     );
