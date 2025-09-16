@@ -4,7 +4,7 @@ import store from "../store/store";
 import { navigate } from "../Helper/navigate";
 
 export const api = axios.create({
-    baseURL: "https://streamsphere-b4it.onrender.com/api/v1",
+    baseURL: "https://api.streamsphere.qzz.io/api/v1",
     withCredentials: true
 });
 
