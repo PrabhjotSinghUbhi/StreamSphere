@@ -45,7 +45,9 @@ import {
     SubscriberList,
     WatchHistoryPage,
     MyPlaylistPage,
-    FinalChannelTweetPage
+    FinalChannelTweetPage,
+    SettingsComponent,
+    SupportComponent
 } from "./components/index.js";
 import { Provider } from "react-redux";
 import store from "./store/store.js";
@@ -165,6 +167,8 @@ const route = createBrowserRouter(
                 element={<Test />}
                 errorElement={<RouteError />}
             />
+            <Route path="/settings" element={<SettingsComponent />} />
+            <Route path="/support" element={<SupportComponent />} />
         </Route>
     )
 );
