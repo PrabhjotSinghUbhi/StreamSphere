@@ -9,8 +9,8 @@ app.get("/", (req, res) => res.send("Root working"));
 const allowedOrigins = [
     process.env.CORS_ORIGIN,
     "https://stream-sphere-client.vercel.app",
-    "https://stream-sphere-clie-git-192fd4-prabhjot-singhs-projects-9271e357.vercel.app",
-    "https://streamsphere.qzz.io"
+    "https://streamsphere.qzz.io",
+    "https://streamsphere.prabh.me"
 ];
 
 // allowing the cross-origin-resource-sharing (cors).
